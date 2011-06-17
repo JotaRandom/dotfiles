@@ -1,0 +1,66 @@
+! --------------------------------------------------------
+! Autor orig.:	Verctor Linux 6.0
+! Modificator:	Jristz "J" Random, The Fox
+! modified:	Jun 2011
+! Rescritpter:	Leafpad-0.8.18.1:es_CL.UTF-8:Xorg-1.10.2:
+!---------------------------------------------------------
+#Urxvt settings
+#Geometry
+#URxvt.geometry: 105x30
+ 
+#Scrollbar
+URxvt.scrollBar: true
+URxvt.scrollstyle: plain
+URxvt.scrollBar_right: false
+URxvt.scrollTtyKeypress: true
+
+#Transparency
+URxvt.transparent: true
+URxvt.shading: 64
+URxvt.fading: 128
+#URxvt.fadeColor: colour
+#URxvt.tintColor: colour
+URxvt.blendType: alphablend 
+#URxvt.blurRadius: number
+#URxvt.background: colour
+#URxvt.foreground: colour
+#URxvt.backgroundPixmap: image path
+
+#Pointer & cursor
+URxvt.pointerBlank: true
+#URxvt.cursorBlink: true
+#URxvt.pointerColor:
+#URxvt.pointerColor2:
+URxvt.pointerBlankDelay: 3
+
+#Borders
+URxvt.internalBorder: 2
+#URxvt.externalBorder: 2
+URxvt.borderLess: false
+
+#Fonts
+#URxvt*font: 10x20
+#URxvt*boldFont: 10x20
+urxvt.font:             xft:monaco:pixelsize=14
+urxvt.boldFont:         xft:monaco:bold:pixelsize=14
+
+#Misc
+URxvt*reverseVideo: true
+URxvt*color12: #6661ee
+
+#Perl
+##Tabs
+URxvt.perl-ext-common: default,tabbed
+URxvt.tabbed.tabbar-fg: 8
+URxvt.tabbed.tabbar-bg: 0
+URxvt.tabbed.tab-fg: 3
+URxvt.tabbed.tab-bg: 0
+##Open URL
+URxvt.perl-ext:           default,matcher
+URxvt.urlLauncher:        opera
+URxvt.keysym.C-Delete:    perl:matcher
+URxvt.matcher.button:     1
+URxvt.matcher.pattern.1:  \\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+
+# Includes $PATH
+include "/home/pablo/.xcolours/urxvt"
