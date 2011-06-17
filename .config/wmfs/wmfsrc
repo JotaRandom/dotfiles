@@ -1,12 +1,7 @@
+#
 # This is the default wmfs config file, copy it to
 # ~/.config/wmfs/wmfsrc and edit it.
 #
-# Modification to the default WMFS
-# Modification taken from Many souces....I dont remember any :(
-
-# Modifier autor:	Jristz "J" Random, The fox
-# Date:			Jun 2011
-# Descripter:		Leafpad-0.8.18.1:es_CL.UTF-8:WMFS:Xorg-1.10.2
 
 # Include file to split configuration
 # @include "~/.config/wmfs/menu-wmfsrc"
