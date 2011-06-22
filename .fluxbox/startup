@@ -17,6 +17,7 @@
 mint-fm2 generate &
 nitrogen --restore &
 xset s off -dpms &
+dropboxd &
 
 # And last but not least we start fluxbox.
 # Because it is the last app you have to run it with ''exec'' before it.
