@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="popup-css-compiled.css">
+<link rel="stylesheet" href="popup-nocompile.css">
+<script src="popup-compiled.js"></script>
+</head><body id="popupBody" onload="picasa_chrome.popup.onLoad();">
+<img id="popupIcon" src="picasa_35x35.png" width="35" height="35" />
+<div id="popupTitle">
+  Loading Picasa...
+  <img class="spinner" src="spinner_gray_22x22.gif" width="22" height="22" />
+</div>
+
+<div id="mainBackground">
+<div id="mainTabsWrapper">
+<div id="mainTabs" class="goog-tab-bar goog-tab-bar-top">
+  <div class="goog-tab"><span class="label">Comments</span></div>
+  <div class="goog-tab goog-tab-last"><span class="label">Albums</span></div>
+</div>
+</div>
+<div class="goog-tab-bar-clear"></div>
+</div>
+<div id="mainContentWrapper">
+  <div id="mainContent" class="goog-tab-content"></div>
+  <div id="mainContentFade"> </div>
+</div>
+
+</body></html>

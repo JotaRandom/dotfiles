@@ -1,0 +1,487 @@
+{
+   "browser": {
+      "show_home_button": true,
+      "window_placement": {
+         "bottom": 752,
+         "left": 18,
+         "maximized": false,
+         "right": 1022,
+         "top": 18,
+         "work_area_bottom": 768,
+         "work_area_left": 0,
+         "work_area_right": 1024,
+         "work_area_top": 18
+      }
+   },
+   "countryid_at_install": 17228,
+   "default_search_provider": {
+      "enabled": true,
+      "encodings": "UTF-8",
+      "icon_url": "http://www.google.com/favicon.ico",
+      "id": "2",
+      "instant_url": "{google:baseURL}webhp?{google:RLZ}sourceid=chrome-instant&ie={inputEncoding}&ion=1{searchTerms}&nord=1",
+      "keyword": "google.cl",
+      "name": "Google",
+      "prepopulate_id": "1",
+      "search_url": "{google:baseURL}search?{google:RLZ}{google:acceptedSuggestion}{google:originalQueryForSuggestion}sourceid=chrome&ie={inputEncoding}&q={searchTerms}",
+      "suggest_url": "{google:baseSuggestURL}search?client=chrome&hl={language}&q={searchTerms}"
+   },
+   "dns_prefetching": {
+      "host_referral_list": [ 2, [ "http://0.76.channel.facebook.com/", [ "http://0.76.channel.facebook.com/", 2.066525344788971, "http://static.ak.fbcdn.net/", 2.853038722283281, "http://www.facebook.com/", 1.8043542189575343 ] ], [ "http://ad.turn.com/", [ "http://cdn.turn.com/", 2.2086570657060003 ] ], [ "http://adsrv.deviantart.com/", [ "http://adimg.deviantart.net/", 1.8572295440774185, "http://adsrv.deviantart.com/", 1.8572295440774185 ] ], [ "http://alilali.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.529573049612, "http://csi.gstatic.com/", 2.2086570657060003, "http://e.deviantart.net/", 4.4550689530479985, "http://partner.googleadservices.com/", 2.2086570657060003, "http://pubads.g.doubleclick.net/", 2.529573049612, "http://s.deviantart.net/", 2.2086570657060003, "http://sh.deviantart.net/", 4.134152969141999, "http://st.deviantart.com/", 4.134152969141999, "http://st.deviantart.net/", 11.515220598979996, "http://www.google-analytics.com/", 2.2086570657060003 ] ], [ "http://archlinux.deviantart.com/", [ "http://archlinux.deviantart.com/", 1.6695182127439199, "http://b.scorecardresearch.com/", 1.8813227621218798, "http://e.deviantart.net/", 2.3049318608777996, "http://partner.googleadservices.com/", 1.6695182127439199, "http://pubads.g.doubleclick.net/", 1.6695182127439199, "http://sh.deviantart.net/", 2.72854095963372, "http://st.deviantart.com/", 2.9403455090116797, "http://st.deviantart.net/", 13.106963879153755, "http://th01.deviantart.net/", 1.45771366336596, "http://th05.deviantart.net/", 1.6695182127439199 ] ], [ "http://artescritorio.deviantart.com/", [ "http://a.collective-media.net/", 2.529573049612, "http://ak1.abmr.net/", 2.2086570657060003, "http://loadus.exelator.com/", 2.529573049612, "http://pixer.meaningtool.com/", 2.529573049612, "http://sh.deviantart.net/", 2.529573049612, "http://st.deviantart.net/", 3.4923210013299997, "http://tags.bluekai.com/", 2.529573049612, "http://tap-cdn.rubiconproject.com/", 2.2086570657060003, "http://tap.rubiconproject.com/", 2.2086570657060003, "http://th09.deviantart.net/", 3.8132369852359993 ] ], [ "http://backend.deviantart.com/", [ "http://backend.deviantart.com/", 3.1714050174239996, "http://th07.deviantart.net/", 3.1714050174239996 ] ], [ "http://blackboxdesktop.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.529573049612, "http://blackboxdesktop.deviantart.com/", 2.2086570657060003, "http://pixel.quantserve.com/", 2.2086570657060003, "http://s.deviantart.net/", 2.2086570657060003, "http://sh.deviantart.net/", 2.529573049612, "http://st.deviantart.net/", 2.2086570657060003, "http://th02.deviantart.net/", 2.850489033518, "http://th05.deviantart.net/", 2.529573049612, "http://th06.deviantart.net/", 2.850489033518, "http://www.google-analytics.com/", 2.2086570657060003 ] ], [ "http://cdn.turn.com/", [ "http://ad.afy11.net/", 2.2086570657060003, "http://ads.adbrite.com/", 2.2086570657060003, "http://bh.contextweb.com/", 2.2086570657060003, "http://ce.lijit.com/", 2.2086570657060003, "http://cms.ad.yieldmanager.net/", 2.2086570657060003, "http://pixel.rubiconproject.com/", 2.2086570657060003, "http://r.openx.net/", 2.529573049612, "http://r.turn.com/", 2.529573049612, "http://sync.adap.tv/", 2.2086570657060003, "http://turn.nexac.com/", 2.2086570657060003 ] ], [ "http://custom-linux.deviantart.com/", [ "http://a.deviantart.net/", 5.738732888671998, "http://custom-linux.deviantart.com/", 2.529573049612, "http://e.deviantart.net/", 5.096900920859999, "http://partner.googleadservices.com/", 2.850489033518, "http://pubads.g.doubleclick.net/", 2.529573049612, "http://sh.deviantart.net/", 5.738732888671998, "http://st.deviantart.com/", 4.4550689530479985, "http://st.deviantart.net/", 6.380564856483998, "http://th01.deviantart.net/", 3.4923210013299997, "http://th09.deviantart.net/", 2.2086570657060003 ] ], [ "http://developer.berlios.de/", [ "http://developer.berlios.de/", 15.045296421945993, "http://pagead2.googlesyndication.com/", 2.529573049612 ] ], [ "http://distoorted.livejournal.com/", [ "http://api.viglink.com/", 1.8572295440774185, "http://b.scorecardresearch.com/", 2.127083409456189, "http://edge.quantserve.com/", 1.8572295440774185, "http://ib.adnxs.com/", 2.6667911402137294, "http://image2.pubmatic.com/", 1.8572295440774185, "http://l-stat.livejournal.com/", 13.946682713046323, "http://m.adnxs.com/", 1.8572295440774185, "http://pixel.quantserve.com/", 1.8572295440774185, "http://www.everypony.com/", 3.735412447113658, "http://www.tns-counter.ru/", 1.8572295440774185 ] ], [ "http://foro.furry.cl/", [ "http://chzmemebase.files.wordpress.com/", 2.2733802, "http://foro.furry.cl/", 22.75323259999999, "http://i.min.us/", 2.2733802, "http://i182.photobucket.com/", 2.2733802, "http://i216.photobucket.com/", 2.9340205999999998, "http://i252.photobucket.com/", 2.2733802, "http://i26.photobucket.com/", 2.2733802, "http://i53.tinypic.com/", 2.6037003999999997, "http://images2.wikia.nocookie.net/", 2.33015861274392, "http://www.ansuz.nl/", 2.75376771149984 ] ], [ "http://forums.dropbox.com/", [ "http://dropbox.com/", 2.127083409456189, "http://forums.dropbox.com/", 4.01606046710758, "http://www.dropbox.com/", 2.127083409456189, "https://www.dropbox.com/", 3.4763527363500395 ] ], [ "http://googleads.g.doubleclick.net/", [ "chrome-extension://gofhjkjmkpinhpoiabjplobcaignabnl/", 2.2733802, "http://googleads.g.doubleclick.net/", 0.09364491764020756, "http://pagead2.googlesyndication.com/", 1.0982869171354368 ] ], [ "http://ib.adnxs.com/", [ "http://ib.adnxs.com/", 1.8572295440774185, "http://view.atdmt.com/", 1.9435827809986248 ] ], [ "http://js2.wlxrs.com/", [ "http://js2.wlxrs.com/", 0.26866637652342934 ] ], [ "http://lightirc.com/", [ "http://lightirc.com/", 0.9435463870304422, "http://www.adobe.com/", 0.9212418991298011 ] ], [ "http://lj-toys.com/", [ "chrome-extension://gofhjkjmkpinhpoiabjplobcaignabnl/", 1.2257714990910962, "http://thedistorted.narod.ru/", 1.2257714990910962 ] ], [ "http://loadus.exelator.com/", [ "http://loadus.exelator.com/", 2.2086570657060003, "http://r.nexac.com/", 2.2086570657060003 ] ], [ "http://login.live.com/", [ "http://loginnet.passport.com/", 3.1780357829844585, "https://accountservices.msn.com/", 2.3601094380552783 ] ], [ "http://minimalistic-desktop.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.529573049612, "http://s.deviantart.net/", 2.2086570657060003, "http://sh.deviantart.net/", 2.529573049612, "http://st.deviantart.net/", 6.0596488725779984, "http://th00.deviantart.net/", 2.850489033518, "http://th01.deviantart.net/", 2.850489033518, "http://th05.deviantart.net/", 2.529573049612, "http://th08.deviantart.net/", 2.529573049612, "http://th09.deviantart.net/", 2.850489033518, "http://www.google-analytics.com/", 2.2086570657060003 ] ], [ "http://mlpfriendshipismagic.deviantart.com/", [ "http://a.deviantart.net/", 3.578224796300721, "http://e.deviantart.com/", 3.578224796300721, "http://mlpfriendshipismagic.deviantart.com/", 2.1894160854077476, "http://pubads.g.doubleclick.net/", 2.1894160854077476, "http://sh.deviantart.net/", 3.300463054122126, "http://st.deviantart.com/", 3.578224796300721, "http://st.deviantart.net/", 7.035138493457544, "http://th00.deviantart.net/", 2.467177827586342, "http://th02.deviantart.net/", 3.0227013119435315, "http://th08.deviantart.net/", 2.4127530284346084 ] ], [ "http://mogneciothebrave.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.6890270987209393, "http://edge.quantserve.com/", 1.8572295440774185, "http://mogneciothebrave.deviantart.com/", 0.8090091894001237, "http://partner.googleadservices.com/", 1.7966743366864224, "http://pixel.quantserve.com/", 1.761917158825637, "http://pubads.g.doubleclick.net/", 2.0575690537346167, "http://sh.deviantart.net/", 1.5142992519540772, "http://st.deviantart.net/", 2.5202022028781346, "http://th07.deviantart.net/", 1.2792025644360927, "http://www.google-analytics.com/", 2.0317710242044074 ] ], [ "http://openbox-users.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.529573049612, "http://e.deviantart.net/", 3.4923210013299997, "http://pixel.quantserve.com/", 2.2086570657060003, "http://s.deviantart.net/", 2.2086570657060003, "http://sh.deviantart.net/", 3.1714050174239996, "http://st.deviantart.com/", 2.2086570657060003, "http://st.deviantart.net/", 5.417816904765999, "http://th04.deviantart.net/", 2.2086570657060003, "http://th06.deviantart.net/", 2.2086570657060003, "http://www.google-analytics.com/", 2.2086570657060003 ] ], [ "http://p4.gv6ilofonugkg.tukinvwfarg4g6vu.if.v4.ipv6-exp.l.google.com/", [ "http://p4.gv6ilofonugkg.tukinvwfarg4g6vu.if.v4.ipv6-exp.l.google.com/", 2.084686339270529 ] ], [ "http://pixelkitties.deviantart.com/", [ "http://b.scorecardresearch.com/", 2.127083409456189, "http://edge.quantserve.com/", 1.8572295440774185, "http://pixel.quantserve.com/", 1.8572295440774185, "http://pubads.g.doubleclick.net/", 3.8973247663409194, "http://sh.deviantart.net/", 10.341435071585954, "http://st.deviantart.net/", 18.712301975635402, "http://th04.deviantart.net/", 1.8572295440774185, "http://th06.deviantart.net/", 1.8572295440774185, "http://th07.deviantart.net/", 2.396937274834959, "http://www.google-analytics.com/", 2.127083409456189 ] ], [ "http://platform0.twitter.com/", [ "http://cdn.api.twitter.com/", 1.1738955671994935, "http://platform0.twitter.com/", 1.4948115511054936, "http://urls.api.twitter.com/", 2.2086570657060003 ] ], [ "http://ponibooru.413chan.net/", [ "http://pagead2.googlesyndication.com/", 0.4624066176875219, "http://ponibooru.413chan.net/", 28.299693767464394 ] ], [ "http://secure.shared.live.com/", [ "http://sn1msg2010717.gateway.messenger.live.com/", 1.2257714990910964, "http://sn1msg2020111.sn1.gateway.edge.messenger.live.com/", 1.2257714990910964, "http://sn1msg3010706.sn1.gateway.edge.messenger.live.com/", 0.7859766977779024, "http://sn1msg3010810.gateway.messenger.live.com/", 0.7859766977779024, "https://js2.wlxrs.com/", 1.3202873512278674, "https://secure.wlxrs.com/", 1.962395807246818 ] ], [ "http://slim.berlios.de/", [ "http://slim.berlios.de/", 1.321520525351516 ] ], [ "http://sn124w.snt124.mail.live.com/", [ "http://gfx1.hotmail.com/", 2.5394767300920633, "http://gfx3.hotmail.com/", 5.398490267281802, "http://gfx4.hotmail.com/", 2.2535753763730892, "http://h.live.com/", 1.967674022654115, "http://js.wlxrs.com/", 12.587436643893463, "http://js2.wlxrs.com/", 2.2535753763730892, "http://msc.wlxrs.com/", 2.2535753763730892, "http://secure.wlxrs.com/", 4.826687559843855, "http://sn124w.snt124.mail.live.com/", 3.111279437530011, "https://secure.wlxrs.com/", 3.111279437530011 ] ], [ "http://sn1msg2010717.gateway.messenger.live.com/", [ "http://sn1msg2010717.gateway.messenger.live.com/", 3.7462066017288094 ] ], [ "http://sn1msg2020111.sn1.gateway.edge.messenger.live.com/", [ "http://shared.live.com/", 1.8572295440774185, "http://sn1msg2020111.sn1.gateway.edge.messenger.live.com/", 1.8572295440774185 ] ], [ "http://sn1msg3010706.sn1.gateway.edge.messenger.live.com/", [ "http://shared.live.com/", 1.8043542189575343, "http://sn1msg3010706.sn1.gateway.edge.messenger.live.com/", 1.8043542189575343 ] ], [ "http://sn1msg3010810.gateway.messenger.live.com/", [ "http://shared.live.com/", 1.8043542189575343, "http://sn1msg3010810.gateway.messenger.live.com/", 3.1152098481147172 ] ], [ "http://sonlinkblog.blogspot.com/", [ "http://backend.deviantart.com/", 3.1714050174239996, "http://mundogeek.net/", 2.2086570657060003, "http://platform0.twitter.com/", 2.2086570657060003, "http://s1.wp.com/", 2.2086570657060003, "http://ubuntulife.wordpress.com/", 2.2086570657060003, "http://www.blogger.com/", 3.9095117804077995, "http://www.google.com/", 2.2086570657060003, "http://www.juegoslibres.net/", 2.2086570657060003, "http://www.linuxhispano.net/", 2.2086570657060003, "http://www.putodeb.com/", 2.2086570657060003 ] ], [ "http://tap2-cdn.rubiconproject.com/", [ "http://a.triggit.com/", 2.2086570657060003, "http://ad.turn.com/", 2.2086570657060003, "http://pixel.quantserve.com/", 2.2086570657060003, "http://pixel.rubiconproject.com/", 2.529573049612, "http://sync.mathtag.com/", 2.529573049612 ] ], [ "http://thedistorted.narod.ru/", [ "http://fpdownload.adobe.com/", 2.396937274834959 ] ], [ "http://view.atdmt.com/", [ "chrome-extension://gofhjkjmkpinhpoiabjplobcaignabnl/", 0.3872162099358869, "http://ec.atdmt.com/", 0.06496407869187547, "http://ib.adnxs.com/", 0.8090091894001237, "http://rmd.atdmt.com/", 0.3351505569835683, "http://spe.atdmt.com/", 0.15207658500916335 ] ], [ "http://www.archlinux-es.org/", [ "http://i.imgur.com/", 1.180102349821534, "http://img196.imageshack.us/", 1.500430932, "http://img211.imageshack.us/", 1.5379046844109872, "http://img69.imageshack.us/", 1.500430932, "http://ompldr.org/", 1.5379046844109872, "http://pagead2.googlesyndication.com/", 0.9620910178215338, "http://www.archlinux-es.org/", 44.96372571394183, "http://www.espaciolinux.com/", 1.3198933524109873, "http://www.google-analytics.com/", 5.631202568128106, "http://www.google.com.ar/", 2.1445876798161545 ] ], [ "http://www.archlinux.org/", [ "http://static.archlinux.org/", 3.3548167769414388, "http://www.archlinux.org/", 3.3548167769414388 ] ], [ "http://www.berlios.de/", [ "http://counter.opensuse.org/", 2.2086570657060003, "http://developer.berlios.de/", 2.529573049612, "http://fedoraproject.org/", 2.529573049612, "http://platform.twitter.com/", 2.2086570657060003, "http://platform0.twitter.com/", 2.2086570657060003, "http://www.berlios.de/", 7.022396824295997, "http://www.facebook.com/", 2.2086570657060003, "http://www.google.com/", 2.529573049612, "http://www.ubuntu.com/", 2.2086570657060003, "https://fedoraproject.org/", 2.2086570657060003 ] ], [ "http://www.blogger.com/", [ "http://img1.blogblog.com/", 0.7345234820717909, "http://www.blogger.com/", 0.2738427626047774, "http://www.google-analytics.com/", 0.27627534514655105 ] ], [ "http://www.codigomaestro.com/", [ "http://pagead2.googlesyndication.com/", 1.6876724897627458, "http://track4.mybloglog.com/", 1.6876724897627458, "http://www.codigomaestro.com/", 6.804628294069264, "http://www.google.com/", 2.1993680701933975 ] ], [ "http://www.dragonball-multiverse.com/", [ "http://www.dragonball-multiverse.com/", 23.564557662966767, "http://www.google-analytics.com/", 2.066525344788971 ] ], [ "http://www.equestriadaily.com/", [ "http://1.bp.blogspot.com/", 2.5904875919999997, "http://3.bp.blogspot.com/", 1.9364535959999998, "http://img.ie/", 6.371333500333578, "http://lh3.googleusercontent.com/", 2.5904875919999997, "http://lightirc.com/", 1.500430932, "http://www.blogblog.com/", 1.500430932, "http://www.blogger.com/", 1.500430932, "http://www.equestriadaily.com/", 1.500430932, "http://www.google-analytics.com/", 1.7184422639999999, "http://www.google.com/", 7.268297092336011 ] ], [ "http://www.facebook.com/", [ "http://creative.ak.fbcdn.net/", 0.7448640705095196, "http://external.ak.fbcdn.net/", 0.5187446205334156, "http://photos-e.ak.fbcdn.net/", 0.5941177705254502, "http://photos-f.ak.fbcdn.net/", 0.8956103704935889, "http://photos-h.ak.fbcdn.net/", 0.5187446205334156, "http://pixel.facebook.com/", 0.6694909205174849, "http://platform.ak.fbcdn.net/", 0.9709835204856234, "http://profile.ak.fbcdn.net/", 9.714268919561674, "http://static.ak.fbcdn.net/", 9.641389790389107, "http://www.facebook.com/", 1.5739687204219013 ] ], [ "http://www.google.com/", [ "http://www.equestriadaily.com/", 0.33081516006114325, "http://www.google.com/", 3.3287327349703326 ] ], [ "http://www.ponychan.net/", [ "http://www.google-analytics.com/", 0.7905145197416206, "http://www.ponychan.net/", 22.497675698290458 ] ], [ "http://www.youtube.com/", [ "http://i1.ytimg.com/", 2.127083409456189, "http://i2.ytimg.com/", 2.396937274834959, "http://i3.ytimg.com/", 2.127083409456189, "http://i4.ytimg.com/", 2.396937274834959, "http://o-o.preferred.terra-scl1.v3.lscache8.c.youtube.com/", 1.8572295440774185, "http://s.ytimg.com/", 3.206498870971269 ] ], [ "https://api.twitter.com/", [ "https://si0.twimg.com/", 4.426065477271901, "https://ssl.google-analytics.com/", 3.6395520997775903 ] ], [ "https://login.live.com/", [ "https://byfiles.storage.msn.com/", 1.967674022654115, "https://directory.services.live.com/", 1.967674022654115, "https://login.live.com/", 1.2499816026468646, "https://secure.shared.live.com/", 4.71922148633368, "https://secure.wlxrs.com/", 2.756198059665925 ] ], [ "https://secure.shared.live.com/", [ "https://secure.wlxrs.com/", 1.2257714990910964 ] ], [ "https://wiki.archlinux.org/", [ "https://d11xdyzr0div58.cloudfront.net/", 12.45731392638879, "https://wiki.archlinux.org/", 3.2453753809451 ] ], [ "https://www.dropbox.com/", [ "https://connect.facebook.net/", 0.22596515670435585, "https://ssl.google-analytics.com/", 1.4586712445907382, "https://www.dropbox.com/", 8.635018856368578, "https://www.facebook.com/", 0.22596515670435585 ] ], [ "https://www.facebook.com/", [ "https://s-static.ak.facebook.com/", 2.2705993491361607 ] ] ],
+      "startup_list": [ 1, "http://ajax.googleapis.com/", "http://crl.geotrust.com/", "http://foro.furry.cl/", "http://long-shore.com/", "http://ocsp.thawte.com/", "http://untiny.me/", "http://www.archlinux-es.org/", "http://www.gstatic.com/", "https://api.twitter.com/", "https://userstream.twitter.com/" ]
+   },
+   "download": {
+      "directory_upgrade": true,
+      "extensions_to_open": ""
+   },
+   "extensions": {
+      "autoupdate": {
+         "last_check": "12953239062749130",
+         "next_check": "12953256779451054"
+      },
+      "blacklistupdate": {
+         "lastpingday": "12953199602339171",
+         "version": "0.0.0.5"
+      },
+      "chrome_url_overrides": {
+         "bookmarks": [ "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/main.html" ]
+      },
+      "settings": {
+         "aknpkdffaafgjchaibgeefbgmgeghloj": {
+            "allowFileAccess": true,
+            "app_launcher_index": 0,
+            "granted_permissions": {
+               "api": [ "unlimitedStorage" ],
+               "full": false
+            },
+            "incognito": false,
+            "install_time": "12953188288836944",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "app": {
+                  "launch": {
+                     "container": "tab",
+                     "urls": [ "http://chrome.angrybirds.com" ],
+                     "web_url": "http://chrome.angrybirds.com"
+                  }
+               },
+               "current_locale": "es_419",
+               "default_locale": "en",
+               "description": "P\u00E1jaros + tirachinas + destrucci\u00F3n + plumas = \u00A1diversi\u00F3n a tope!",
+               "icons": {
+                  "128": "128.png",
+                  "16": "16.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6PeQTq1pwDNiqFlcp7UsUUUJQBsjUBcSiboI/+WSmsE93IF5xyd3e6erYAPW7DRBdrCJVDqPW0kv0APgTaCGOhVTBjvYO/1IbBBX86j+1pE58f4slTybPxklVQw04gXEkxe2fLBFriVf1bH20b+X9tagRS+6oqz2glinagc7FVwIDAQAB",
+               "name": "Angry Birds",
+               "permissions": [ "unlimitedStorage" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1.1.2"
+            },
+            "path": "aknpkdffaafgjchaibgeefbgmgeghloj/1.1.2_0",
+            "state": 1
+         },
+         "balcnogfmibkdajeinifgcmafphjahlk": {
+            "allowFileAccess": true,
+            "app_launcher_index": 2,
+            "granted_permissions": {
+               "full": false
+            },
+            "incognito": false,
+            "install_time": "12953188315868438",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "description": "A dark Luna theme for all.",
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDE95FOKIwvkZmrnX7PbqxzhxUJ2pqmxMJRnYaMPUlxLIc9JaoCTWzvi5mxiP5AIy503XL5+PPBZX+2Vr94yPOhftpQjYo2xwJwSVWD7w5VfTSdFkDDMxvvnMi8BN5UDagTZ1PW2ulr2yeFMm81Qse38rthp4MxKBlcFIRgaI1pxwIDAQAB",
+               "name": "Luna",
+               "theme": {
+                  "colors": {
+                     "bookmark_text": [ 168, 194, 255 ],
+                     "button_background": [ 67, 10, 255, 100 ],
+                     "control_background": [ 0, 0, 0, 100 ],
+                     "frame": [ 32, 4, 125 ],
+                     "frame_inactive": [ 24, 3, 92 ],
+                     "frame_incognito": [ 22, 3, 87 ],
+                     "frame_incognito_inactive": [ 20, 3, 77 ],
+                     "ntp_background": [ 0, 0, 0 ],
+                     "ntp_header": [ 28, 3, 107 ],
+                     "ntp_link": [ 6, 55, 116 ],
+                     "ntp_section": [ 15, 2, 58 ],
+                     "ntp_section_link": [ 103, 103, 214 ],
+                     "ntp_section_text": [ 130, 133, 224 ],
+                     "ntp_text": [ 173, 198, 255 ],
+                     "tab_background_text": [ 255, 255, 255 ],
+                     "tab_text": [ 153, 190, 255 ],
+                     "toolbar": [ 15, 2, 58 ]
+                  },
+                  "images": {
+                     "theme_frame": "images/theme_frame.png",
+                     "theme_ntp_attribution": "images/theme_ntp_attribution.png",
+                     "theme_ntp_background": "images/theme_ntp_background.png",
+                     "theme_toolbar": "images/theme_toolbar.png"
+                  },
+                  "properties": {
+                     "ntp_background_alignment": "right top",
+                     "ntp_background_repeat": "no-repeat"
+                  },
+                  "tints": {
+                     "background_tab": [ -1, 0.5, 0.75 ],
+                     "buttons": [ 1, 1, 1 ],
+                     "frame": [ -1, -1, -1 ],
+                     "frame_inactive": [ -1, -1, 0.75 ],
+                     "frame_incognito": [ -1, 0.2, 0.35 ],
+                     "frame_incognito_inactive": [ -1, 0.3, 0.6 ]
+                  }
+               },
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1"
+            },
+            "path": "balcnogfmibkdajeinifgcmafphjahlk/1_0",
+            "state": 1
+         },
+         "blpcfgokakmgnkcojhhkbfbldkacnbeo": {
+            "allowFileAccess": true,
+            "app_launcher_index": 1,
+            "granted_permissions": {
+               "full": false
+            },
+            "incognito": false,
+            "install_time": "12953188298304178",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "app": {
+                  "launch": {
+                     "container": "tab",
+                     "web_url": "http://www.youtube.com/"
+                  },
+                  "web_content": {
+                     "enabled": true,
+                     "origin": "http://www.youtube.com"
+                  }
+               },
+               "description": "The world's most popular online video community.",
+               "icons": {
+                  "128": "128.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDC/HotmFlyuz5FaHaIbVBhhL4BwbcUtsfWwzgUMpZt5ZsLB2nW/Y5xwNkkPANYGdVsJkT2GPpRRIKBO5QiJ7jPMa3EZtcZHpkygBlQLSjMhdrAKevpKgIl6YTkwzNvExY6rzVDzeE9zqnIs33eppY4S5QcoALMxuSWlMKqgFQjHQIDAQAB",
+               "name": "YouTube",
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "4.2"
+            },
+            "path": "blpcfgokakmgnkcojhhkbfbldkacnbeo/4.2_0",
+            "state": 1
+         },
+         "encaiiljifbdbjlphpgpiimidegddhic": {
+            "allowFileAccess": true,
+            "app_launcher_index": 8,
+            "granted_permissions": {
+               "api": [ "notifications", "tabs" ],
+               "full": false,
+               "host": [ "http://*/*", "http://api.twitter.com/oauth/authorize", "http://identi.ca/api/oauth/authorize", "http://twitter.com/oauth/authorize", "https://*/*", "https://api.twitter.com/oauth/authorize", "https://identi.ca/api/oauth/authorize", "https://twitter.com/oauth/authorize" ]
+            },
+            "incognito": false,
+            "install_time": "12953188348263190",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "background_page": "background.html",
+               "browser_action": {
+                  "default_icon": "img/icon19.png",
+                  "default_title": "Silver Bird",
+                  "popup": "popup.html?popup"
+               },
+               "content_scripts": [ {
+                  "js": [ "lib/3rdparty/jquery.js", "lib/oauth_authorizer.js" ],
+                  "matches": [ "http://twitter.com/oauth/authorize", "https://twitter.com/oauth/authorize", "http://api.twitter.com/oauth/authorize", "https://api.twitter.com/oauth/authorize" ]
+               }, {
+                  "js": [ "lib/3rdparty/jquery.js", "lib/oauth_identica_authorizer.js" ],
+                  "matches": [ "http://identi.ca/api/oauth/authorize", "https://identi.ca/api/oauth/authorize" ]
+               } ],
+               "current_locale": "es_419",
+               "default_locale": "en",
+               "description": "Silver Bird es una extensi\u00F3n para Twitter que te permite seguir tus l\u00EDneas de tiempo e interactuar con tu cuenta de Twitter.",
+               "icons": {
+                  "128": "img/icon128.png",
+                  "16": "img/icon19.png",
+                  "19": "img/icon19.png",
+                  "32": "img/icon32.png",
+                  "48": "img/icon48.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCYv+3X+YOmPDX/AuHcADMHRFILWuC1y7hkxhygN/hjnsJ8ARp6D0BharyVwOmZtCDGbycnQCxAeZmlD/qquLMemO1VSDTfFsiJ35F4J9jhvzOgeKuuGU680zqWkwF4Lr1qZD5Qkl8WwX2ECp965N19nP/CKR8xSHKcBaMzzxvdbwIDAQAB",
+               "name": "Silver Bird",
+               "options_page": "options.html",
+               "permissions": [ "notifications", "tabs", "http://*/*", "https://*/*" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1.9.8.1"
+            },
+            "path": "encaiiljifbdbjlphpgpiimidegddhic/1.9.8.1_0",
+            "state": 1
+         },
+         "eohjkphdfajdfhpmdaedemmgmbidbldc": {
+            "allowFileAccess": true,
+            "app_launcher_index": 4,
+            "granted_permissions": {
+               "api": [ "tabs" ],
+               "full": false,
+               "host": [ "http://*/*", "http://ajax.googleapis.com/*", "http://twitter.com/*", "https://twitter.com/*" ]
+            },
+            "incognito": true,
+            "install_time": "12953188347086385",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "background_page": "background.html",
+               "content_scripts": [ {
+                  "all_frames": true,
+                  "js": [ "jquery.min.js", "contentscript.js" ],
+                  "matches": [ "http://twitter.com/*", "https://twitter.com/*" ]
+               } ],
+               "description": "Adds large size preview images to your Twitter web.",
+               "icons": {
+                  "128": "miniplus_logo_128.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6gBQ2xcuaNb102ox/dx7LjxvgdNU4cHtua2WeBFASXZ3M+fq5lJYg5TE8xc+5aD01Q4LbXS/lMIFE0dBjUDJtK9/kFNSXmHIFD2tw3NO1jSutgoY6533UgRNtDIS0CtHAMK0vq6/UmrPpk0H5Y4InAWFhQ2Suee7SPjHl9zqmHQIDAQAB",
+               "name": "Twitter Photo Zoom",
+               "permissions": [ "tabs", "http://*/", "http://ajax.googleapis.com/" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1.2"
+            },
+            "path": "eohjkphdfajdfhpmdaedemmgmbidbldc/1.2_0",
+            "state": 1
+         },
+         "gofhjkjmkpinhpoiabjplobcaignabnl": {
+            "allowFileAccess": true,
+            "app_launcher_index": 7,
+            "granted_permissions": {
+               "api": [ "tabs" ],
+               "full": false,
+               "host": [ "http://*/*", "https://*/*" ]
+            },
+            "incognito": false,
+            "install_time": "12953188348044474",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "background_page": "background.html",
+               "content_scripts": [ {
+                  "all_frames": true,
+                  "js": [ "content.js" ],
+                  "matches": [ "http://*/*", "https://*/*" ],
+                  "run_at": "document_start"
+               } ],
+               "description": "FlashBlock for Chrome. Block them all, or be selective with the embedded whitelist manager",
+               "icons": {
+                  "128": "icons/icon128.png",
+                  "16": "icons/icon16.png",
+                  "32": "icons/icon32.png",
+                  "48": "icons/icon48.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDRmFygsWWPDx/izHE0xrHEzTZxvlaJks0nri7RTCBqs3UkffT8xgL4DnzkXYPfwx6EHyRB9hx8024BpxnHhuMVvSg83CWt+sTOtbNcg92YxN78xdIgaNtaKl/9JyeXrR6qdfRAuG19uHXspLLlCOOrLxHUfHnRKGG5C5wS0Cv0eQIDAQAB",
+               "name": "FlashBlock",
+               "options_page": "options.html",
+               "page_action": {
+                  "default_icon": "blocked.png",
+                  "popup": "popup.html"
+               },
+               "permissions": [ "tabs", "http://*/*" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "0.9.31"
+            },
+            "path": "gofhjkjmkpinhpoiabjplobcaignabnl/0.9.31_0",
+            "state": 1
+         },
+         "hpibmhghjndideebpackbdlpncgkcppp": {
+            "blacklist": true
+         },
+         "icfheaanjfdlgpembjfncoiinoaijenf": {
+            "allowFileAccess": true,
+            "app_launcher_index": 3,
+            "granted_permissions": {
+               "full": false
+            },
+            "incognito": false,
+            "install_time": "12953188347022663",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "app": {
+                  "launch": {
+                     "web_url": "http://www.webupd8.org/"
+                  }
+               },
+               "description": "Daily Ubuntu / Linux news and application reviews.",
+               "icons": {
+                  "128": "icon_128.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYPz25UhEShdo+BJT6ckd0Eg8JcFi3dSxHWxJ1WUJRN/+SS0NwduFveQiL5/28mxmCcToAdKupx195tuUta6sMmcEoC0EVHyEPA7Taa6VMJIUhhj+wulKsB7rG/vIppCbnM/VeJM1dmHFM1TPNsISsZY9P2qWtIfyD8e9cJt2pbQIDAQAB",
+               "name": "Web Upd8",
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1.0.1"
+            },
+            "path": "icfheaanjfdlgpembjfncoiinoaijenf/1.0.1_0",
+            "state": 1
+         },
+         "lhhlohbbihddnfcehbijmlnpkafmmkfp": {
+            "allowFileAccess": true,
+            "app_launcher_index": 6,
+            "granted_permissions": {
+               "full": false,
+               "host": [ "https://picasaweb.google.com/*" ]
+            },
+            "incognito": false,
+            "install_time": "12953188347810144",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "browser_action": {
+                  "default_icon": "picasa_19x19.png",
+                  "popup": "popup.html"
+               },
+               "description": "Picasa photos and comments in Chrome.",
+               "icons": {
+                  "128": "128.png",
+                  "24": "24.png",
+                  "48": "48.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCWT/T4++yIOFI1nKFVg36TC02wD/cJpCxzXBOBifj+9WICLREkFU05fmyVw/P5vQ7BMG1FFr7rokMt+Hm9nXM6nrYvKLks8SPMm1WzrXCCMyb+WqCb5NaGWuD+QmZ/Qr3EUhCUy0g8eJZiOBqeMk7Wq9/s64cHyVWoXQFwW9EVQIDAQAB",
+               "name": "Picasa Extension (by Google)",
+               "permissions": [ "https://picasaweb.google.com/" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "0.1"
+            },
+            "path": "lhhlohbbihddnfcehbijmlnpkafmmkfp/0.1_0",
+            "state": 1
+         },
+         "lncjcfkpannmofmpgdfoonkniofdnaba": {
+            "blacklist": true
+         },
+         "mmcegpfdgcoclcdfkjahiimlikdpnina": {
+            "allowFileAccess": true,
+            "app_launcher_index": 5,
+            "granted_permissions": {
+               "api": [ "unlimitedStorage" ],
+               "full": false
+            },
+            "incognito": false,
+            "install_time": "12953188347210212",
+            "lastpingday": "12953199602377020",
+            "location": 1,
+            "manifest": {
+               "app": {
+                  "launch": {
+                     "web_url": "http://chrome.plantsvszombies.com/"
+                  },
+                  "urls": [ "http://chrome.plantsvszombies.com/" ]
+               },
+               "description": "Think fast and plant faster to stem a zombie attack and save your home in this action-strategy PopCap game! - FREE TRIAL",
+               "icons": {
+                  "128": "icon_128.png"
+               },
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuCKUZK/OvlXP1HM7Zt5HVczwtFJi3DmOz2PWvD9j0kgcC72ZPUvk464tdmk2UhA7WmAF7bNOcLaJbuHs7vtW2/Z1HF/ruLYwJ95GEnJpZaMAlKzzigvQOKRFVQbQLZxNJxhv5d2zA7qI810hIP4XmSvN63OFo47DFBHGC6EAKiwIDAQAB",
+               "name": "Plants vs Zombies",
+               "permissions": [ "unlimitedStorage" ],
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "1.0.5"
+            },
+            "path": "mmcegpfdgcoclcdfkjahiimlikdpnina/1.0.5_0",
+            "state": 1
+         }
+      },
+      "theme": {
+         "id": "balcnogfmibkdajeinifgcmafphjahlk",
+         "pack": "/home/pablo/.config/chromium/Default/Extensions/balcnogfmibkdajeinifgcmafphjahlk/1_0/Cached Theme.pak",
+         "use_system": false
+      },
+      "toolbar": [ "lhhlohbbihddnfcehbijmlnpkafmmkfp", "encaiiljifbdbjlphpgpiimidegddhic" ],
+      "toolbarsize": -1,
+      "ui": {
+         "developer_mode": true
+      }
+   },
+   "geolocation": {
+      "content_settings": {
+         "chrome-extension://ihdkejbciahopmbagpnjmmkkdpfpaaak/": {
+            "chrome-extension://ihdkejbciahopmbagpnjmmkkdpfpaaak/": 1
+         }
+      }
+   },
+   "google": {
+      "services": {
+         "username": "prflr88@gmail.com"
+      }
+   },
+   "homepage": "http://www.google.com/",
+   "homepage_is_newtabpage": true,
+   "intl": {
+      "charset_default": "UTF-8"
+   },
+   "ntp": {
+      "pref_version": 3,
+      "promo_build": 2,
+      "promo_closed": false,
+      "promo_end": 1299830340.0,
+      "promo_group": 7,
+      "promo_group_timeslice": 0,
+      "promo_line": "\u00BFUtilizas Google Chrome en otro ordenador? Ll\u00E9vate los marcadores contigo.",
+      "promo_resource_cache_update": "1308714540.12728",
+      "promo_start": 1299830280.0,
+      "shown_sections": 4521984
+   },
+   "plugins": {
+      "enabled_internal_pdf3": true,
+      "last_internal_directory": "/usr/lib/chromium",
+      "plugins_list": [ {
+         "enabled": true,
+         "name": "Default Plug-in",
+         "path": "default_plugin",
+         "version": "1"
+      }, {
+         "enabled": true,
+         "name": "Default Plug-in"
+      } ]
+   },
+   "profile": {
+      "content_settings": {
+         "pref_version": 1
+      },
+      "exited_cleanly": false,
+      "notification_allowed_sites": [ "chrome-extension://ffcbeckjmgmgigkmnhmgjplmomcpfall/", "http://web.ebuddy.com/" ]
+   },
+   "session": {
+      "restore_on_startup": 1
+   },
+   "sync": {
+      "apps": true,
+      "autofill": true,
+      "autofill_profile": true,
+      "bookmarks": true,
+      "encryption_bootstrap_token": "djEwD5fuUwd9cevPg50UZyrQn1fVarcncmESbkc/T24fRjeY+Byrdb96oGOWKVFiAqIvVb8P0ojZbYsK812do9Ks+w==",
+      "extensions": true,
+      "has_setup_completed": true,
+      "keep_everything_synced": true,
+      "last_synced_time": "12953248327321030",
+      "passwords": true,
+      "preferences": true,
+      "suppress_start": false,
+      "themes": true
+   },
+   "tabs": {
+      "use_vertical_tabs": false
+   },
+   "translate_accepted_count": {
+      "en": 0,
+      "fr": 0,
+      "ru": 0,
+      "zh-TW": 2
+   },
+   "translate_denied_count": {
+      "en": 6,
+      "fr": 4,
+      "ru": 1,
+      "zh-TW": 0
+   },
+   "translate_language_blacklist": [ "en" ]
+}

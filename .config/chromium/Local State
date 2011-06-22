@@ -1,0 +1,208 @@
+{
+   "background_pages": {
+      "known": {
+         "encaiiljifbdbjlphpgpiimidegddhic": false,
+         "eohjkphdfajdfhpmdaedemmgmbidbldc": false,
+         "gofhjkjmkpinhpoiabjplobcaignabnl": false
+      }
+   },
+   "browser": {
+      "clear_lso_data_enabled": false,
+      "last_known_google_url": "http://www.google.cl/",
+      "last_prompted_google_url": "http://www.google.cl/",
+      "last_redirect_origin": ""
+   },
+   "gpu_blacklist": {
+      "entries": [ {
+         "blacklist": [ "webgl" ],
+         "description": "ATI Radeon X1900 is not compatible with WebGL on the Mac.",
+         "device_id": [ "0x7249" ],
+         "id": 1,
+         "os": {
+            "type": "macosx"
+         },
+         "vendor_id": "0x1002",
+         "webkit_bugs": [ 47028 ]
+      }, {
+         "blacklist": [ "accelerated_compositing" ],
+         "cr_bugs": [ 59302 ],
+         "description": "GL driver is software rendered. Accelerated compositing is disabled.",
+         "gl_renderer": {
+            "op": "contains",
+            "value": "software"
+         },
+         "id": 3,
+         "os": {
+            "type": "linux"
+         }
+      }, {
+         "blacklist": [ "webgl" ],
+         "description": "The Intel Mobile 945 Express family of chipsets is not compatible with WebGL.",
+         "device_id": [ "0x27AE" ],
+         "id": 4,
+         "os": {
+            "type": "any"
+         },
+         "vendor_id": "0x8086"
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 71381, 76428, 73910 ],
+         "description": "ATI cards in Linux are crash-prone.",
+         "id": 5,
+         "os": {
+            "type": "linux"
+         },
+         "vendor_id": "0x1002"
+      }, {
+         "blacklist": [ "webgl", "accelerated_compositing" ],
+         "cr_bugs": [ 72938 ],
+         "description": "NVIDIA GeForce FX Go5200 does not support WebGL or accelerated compositing.",
+         "device_id": [ "0x0324" ],
+         "id": 8,
+         "os": {
+            "type": "any"
+         },
+         "vendor_id": "0x10de"
+      }, {
+         "blacklist": [ "webgl" ],
+         "cr_bugs": [ 73794 ],
+         "description": "NVIDIA GeForce 7300 GT on Mac does not support WebGL.",
+         "device_id": [ "0x0393" ],
+         "id": 10,
+         "os": {
+            "type": "macosx"
+         },
+         "vendor_id": "0x10de"
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 72979 ],
+         "description": "Drivers older than 2009-01 on Windows are assumed to be buggy.",
+         "driver_date": {
+            "number": "2009.1",
+            "op": "\u003C"
+         },
+         "id": 12,
+         "os": {
+            "type": "win"
+         }
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 74212 ],
+         "description": "ATI drivers older than 10.6 on Windows XP are assumed to be buggy.",
+         "driver_version": {
+            "number": "8.741",
+            "op": "\u003C"
+         },
+         "id": 13,
+         "os": {
+            "type": "win",
+            "version": {
+               "number": "5",
+               "op": "="
+            }
+         },
+         "vendor_id": "0x1002"
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 74212 ],
+         "description": "NVIDIA drivers older than 257.21 on Windows XP are assumed to be buggy.",
+         "driver_version": {
+            "number": "6.14.12.5721",
+            "op": "\u003C"
+         },
+         "id": 14,
+         "os": {
+            "type": "win",
+            "version": {
+               "number": "5",
+               "op": "="
+            }
+         },
+         "vendor_id": "0x10de"
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 74212 ],
+         "description": "Intel drivers older than 14.42.7.5294 on Windows XP are assumed to be buggy.",
+         "driver_version": {
+            "number": "6.14.10.5294",
+            "op": "\u003C"
+         },
+         "id": 15,
+         "os": {
+            "type": "win",
+            "version": {
+               "number": "5",
+               "op": "="
+            }
+         },
+         "vendor_id": "0x8086"
+      }, {
+         "blacklist": [ "multisampling" ],
+         "cr_bugs": [ 67752, 83153 ],
+         "description": "Multisampling is buggy in some ATI Mac cards.",
+         "exceptions": [ {
+            "device_id": [ "0x6760", "0x9488" ]
+         } ],
+         "id": 16,
+         "os": {
+            "type": "macosx"
+         },
+         "vendor_id": "0x1002"
+      }, {
+         "blacklist": [ "all" ],
+         "cr_bugs": [ 76703 ],
+         "description": "Intel mesa drivers are crash-prone.",
+         "id": 17,
+         "os": {
+            "type": "linux"
+         },
+         "vendor_id": "0x8086"
+      } ],
+      "name": "software rendering list",
+      "version": "1.11"
+   },
+   "gpu_blacklist_update": "1308714543.157694",
+   "local_state": {
+      "multiple_profile_prefs_version": 3
+   },
+   "ntp": {
+      "promo_locale": "es-419",
+      "promo_version": 1
+   },
+   "safe_browsing": {
+      "client_key": "l1I0arcnH31pi9ssnATqpw==",
+      "wrapped_key": "AKEgNitw8-sT-TI9JRCvPbi2DiT34die3NR0cx7XCXnOu7_pqtC2bdqCFBIKVYNwAEL5lLscjaknOK8lg17BTVwhzWJXKA5wZw=="
+   },
+   "show-minimal-first-run-bubble": true,
+   "show-welcome-page": true,
+   "shutdown": {
+      "num_processes": 0,
+      "num_processes_slow": 0,
+      "type": 0
+   },
+   "uninstall_metrics": {
+      "installation_date2": "1308714526",
+      "launch_count": "6"
+   },
+   "user_experience_metrics": {
+      "session_id": 5,
+      "stability": {
+         "breakpad_registration_fail": 6,
+         "breakpad_registration_ok": 0,
+         "crash_count": 0,
+         "debugger_not_present": 6,
+         "debugger_present": 0,
+         "exited_cleanly": false,
+         "incomplete_session_end_count": 0,
+         "last_timestamp_sec": "1308776039",
+         "launch_count": 6,
+         "launch_time_sec": "1308771839",
+         "page_load_count": 0,
+         "renderer_crash_count": 0,
+         "renderer_hang_count": 0,
+         "session_end_completed": true,
+         "stats_buildtime": "1308087783",
+         "stats_version": "12.0.742.100-devel"
+      }
+   }
+}

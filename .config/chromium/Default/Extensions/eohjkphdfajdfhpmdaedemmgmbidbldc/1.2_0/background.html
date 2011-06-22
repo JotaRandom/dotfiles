@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script>
+            // Called when the user clicks on the browser action.
+            chrome.browserAction.onClicked.addListener(function(tab) {
+   
+  
+  
+                //alert(window.localStorage.customMailtoUrl);
+                //chrome.tabs.executeScript(null, {file:"signiture.js"});
+  
+                //alert();
+                //chrome.tabs.create('options.html');
+                //window.open('options.html');
+                chrome.tabs.create({'url': 'options.html'},function(){});
+            });
+
+  
+  
+            //chrome.browserAction.setBadgeBackgroundColor({color:[0, 200, 0, 100]});
+
+            //alert(window.localStorage.customMailtoUrl);
+  
+  
+          //  var i = 0;
+            //window.setInterval(function() {
+                //chrome.browserAction.setBadgeText({text:String(i)});
+              //  i++;
+	//
+          //  }, 10);
+
+
+  
+  
+        </script>
+
+
+
+
+
+
+
+
+
+    </head>
+</html>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "signature"){
+      sendResponse(window.localStorage.customMailtoUrl);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "custom_icon"){
+      sendResponse(window.localStorage.test);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "bam"){
+      sendResponse(window.localStorage.bam);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "boss"){
+      sendResponse(window.localStorage.boss);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "position"){
+      sendResponse(window.localStorage.position);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "bigicon"){
+      sendResponse(window.localStorage.bigicon);
+    }
+
+  });
+</script>
+
+<script>
+    chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.options == "like"){
+      sendResponse(window.localStorage.like);
+    }
+
+  });
+</script>
+

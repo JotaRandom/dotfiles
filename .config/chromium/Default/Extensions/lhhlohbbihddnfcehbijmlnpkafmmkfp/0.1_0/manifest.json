@@ -1,0 +1,17 @@
+{
+   "browser_action": {
+      "default_icon": "picasa_19x19.png",
+      "popup": "popup.html"
+   },
+   "description": "Picasa photos and comments in Chrome.",
+   "icons": {
+      "128": "128.png",
+      "24": "24.png",
+      "48": "48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCWT/T4++yIOFI1nKFVg36TC02wD/cJpCxzXBOBifj+9WICLREkFU05fmyVw/P5vQ7BMG1FFr7rokMt+Hm9nXM6nrYvKLks8SPMm1WzrXCCMyb+WqCb5NaGWuD+QmZ/Qr3EUhCUy0g8eJZiOBqeMk7Wq9/s64cHyVWoXQFwW9EVQIDAQAB",
+   "name": "Picasa Extension (by Google)",
+   "permissions": [ "https://picasaweb.google.com/" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "0.1"
+}

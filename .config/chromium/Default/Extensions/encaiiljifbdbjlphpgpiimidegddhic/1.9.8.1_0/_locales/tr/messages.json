@@ -1,0 +1,680 @@
+{
+   "Delete": {
+      "message": "Sil"
+   },
+   "No": {
+      "message": "Hay\u0131r"
+   },
+   "Reply": {
+      "message": "Cevapla"
+   },
+   "Retweet": {
+      "message": "Yeniden tweetle"
+   },
+   "Yes": {
+      "message": "Evet"
+   },
+   "add": {
+      "message": "Ekle"
+   },
+   "add_mention_action": {
+      "message": "Bahset"
+   },
+   "ajaxFailed": {
+      "message": "AJAX iste\u011Fi ba\u015Far\u0131s\u0131z (k\u00F6t\u00FC ba\u011Flant\u0131?)"
+   },
+   "authorizing": {
+      "message": "L\u00FCtfen bekleyin..."
+   },
+   "autoUpdatesSuspended": {
+      "message": "Otomatik g\u00FCncellemeler iptal edildi"
+   },
+   "automatic": {
+      "message": "Taray\u0131c\u0131 ile ayn\u0131"
+   },
+   "btnAuthorize": {
+      "message": "Yetkilendir!"
+   },
+   "btn_default": {
+      "message": "Varsay\u0131lan ayarlara geri d\u00F6n"
+   },
+   "btn_reset": {
+      "message": "S\u0131f\u0131rla"
+   },
+   "btn_reset_popup_size": {
+      "message": "Pencere Boyutunu S\u0131f\u0131rla"
+   },
+   "btn_save": {
+      "message": "Kaydet"
+   },
+   "cancelTweet": {
+      "message": "\u0130ptal"
+   },
+   "canceling": {
+      "message": "\u0130ptal ediliyor..."
+   },
+   "cbAuthorized": {
+      "message": "Silver Bird yetkili!"
+   },
+   "cbNotAuthorized": {
+      "message": "Bir hata olu\u015Ftu. L\u00FCtfen Silver Bird ikonuna tekrar t\u0131klay\u0131n."
+   },
+   "changeNotificationSettings": {
+      "message": "Bildirim se\u00E7eneklerini ayarlar sayfas\u0131ndan de\u011Fi\u015Ftirebilirsiniz."
+   },
+   "changes_restart": {
+      "message": "Baz\u0131 ayarlar\u0131n aktif olmas\u0131 i\u00E7in eklentinin yeniden ba\u015Flat\u0131lmas\u0131 gerek. Bunu \u015Fimdi yapmak ister misiniz?\u003Cbr\u003E    (Okunmam\u0131\u015F tweet say\u0131n\u0131z s\u0131f\u0131rlanacak)"
+   },
+   "composeTweet": {
+      "description": "Text for composing new tweet",
+      "message": "Yeni tweet"
+   },
+   "conf_saved": {
+      "message": "Ayarlar\u0131n\u0131z ba\u015Far\u0131yla kaydedildi."
+   },
+   "day_plural": {
+      "message": "g\u00FCn"
+   },
+   "day_singular": {
+      "message": "g\u00FCn"
+   },
+   "deleteConfirm": {
+      "message": "Bu iletiyi sil: "
+   },
+   "detach_window": {
+      "message": "Pencereyi Ay\u0131r"
+   },
+   "errorExpandingUrl": {
+      "message": "Bir hata olu\u015Ftu. L\u00FCtfen tekrar deneyin."
+   },
+   "exceededAPIHits": {
+      "message": "G\u00FCnl\u00FCk API kullan\u0131m limitini a\u015Ft\u0131n\u0131z. L\u00FCtfen \u003Ca href='javascript:chrome.tabs.create({url:\"$options_url$\"})'\u003Eayarlar sayfas\u0131ndan\u003C/a\u003E yenileme aral\u0131\u011F\u0131n\u0131 kontrol edin. Silver Bird $nextResetDate $nextResetTime$ tarihine kadar g\u00FCncellenmeyecek.",
+      "placeholders": {
+         "nextResetDate": {
+            "content": "$2"
+         },
+         "nextResetTime": {
+            "content": "$3"
+         },
+         "options_url": {
+            "content": "$1"
+         }
+      }
+   },
+   "extDescription": {
+      "description": "Extension description",
+      "message": "Silver Bird, Twitter hesab\u0131n\u0131z\u0131 Google Chrome \u00FCzerinden takip etmenizi ve y\u00F6netmenizi sa\u011Flayan bir eklentidir."
+   },
+   "follow_action": {
+      "message": "Takip Et"
+   },
+   "fromApp": {
+      "message": "istemci:"
+   },
+   "g_advanced": {
+      "message": "Geli\u015Fmi\u015F"
+   },
+   "g_image_service": {
+      "message": "G\u00F6rsel servisi"
+   },
+   "g_microblogging_service": {
+      "message": "Mikroblog servisi"
+   },
+   "g_notifications": {
+      "message": "Bildirimler"
+   },
+   "g_shortener": {
+      "message": "K\u0131salt\u0131c\u0131"
+   },
+   "g_timelines": {
+      "message": "Ak\u0131\u015Flar"
+   },
+   "g_trending_topics": {
+      "message": "Pop\u00FCler konular"
+   },
+   "g_ui": {
+      "message": "Aray\u00FCz"
+   },
+   "hide": {
+      "message": "Gizle"
+   },
+   "hour_plural": {
+      "message": "saat"
+   },
+   "hour_singular": {
+      "message": "saat"
+   },
+   "inReply": {
+      "message": "cevap olarak:"
+   },
+   "justNow": {
+      "message": "Az \u00F6nce"
+   },
+   "l_base_oauth_signing_url": {
+      "message": "OAuth Giri\u015F Adresi:"
+   },
+   "l_base_oauth_url": {
+      "message": "OAuth Adresi:"
+   },
+   "l_base_search_url": {
+      "message": "Arama API Adresi:"
+   },
+   "l_base_signing_url": {
+      "message": "API Giri\u015F Adresi:"
+   },
+   "l_base_url": {
+      "message": "Twitter API Adresi:"
+   },
+   "l_blocked_users": {
+      "message": "Engellenen kullan\u0131c\u0131lar:"
+   },
+   "l_change_icon": {
+      "message": "Simgeyi de\u011Fi\u015Ftir"
+   },
+   "l_compose_position": {
+      "message": "Yeni tweet konumu:"
+   },
+   "l_default_locale": {
+      "message": "Varsay\u0131lan dil"
+   },
+   "l_font_family": {
+      "message": "Yaz\u0131 tipi:"
+   },
+   "l_font_size": {
+      "message": "Yaz\u0131 boyutu:"
+   },
+   "l_hits_notice": {
+      "message": "Saatlik API limiti: "
+   },
+   "l_hover_timeout": {
+      "message": "Okumak i\u00E7in \u00FCzerinde bekleme s\u00FCresi (ms):"
+   },
+   "l_icon_color": {
+      "message": "Simge rengi:"
+   },
+   "l_icon_color_column": {
+      "message": "Simge rengi"
+   },
+   "l_image_up_service": {
+      "message": "G\u00F6rsel y\u00FCkleme servisi"
+   },
+   "l_include_in_unified": {
+      "message": "Birle\u015Fik ak\u0131\u015Fa dahil et"
+   },
+   "l_max_cached_tweets": {
+      "message": "G\u00F6sterilecek maksimum tweet:"
+   },
+   "l_name_attribute": {
+      "message": "Tweetlerdeki isimler nas\u0131l g\u00F6r\u00FCns\u00FCn?:"
+   },
+   "l_noti_desktop": {
+      "message": "Masa\u00FCst\u00FC bildirimleri"
+   },
+   "l_noti_on_page": {
+      "message": "Taray\u0131c\u0131 bildirimleri"
+   },
+   "l_notification_fade_timeout": {
+      "message": "Bildirim zaman a\u015F\u0131m\u0131(s):"
+   },
+   "l_notification_max_popups": {
+      "message": "Maksimum bildirim say\u0131s\u0131 (-1: hepsi):"
+   },
+   "l_refresh_interval": {
+      "message": "Yenileme aral\u0131\u011F\u0131(s)"
+   },
+   "l_reply_all": {
+      "message": "T\u00FCm bahsedilenleri cevapla:"
+   },
+   "l_request_timeout": {
+      "message": "\u0130stek zamana\u015F\u0131m\u0131(ms):"
+   },
+   "l_same_signing_urls": {
+      "message": "Ayn\u0131 Giri\u015F Adresleri:"
+   },
+   "l_share_include_title": {
+      "message": "Sayfa ba\u015Fl\u0131\u011F\u0131n\u0131 dahil et:"
+   },
+   "l_shortener_acct": {
+      "message": "Ki\u015Fisel hesap kullan?"
+   },
+   "l_shortener_key": {
+      "message": "API Anahtar\u0131:"
+   },
+   "l_shortener_login": {
+      "message": "API Giri\u015F:"
+   },
+   "l_show_expanded_urls": {
+      "message": "K\u0131salt\u0131lm\u0131\u015F adresleri geni\u015Flet:"
+   },
+   "l_show_hits_in_popup": {
+      "message": "API kullan\u0131m say\u0131s\u0131n\u0131 g\u00F6ster:"
+   },
+   "l_show_user_autocomplete": {
+      "message": "Kullan\u0131c\u0131 adlar\u0131n\u0131 otomatik tamamla:"
+   },
+   "l_tabs_count": {
+      "message": "Sekme say\u0131s\u0131"
+   },
+   "l_theme": {
+      "message": "Tema:"
+   },
+   "l_trending_topics_woeid": {
+      "message": "Pop\u00FCler konular yerelle\u015Ftirmesi"
+   },
+   "l_tweet_color": {
+      "message": "Tweet rengi:"
+   },
+   "l_tweet_notification": {
+      "message": "Tweet bildirimi"
+   },
+   "l_tweets_color_only_unified": {
+      "message": "Sadece birle\u015Fik ak\u0131\u015Fta renkler:"
+   },
+   "l_tweets_notification_style": {
+      "message": "Bildirim stili:"
+   },
+   "l_tweets_per_page": {
+      "message": "Sayfa ba\u015F\u0131 g\u00F6sterilecek tweet say\u0131s\u0131:"
+   },
+   "l_unified_timeline": {
+      "message": "Birle\u015Fik Ak\u0131\u015F:"
+   },
+   "l_url_shortener": {
+      "message": "URL k\u0131salt\u0131c\u0131:"
+   },
+   "l_visible": {
+      "message": "G\u00F6r\u00FCns\u00FCn"
+   },
+   "loadingImage": {
+      "message": "G\u00F6rsel y\u00FCkleniyor..."
+   },
+   "loadingLongUrl": {
+      "message": "URL y\u00FCkleniyor..."
+   },
+   "loadingMap": {
+      "message": "Harita y\u00FCkleniyor..."
+   },
+   "logout": {
+      "description": "The text for the logout link",
+      "message": "\u00C7\u0131k\u0131\u015F"
+   },
+   "markAllRead": {
+      "message": "T\u00FCm\u00FCn\u00FC okundu olarak i\u015Faretle"
+   },
+   "markFavorite": {
+      "message": "Favorilere ekle"
+   },
+   "minuteAgo": {
+      "message": "Saniyeler \u00F6nce"
+   },
+   "minute_plural": {
+      "message": "dakika"
+   },
+   "minute_singular": {
+      "message": "dakika"
+   },
+   "minutes": {
+      "message": "$nr_of_minutes$ $minutes$ \u00F6nce",
+      "placeholders": {
+         "minutes": {
+            "content": "$2",
+            "example": "minute or minutes (singular / plural)"
+         },
+         "nr_of_minutes": {
+            "content": "$1"
+         }
+      }
+   },
+   "month_plural": {
+      "message": "ay"
+   },
+   "month_singular": {
+      "message": "ay"
+   },
+   "nerds_link": {
+      "message": "API kullan\u0131m istatistikleri"
+   },
+   "newToken": {
+      "message": "Ba\u015Fka bir i\u015Faret\u00E7i iste"
+   },
+   "newTweets": {
+      "message": "$count$ $newtweets$",
+      "placeholders": {
+         "count": {
+            "content": "$1"
+         },
+         "newtweets": {
+            "content": "$2"
+         }
+      }
+   },
+   "newTweetsAvailable": {
+      "message": "Yeni $count$ tweet var. Okumak i\u00E7in t\u0131klay\u0131n.",
+      "placeholders": {
+         "count": {
+            "content": "$1"
+         },
+         "tweets": {
+            "content": "$2"
+         }
+      }
+   },
+   "newtweets_plural": {
+      "message": "yeni tweet"
+   },
+   "newtweets_singular": {
+      "message": "yeni tweet"
+   },
+   "notice_api_hits": {
+      "message": "Saatlik API limiti en fazla \u003Cspan style=\"color: red;\"\u003E\u003Cspan class=\"__hourly_limit\"\u003E\u003C/span\u003E\u003C/span\u003E olabilir!\u003Cbr\u003EE\u011Fer birden fazla Twitter istemcisi kullan\u0131yorsan\u0131z a\u015Fa\u011F\u0131daki de\u011Ferleri daha da azaltmal\u0131s\u0131n\u0131z."
+   },
+   "notice_right_click_change": {
+      "message": "* Art\u0131k pencerede sa\u011F t\u0131klayarak buradaki ayarlar\u0131n \u00E7o\u011Funu pencere \u00FCzerinden de\u011Fi\u015Ftirebilirsiniz."
+   },
+   "notif_dms": {
+      "message": "Direkt iletiler:"
+   },
+   "notif_home": {
+      "message": "Ana sayfa:"
+   },
+   "notif_lists": {
+      "message": "Listeler:"
+   },
+   "notif_mentions": {
+      "message": "Bahsetmeler:"
+   },
+   "notif_search": {
+      "message": "Ara:"
+   },
+   "oAuthError": {
+      "message": "Bir hata olu\u015Ftu: $errorMessage$. L\u00FCtfen \u003Ca href=\"javascript:OAuth.requestNewToken();\"\u003Eyetkilendirme i\u015Flemini tekrar ba\u015Flat\u0131n\u003C/a\u003E.",
+      "placeholders": {
+         "errorMessage": {
+            "content": "$1"
+         }
+      }
+   },
+   "o_both": {
+      "message": "\u0130kisi de"
+   },
+   "o_bottom": {
+      "message": "Alt"
+   },
+   "o_extra_large": {
+      "message": "\u00C7ok b\u00FCy\u00FCk"
+   },
+   "o_large": {
+      "message": "B\u00FCy\u00FCk"
+   },
+   "o_name": {
+      "message": "Ger\u00E7ek ad"
+   },
+   "o_normal": {
+      "message": "Normal"
+   },
+   "o_screen_name": {
+      "message": "Kullan\u0131c\u0131 ad\u0131"
+   },
+   "o_small": {
+      "message": "K\u00FC\u00E7\u00FCk"
+   },
+   "o_top": {
+      "message": "\u00DCst"
+   },
+   "oldRT": {
+      "message": "Payla\u015F"
+   },
+   "options": {
+      "description": "Options link",
+      "message": "Se\u00E7enekler"
+   },
+   "options_title": {
+      "message": "Silver Bird Se\u00E7enekleri"
+   },
+   "preventClosing": {
+      "message": "Kapanmamas\u0131 i\u00E7in t\u0131klay\u0131n."
+   },
+   "profile_action": {
+      "message": "Profil"
+   },
+   "queue_retried": {
+      "message": "$timediff$ tarihinden beri $retries$ defa g\u00F6nderilmeye \u00E7al\u0131\u015Ft\u0131 [$laststatus$]",
+      "placeholders": {
+         "laststatus": {
+            "content": "$3"
+         },
+         "retries": {
+            "content": "$1"
+         },
+         "timediff": {
+            "content": "$2"
+         }
+      }
+   },
+   "queue_trying": {
+      "message": "$timediff$ tarihinden beri g\u00F6nderilmeyi bekliyor",
+      "placeholders": {
+         "timediff": {
+            "content": "$1"
+         }
+      }
+   },
+   "queued_messages": {
+      "message": "Kuyruktaki mesajlar:"
+   },
+   "rate_limit_reset": {
+      "message": "Bir sonraki Twitter API s\u0131f\u0131rlama tarihi: "
+   },
+   "refresh": {
+      "description": "Refresh link",
+      "message": "Yenile"
+   },
+   "remaining_api_hits": {
+      "message": "Kalan Twitter API Kullan\u0131m Say\u0131s\u0131: "
+   },
+   "remove": {
+      "message": "Kald\u0131r"
+   },
+   "resetSize": {
+      "message": "Varsay\u0131lan boyuta d\u00F6n\u00FC\u015F i\u00E7in \u00E7ift t\u0131klay\u0131n"
+   },
+   "resume": {
+      "message": "Devam"
+   },
+   "retweetConfirm": {
+      "message": "Bu iletiyi yeniden tweetle: "
+   },
+   "retweetedBy": {
+      "message": "tekrar tweetleyen:"
+   },
+   "retweetedByMe": {
+      "message": "sizin taraf\u0131n\u0131zdan tekrar tweetlendi"
+   },
+   "selectList": {
+      "message": "- Bir liste se\u00E7 -"
+   },
+   "sentTo": {
+      "message": "g\u00F6nderildi"
+   },
+   "shortenIt": {
+      "message": "K\u0131salt"
+   },
+   "shorten_current": {
+      "message": "Aktif sayfay\u0131 payla\u015F"
+   },
+   "shortenerIdleString": {
+      "message": "Buraya k\u0131salt\u0131lacak adresi yaz\u0131n. A\u00E7\u0131k sayfay\u0131 sa\u011Fdaki simgeden k\u0131salt\u0131n."
+   },
+   "show": {
+      "message": "G\u00F6ster"
+   },
+   "successAuth": {
+      "message": "Tebrikler, kimli\u011Finiz do\u011Fruland\u0131. Silver Bird'\u00FCn tad\u0131n\u0131 \u00E7\u0131kar\u0131n!"
+   },
+   "suspend": {
+      "description": "Suspend link",
+      "message": "\u0130ptal"
+   },
+   "timeAgo": {
+      "message": "$time$ $time_string$ \u00F6nce",
+      "placeholders": {
+         "time": {
+            "content": "$1"
+         },
+         "time_string": {
+            "content": "$2"
+         }
+      }
+   },
+   "timelineDM": {
+      "description": "The direct message time line tab",
+      "message": "Mesajlar"
+   },
+   "timelineFavorites": {
+      "description": "The home time line tab",
+      "message": "Favoriler"
+   },
+   "timelineHome": {
+      "description": "The home time line tab",
+      "message": "Ana sayfa"
+   },
+   "tml_favorites": {
+      "message": "Favoriler:"
+   },
+   "trending_topics": {
+      "message": "Pop\u00FCler konular"
+   },
+   "tryAgain": {
+      "message": "Tekrar deneyin"
+   },
+   "tweet_plural": {
+      "message": "tweet"
+   },
+   "tweet_send_error": {
+      "message": "Tweetinizi g\u00F6nderirken bir hata olu\u015Ftu. Twitter garip davran\u0131yor olabilir mi? Tekrar deneyebilirsiniz ama ayn\u0131 mesaj\u0131 g\u00F6ndermedi\u011Finizden emin olun."
+   },
+   "tweet_singular": {
+      "message": "tweet"
+   },
+   "tweetit": {
+      "message": "G\u00F6nder"
+   },
+   "tweets_action": {
+      "message": "Tweetler"
+   },
+   "ue_deletingTweet": {
+      "message": "Tweet silinirken $status$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "status": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_fetchingLists": {
+      "message": "Listeler al\u0131n\u0131rken $status$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "status": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_markFavorite": {
+      "message": "Favorilere eklerken $status$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "status": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_retweeting": {
+      "message": "Tekrar tweetlerken $status$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "status": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_unmarkFavorite": {
+      "message": "Favoriden kald\u0131r\u0131rken $status$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "status": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_updatingTweets": {
+      "message": "Tweetler g\u00FCncellenirken $baseError$ hatas\u0131 olu\u015Ftu.",
+      "placeholders": {
+         "baseError": {
+            "content": "$1"
+         }
+      }
+   },
+   "ue_updatingTweets2": {
+      "message": "E\u011Fer bu hata ile \u00E7ok s\u0131k kar\u015F\u0131la\u015F\u0131yorsan\u0131z \u00E7\u0131k\u0131\u015F yap\u0131p tekrar girmeyi deneyin."
+   },
+   "unfollow_action": {
+      "message": "Takip Etmeyi B\u0131rak"
+   },
+   "unmarkFavorite": {
+      "message": "Favorilerden kald\u0131r"
+   },
+   "updateList": {
+      "message": "Listeler g\u00FCncelleniyor..."
+   },
+   "w_DM": {
+      "message": "Mesajlar"
+   },
+   "w_Favorites": {
+      "message": "Favoriler"
+   },
+   "w_Home": {
+      "message": "Ana sayfa"
+   },
+   "w_Lists": {
+      "message": "Listeler"
+   },
+   "w_Mentions": {
+      "message": "Bahsetmeler"
+   },
+   "w_ReceivedDM": {
+      "message": "Al\u0131nan iletiler"
+   },
+   "w_Search": {
+      "message": "Ara"
+   },
+   "w_SentDM": {
+      "message": "G\u00F6nderilen iletiler"
+   },
+   "w_Unified": {
+      "message": "T\u00FCm\u00FC"
+   },
+   "warningAPIHits": {
+      "message": "API limitinizi \u00E7ok h\u0131zl\u0131 dolduruyorsunuz.\u003Cbr\u003EL\u00FCtfen \u003Ca href='javascript:chrome.tabs.create({url:\"$options_url$\"})'\u003Eayarlar sayfas\u0131ndan\u003C/a\u003E yenileme aral\u0131\u011F\u0131n\u0131 kontrol edin.\u003Cbr\u003EKalan hak: $remainingHits$ - Bir sonraki s\u0131f\u0131rlama tarihi: $nextResetDate$ $nextResetTime$",
+      "placeholders": {
+         "nextResetDate": {
+            "content": "$3"
+         },
+         "nextResetTime": {
+            "content": "$4"
+         },
+         "options_url": {
+            "content": "$1"
+         },
+         "remainingHits": {
+            "content": "$2"
+         }
+      }
+   },
+   "yearsAgo": {
+      "message": "y\u0131l \u00F6nce"
+   },
+   "yourPIN": {
+      "message": "PIN numaran\u0131z: $pin$",
+      "placeholders": {
+         "pin": {
+            "content": "$1"
+         }
+      }
+   }
+}

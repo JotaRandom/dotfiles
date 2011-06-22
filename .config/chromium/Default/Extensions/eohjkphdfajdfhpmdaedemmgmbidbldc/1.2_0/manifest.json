@@ -1,0 +1,17 @@
+{
+   "background_page": "background.html",
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "jquery.min.js", "contentscript.js" ],
+      "matches": [ "http://twitter.com/*", "https://twitter.com/*" ]
+   } ],
+   "description": "Adds large size preview images to your Twitter web.",
+   "icons": {
+      "128": "miniplus_logo_128.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6gBQ2xcuaNb102ox/dx7LjxvgdNU4cHtua2WeBFASXZ3M+fq5lJYg5TE8xc+5aD01Q4LbXS/lMIFE0dBjUDJtK9/kFNSXmHIFD2tw3NO1jSutgoY6533UgRNtDIS0CtHAMK0vq6/UmrPpk0H5Y4InAWFhQ2Suee7SPjHl9zqmHQIDAQAB",
+   "name": "Twitter Photo Zoom",
+   "permissions": [ "tabs", "http://*/", "http://ajax.googleapis.com/" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "1.2"
+}

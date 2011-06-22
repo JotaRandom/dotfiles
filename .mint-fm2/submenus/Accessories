@@ -1,0 +1,6 @@
+[exec] (Galculator) {galculator} </usr/share/icons/Faenza/apps/16/galculator.png> ###-galculator.desktop
+[exec] (Gestor de archivos) {pcmanfm } </usr/share/icons/Faenza/apps/16/system-file-manager.png> ###-pcmanfm.desktop
+[exec] (Image Viewer) {gpicview } </usr/share/icons/Faenza/apps/16/gpicview.png> ###-gpicview.desktop
+[exec] (Leafpad) {leafpad } </usr/share/icons/Faenza/apps/16/leafpad.png> ###-leafpad.desktop
+[exec] (LXTerminal) {lxterminal} </usr/share/icons/Faenza/apps/16/lxterminal.png> ###-lxterminal.desktop
+[exec] (Utilidad de discos) {palimpsest} </usr/share/icons/Faenza/apps/22/palimpsest.png> ###-palimpsest.desktop

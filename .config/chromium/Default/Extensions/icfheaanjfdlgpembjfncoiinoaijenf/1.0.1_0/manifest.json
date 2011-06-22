@@ -1,0 +1,15 @@
+{
+   "app": {
+      "launch": {
+         "web_url": "http://www.webupd8.org/"
+      }
+   },
+   "description": "Daily Ubuntu / Linux news and application reviews.",
+   "icons": {
+      "128": "icon_128.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYPz25UhEShdo+BJT6ckd0Eg8JcFi3dSxHWxJ1WUJRN/+SS0NwduFveQiL5/28mxmCcToAdKupx195tuUta6sMmcEoC0EVHyEPA7Taa6VMJIUhhj+wulKsB7rG/vIppCbnM/VeJM1dmHFM1TPNsISsZY9P2qWtIfyD8e9cJt2pbQIDAQAB",
+   "name": "Web Upd8",
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "1.0.1"
+}

@@ -1,0 +1,6 @@
+[exec] (Adobe Flash Player) {flash-player-properties} </usr/share/icons/hicolor/16x16/apps/flash-player-properties.png> ###-flash-player-properties.desktop
+[exec] (Aplicaciones preferidas) {libfm-pref-apps} </usr/share/icons/Faenza/apps/16/preferences-desktop-font.png> ###-libfm-pref-apps.desktop
+[exec] (Java Control Panel) {/opt/java/bin/jcontrol} </usr/share/icons/Faenza/apps/16/sun-java6.png> ###-java-control-panel.desktop
+[exec] (Java Policy Settings) {/opt/java/bin/policytool} </usr/share/icons/Faenza/apps/16/sun-java6.png> ###-java-policy-settings.desktop
+[exec] (Monitor Settings) {lxrandr ; fbsetbg -l} </usr/share/icons/Faenza/apps/22/dropbox.png> ###-lxrandr.desktop
+[exec] (Personalizar apariencia y comportamiento) {lxappearance} </usr/share/icons/Faenza/apps/16/preferences-desktop-theme.png> ###-lxappearance.desktop
