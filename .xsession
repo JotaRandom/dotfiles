@@ -6,5 +6,5 @@
 # Executed by xdm/gdm/kdm at login
 #
 
-/bin/dash --login -i ~/.xinitrc
+/bin/bash --login -i ~/.xinitrc
 

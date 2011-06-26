@@ -50,11 +50,11 @@ URxvt*color12: #6661ee
 
 #Perl
 ##Tabs
-URxvt.perl-ext-common: default,tabbed
-URxvt.tabbed.tabbar-fg: 8
-URxvt.tabbed.tabbar-bg: 0
-URxvt.tabbed.tab-fg: 3
-URxvt.tabbed.tab-bg: 0
+#URxvt.perl-ext-common: default,tabbed
+#URxvt.tabbed.tabbar-fg: 8
+#URxvt.tabbed.tabbar-bg: 0
+#URxvt.tabbed.tab-fg: 3
+#URxvt.tabbed.tab-bg: 0
 ##Open URL
 URxvt.perl-ext:           default,matcher
 URxvt.urlLauncher:        opera
@@ -64,3 +64,15 @@ URxvt.matcher.pattern.1:  \\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
 
 # Includes $PATH
 include "/home/pablo/.xcolours/urxvt"
+
+#Xterm options
+xterm*geometry: 80x25
+xterm*scrollBar: false
+xterm*vt100.scrollBar: false
+xterm*faceName:	terminusbold:pixelsize=12
+!xterm * font:	-*-dina-medium-r-*-*- 12 -*-*-*-*-*-*-* xterm * utf8: 1
+xterm*background: black
+xterm*foreground: white
+xterm*multiScroll: on
+xterm*jumpScroll: on
+xterm*SaveLines: 10000

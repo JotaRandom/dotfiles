@@ -1,0 +1,1 @@
+/home/pablo/.icewm/startup

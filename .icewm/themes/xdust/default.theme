@@ -1,0 +1,145 @@
+ThemeDescription              = "Ambiance-X dust"
+ThemeAuthor                   = "jcsl"
+
+Look                          = flat
+RolloverButtonsSupported      = 1
+# Gradients                     = "menusel.xpm menusep.xpm taskbuttonactive.xpm workspacebuttonbg.xpm workspacebuttonactive.xpm"
+#Gradients                     = "menusel.xpm menusep.xpm titleAJ.xpm titleAQ.xpm titleAS.xpm titleAT.xpm titleAB.xpm titleIS.xpm titleIT.xpm titleIB.xpm"
+Gradients                     = "menusel.xpm menusep.xpm taskbuttonactive.xpm taskbuttonbg.xpm taskbuttonminimized.xpm taskbar.xpm"
+SmallIconSize                 = 16
+BorderSizeX                   = 3
+BorderSizeY                   = 3
+CornerSizeX                   = 10
+CornerSizeY                   = 10
+DlgBorderSizeX                = 3
+DlgBorderSizeY                = 3
+ColorNormalBorder             = "#FF0000"                   # Border of inactive windows
+ColorActiveBorder             = "#00FF00"                   # Border of active windows
+DoubleBuffer                  = 1                           # Use double buffering when redrawing the display
+
+
+################################################## Titlebar
+
+ShowMenuButtonIcon            = 0
+TitleBarCentered              = 1
+TitleBarJustify               = 50
+TitleBarHeight                = 25
+TitleFontNameXft              = "sans-serif:size=11:bold"
+TitleButtonsLeft              = "s"
+TitleButtonsRight             = "xmi"
+TitleButtonsSupported         = "sxim"
+ColorNormalTitleButton        = "#2C2B29"                   # Background of titlebar buttons
+ColorActiveTitleBarText       = "#DFD8C9"                   # Activa
+ColorNormalTitleBarText       = "#99958B"                   # Inactiva
+#ColorActiveTitleBarShadow     = "#efefee"
+#ColorNormalTitleBarShadow     = "#efefee"
+TaskBarFullscreenAutoShow    = 0                            # Auto show task bar when fullscreen window active
+
+################################################## Desktop
+
+#DesktopBackgroundCenter       = 1
+#DesktopBackgroundImage        = "../../wallpapers/ThrowingStones.jpg"
+
+################################################## Taskbar
+
+TaskBarAtTop                  = 1
+TaskBarClockLeds              = 0
+TrayDrawBevel                 = 1
+TrayShowAllWindows            = 1
+TaskBarShowCollapseButton     = 1
+ColorNormalTaskBarAppText     = "#C2C2B8"
+ColorMinimizedTaskBarAppText  = "#C2C2B8"
+ActiveTaskBarFontNameXft      = sans-serif:size=12
+NormalTaskBarFontNameXft      = sans-serif:size=12
+ColorDefaultTaskBar           = "#2C2B29"                   # Background of the taskbar
+ColorNormalTaskBarApp         = "#2C2B29"                   # Background for task buttons of regular windows
+ColorNormalTaskBarAppText     = "#C2C2B8"                   # Textcolor for task buttons of regular windows
+ColorActiveTaskBarApp         = "#996B5C"                   # Background for task buttons of the active window
+ColorActiveTaskBarAppText     = "#C2C2B8"                   # Textcolor for task buttons of the active window
+ColorMinimizedTaskBarApp      = "#2C2B29"                   # Background for task buttons of minimized windows
+ColorMinimizedTaskBarAppText  = "#C2C2B8"                   # Textcolor for task buttons of minimized windows
+ColorInvisibleTaskBarApp      = "#2C2B29"                   # Background for task buttons of windows on other workspaces
+ColorInvisibleTaskBarAppText  = "#C2C2B8"                   # Textcolor for task buttons of windows on other workspaces
+
+################################################## Workspace
+
+ColorNormalWorkspaceButton    = "#2C2B29"                   # Background of workspace buttons, ColorNormalButton is used if empty
+ColorNormalWorkspaceButtonText= "#C2C2B8"                   # Textcolor of workspace buttons, ColorNormalButtonText is used if empty
+ColorActiveWorkspaceButton    = "#2C2B29"                   # Background of the active workspace button, ColorActiveButton is used if empty
+ColorActiveWorkspaceButtonText= "#C2C2B8"                   # Textcolor of the active workspace button, ColorActiveButtonText is used if empty
+
+################################################## Toolbar
+
+ColorToolButton               = "#2C2B29"                   # Background of toolbar buttons, ColorNormalButton is used if empty"
+ColorToolButtonText           = "#C2C2B8"                   # Textcolor of toolbar buttons, ColorNormalButtonText is used if empty"
+
+################################################## Menu
+
+ColorNormalMenu               = "#2C2B29"                   # Color de fondo del menú
+ColorActiveMenuItem           = ""                          # Borde exterior y parte abajo selección en menúes
+ColorNormalMenuItemText       = "#C2C2B8"                   # Color normal del texto del menú
+ColorActiveMenuItemText       = "#D6D6CA"                   # Color del texto del elemento seleccionado del menú
+ColorDisabledMenuItemText     = "#c2bfbd"                   # Supuestamente elementos deshabilitados
+MenuFontNameXft               = "sans-serif:size=12"
+ShowSettingsMenu              = 1                           # Show settings submenu
+ShowFocusModeMenu             = 0                           # Show focus mode submenu
+ShowThemesMenu                = 1                           # Show themes submenu
+ShowHelp                      = 0                           # Show the help menu item
+ShowLogoutMenu                = 1                           # Show logout submenu
+ShowLogoutSubMenu             = 1                           # Show logout submenu
+ShowWindowList                = 0                           # Show the window menu item
+
+################################################## ToolTips
+
+ColorToolTip                  = "#EBEAB8"
+ColorToolTipText              = "#323232"
+
+################################################## Clock
+
+ColorClock                    = ""
+ColorClockText                = "#C2C2B8"
+ClockFontNameXft              = "arial:size=11"
+
+################################################## Otros fondos
+
+ColorLabel                    = "#D9D4CC"                   # Background of labels, leave empty to force transparency
+ColorDialog                   = "#D9D4CC"
+ColorLabelText                = "#2C2B29"
+
+################################################## QuickSwitch (cambiador de tareas)
+
+ColorQuickSwitch              = "#D9D4CC"                   # Background of the quick switch window
+ColorQuickSwitchText          = "#2C2B29"                   # Textcolor in the quick switch window
+QuickSwitchFontNameXft        = "sans-serif:size=12"
+QuickSwitchSmallWindow        = 1
+ColorQuickSwitchActive        = "#996B5C"
+QuickSwitchFillSelection      = 0
+
+################################################## Scrollbar
+
+ScrollBarX                    = 17                          # Scrollbar width
+ScrollBarY                    = 17                          # Scrollbar (button) height
+ColorScrollBar                = "#c3c1bf"                   # Scrollbar background (sliding area)
+ColorScrollBarSlider          = "#e3e2e1"                   # Background of the slider button in scrollbars
+ColorScrollBarButton          = "#2C2B29"                   # Background of the arrow buttons in scrollbars
+
+################################################## ListBox (lista de ventanas)
+
+ColorListBox                  = "#D9D4CC"                   # Background of listboxes
+ColorListBoxSelection         = "#996B5C"                   # Background of selected listbox items
+ColorListBoxText              = "#2C2B29"                   # Textcolor in listboxes
+ColorListBoxSelectionText     = "#FFFFFF"                   # Textcolor of selected listbox items
+
+
+#  Background of regular buttons
+ColorNormalButton="#ff0000" #NA
+
+#  Textcolor of regular buttons
+ColorNormalButtonText="#D9D4CC"
+
+#  Background of pressed buttons
+ColorActiveButton="#ff0000" #NA
+
+#  Textcolor of pressed buttons
+ColorActiveButtonText="#FFFFFF"
+

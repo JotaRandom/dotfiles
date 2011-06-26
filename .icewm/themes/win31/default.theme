@@ -1,0 +1,116 @@
+ThemeDescription="Win 3.1 Theme v0.1"
+ThemeAuthor="linko"
+Look=metal
+
+TitleButtonsLeft="s"
+TitleButtonsRight="mi"
+TitleButtonsSupported="sxmi"
+TitleBarJustify=50
+TitleBarHeight=19
+ShowMenuButtonIcon=0
+DesktopBackgroundColor="#c0c0c0"
+BorderSizeX=4
+BorderSizeY=4
+CornerSizeX=23
+CornerSizeY=23
+DlgBorderSizeX=1
+DlgBorderSizeY=1
+
+ColorNormalButton="#ffffff"
+ColorNormalButtonText="#000000"
+ColorActiveButton="#c0c0c0"
+ColorActiveButtonText="#000000"
+
+ColorNormalTitleBarText="#000000"
+ColorActiveTitleBarText="#ffffff"
+ColorActiveBorder="#000000"
+ColorNormalBorder="#000000"
+
+ColorDialog="#ffffff"
+ColorListBox="#ffffff"
+ColorListBoxText="#000000"
+ColorListBoxSelection="#000080"
+ColorListBoxSelectionText="#ffffff"
+ColorScrollBar="#c0c0c0"
+ColorScrollBarSlider="#b0b0b0"
+ColorScrollBarButton="#c0c0c0"
+ColorScrollBarButtonArrow="#000000"
+ColorLabel="#ffffff"
+ColorLabelText="#000000"
+
+ColorNormalMenu="#ffffff"
+ColorActiveMenuItem="#000000"
+ColorNormalMenuItemText="#000000"
+ColorActiveMenuItemText="#ffffff"
+ColorDisabledMenuItemText="#c0c0c0"
+
+ColorDefaultTaskBar="#ffffff"
+ColorNormalTaskBarApp="#ffffff"
+ColorNormalTaskBarAppText="#000000"
+ColorActiveTaskBarApp="#c0c0c0"
+ColorActiveTaskBarAppText="#000000"
+ColorMinimizedTaskBarApp="#ffffff"
+ColorMinimizedTaskBarAppText="#000000"
+
+ColorInput="#ffffff"
+ColorInputText="#000000"
+ColorClock="#ffffff"
+ColorClockText="#000000"
+
+
+ColorApm="#ffffff"
+ColorApmText="rgb:c0/c0/c0"
+
+#  User load on the CPU monitor
+ ColorCPUStatusUser="#4444ff"
+
+#  System load on the CPU monitor
+ ColorCPUStatusSystem="#cc4444"
+
+#  Interrupts on the CPU monitor
+ ColorCPUStatusInterrupts="rgb:FF/FF/00"
+
+#  IO Wait on the CPU monitor
+ ColorCPUStatusIoWait="rgb:60/00/60"
+
+#  Soft Interrupts on the CPU monitor
+ ColorCPUStatusSoftIrq="rgb:00/FF/FF"
+
+#  Nice load on the CPU monitor
+ ColorCPUStatusNice="rgb:00/00/FF"
+
+#  Idle (non) load on the CPU monitor, leave empty to force transparency
+ ColorCPUStatusIdle="#c0c0c0"
+
+#  Outgoing load on the network monitor
+ ColorNetSend="#333333"
+
+#  Incoming load on the network monitor
+ ColorNetReceive="#777777"
+
+#  Idle (non) load on the network monitor, leave empty to force transparency
+ ColorNetIdle="#c0c0c0"
+
+
+ColorToolTip="#ffffff"
+ColorToolTipText="#000000"
+ColorMoveSizeStatus="#ffffff"
+ColorMoveSizeStatusText="#000000"
+ColorQuickSwitch="#ffffff"
+ColorQuickSwitchText="#000000"
+
+TitleFontNameXft	   = 	"monospace:size=9:bold"
+MenuFontNameXft	           =    "monospace:size=9"
+MinimizedWindowFontNameXft =    "monospace:size=9"
+ActiveButtonFontNameXft    =    "monospace:size=9:bold"
+NormalButtonFontNameXft    =    "monospace:size=9"
+QuickSwitchFontNameXft     =    "monospace:size=9"
+ListBoxFontNameXft         =    "monospace:size=9"
+StatusFontNameXft          =    "monospace:size=9"
+ToolTipFontNameXft         =    "monospace:size=9"
+ActiveTaskBarFontNameXft   =    "monospace:size=9:bold"
+NormalTaskBarFontNameXft   =    "monospace:size=9"
+ClockFontNameXft           =    "monospace:size=9:bold"
+ApmFontNameXft             =    "monospace:size=9"
+
+

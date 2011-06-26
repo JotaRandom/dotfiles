@@ -1,0 +1,117 @@
+ThemeDescription="TrueVista"
+ThemeAuthor="Albi"
+Look=flat
+Gradients="menubg.xpm taskbuttonactive.xpm menusel.xpm workspacebuttonactive.xpm taskbuttonbg.xpm taskbuttonminimized.xpm titleAB.xpm titleIB.xpm titleAM.xpm titleIM.xpm titleAP.xpm titleIP.xpm titleAR.xpm titleIR.xpm"
+RolloverButtonsSupported=1
+MenuMouseTracking=1 
+TaskBarDoubleHeight=1
+SmallIconSize=21
+
+TitleButtonsLeft=""
+TitleButtonsRight="xmi"
+TitleButtonsSupported="xmi"
+#TitleButtonsSupported="xism"
+TitleBarHeight=23
+
+TitleBarJustify=0
+
+BorderSizeX=4
+BorderSizeY=4
+CornerSizeX=26
+CornerSizeY=26
+DlgBorderSizeX=4
+DlgBorderSizeY=4
+
+ColorNormalButton="rgb:40/40/40"
+ColorNormalButtonText="rgb:ff/ff/ff"
+ColorActiveButton="rgb:00/00/00"
+ColorActiveButtonText="rgb:ff/ff/ff"
+
+ColorNormalTitleBarText="rgb:00/00/00"
+ColorNormalTitleBarShadow="rgb:ff/ff/ff"
+ColorActiveTitleBarText="rgb:00/00/00"
+ColorActiveTitleBarShadow="rgb:ff/ff/ff"
+
+ColorActiveBorder="rgb:00/00/00"
+ColorNormalBorder="rgb:00/00/00"
+
+ColorDialog="rgb:f4/f4/f4"
+ColorListBox="rgb:f4/f4/f4"
+ColorListBoxText="rgb:00/00/00"
+ColorListBoxSelection="rgb:c5/e7/f6"
+ColorListBoxSelectionText="rgb:00/00/00"
+ColorScrollBar="rgb:00/00/00"
+ColorScrollBarSlider="rgb:00/00/00"
+ColorScrollBarButton="rgb:00/00/00"
+ColorScrollBarButtonArrow="rgb:00/00/00"
+ColorLabel="rgb:f4/f4/f4"
+ColorLabelText="rgb:00/00/00"
+
+ColorNormalMenu="rgb:40/40/40"
+ColorActiveMenuItem="rgb:FF/FF/FF"
+ColorNormalMenuItemText="rgb:00/00/00"
+ColorActiveMenuItemText="rgb:00/00/00"
+ColorDisabledMenuItemText="rgb:80/80/80"
+
+ColorDefaultTaskBar="rgb:40/40/40"
+ColorNormalTaskBarApp="rgb:40/40/40"
+ColorNormalTaskBarAppText="rgb:ff/ff/ff"
+ColorInvisibleTaskBarApp="rgb:40/40/40"
+ColorInvisibleTaskBarAppText="rgb:ff/ff/ff"
+ColorActiveTaskBarApp="rgb:30/30/30"
+ColorActiveTaskBarAppText="rgb:ff/ff/ff"
+ColorMinimizedTaskBarApp="rgb:40/40/40"
+ColorMinimizedTaskBarAppText="rgb:ff/ff/ff"
+ColorNormalWorkspaceButton="rgb:40/40/40"
+ColorActiveWorkspaceButton="rgb:30/30/30"
+
+ColorInput="rgb:00/00/00"
+ColorInputText="rgb:ff/ff/ff"
+
+ColorClock=""
+ColorClockText="rgb:ff/ff/ff"
+
+ColorCPUStatusUser="rgb:4c/59/a6"
+ColorCPUStatusSystem="rgb:74/7c/b0"
+ColorCPUStatusNice="rgb:00/00/00"
+# ColorCPUStatusIdle=""
+# silly icewm: ColorCPUStatusIdle="" doesn't work - it's transparent but the monitoring is screwed, so this is poor-man's pseudo-transparency instead :)
+ColorCPUStatusIdle="rgb:00/00/00"
+
+ColorNetSend="rgb:00/00/00"
+ColorNetReceive="rgb:00/00/00"
+ColorNetIdle="00/00/00"
+
+ColorToolTip="rgb:00/00/00"
+ColorToolTipText="rgb:FF/FF/FF"
+
+ColorMoveSizeStatus="rgb:30/30/30"
+ColorMoveSizeStatusText="rgb:3b/9d/dc"
+
+ColorQuickSwitch="rgb:40/40/40"
+ColorQuickSwitchText="rgb:ff/ff/ff"
+
+# Font Specification
+TitleFontNameXft		=	calibri:size=9
+MenuFontNameXft			=	calibri:size=11
+MinimizedWindowFontNameXft	=	calibri:size=10:bold
+ActiveButtonFontNameXft		=	calibri:size=10:bold
+NormalButtonFontNameXft		=	calibri:size=10
+ToolButtonFontNameXft		=	calibri:size=10
+NormalWorkspaceFontNameXft	=	calibri:size=10
+ActiveWorkspaceFontNameXft	=	calibri:size=10:bold
+QuickSwitchFontNameXft		=	calibri:size=10
+ListBoxFontNameXft		=	calibri:size=10
+StatusFontNameXft		=	calibri:size=10
+ToolTipFontNameXft		=	calibri:size=10
+ActiveTaskBarFontNameXft	=	calibri:size=10
+NormalTaskBarFontNameXft	=	calibri:size=10
+ClockFontNameXft		=	calibri:size=10:bold
+InputFontNameXft		=	calibri:size=10
+
+TaskBarClockLeds=0
+#DesktopBackgroundCenter = 1
+#DesktopBackgroundImage = 'img22.jpg'
+TaskBarShowNetStatus=0
+TaskBarShowCPUStatus=0
+TimeFormat="%X"
