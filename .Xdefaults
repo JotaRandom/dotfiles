@@ -16,8 +16,8 @@ URxvt.scrollTtyKeypress: true
 
 #Transparency
 URxvt.transparent: true
-URxvt.shading: 64
-URxvt.fading: 128
+URxvt.shading: 32
+URxvt.fading: 64
 #URxvt.fadeColor: colour
 #URxvt.tintColor: colour
 URxvt.blendType: alphablend 
