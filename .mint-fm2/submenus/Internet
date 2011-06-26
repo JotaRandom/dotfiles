@@ -1,6 +1,0 @@
-[exec] (Chromium) {chromium } </usr/share/icons/Faenza/apps/16/chromium-browser.png> ###-chromium.desktop
-[exec] (Dropbox) {/opt/dropbox/dropboxd} </usr/share/pixmaps/dropbox.png> ###-dropbox.desktop
-[exec] (emesene) {emesene} </usr/share/icons/Faenza/apps/16/emesene.png> ###-emesene.desktop
-[exec] (Examinador de servidores SSH de Avahi) {/usr/bin/bssh} </usr/share/icons/Faenza/mimetypes/16/stock_script.png> ###-bssh.desktop
-[exec] (Examinador de servidores VNC de Avahi) {/usr/bin/bvnc} </usr/share/icons/Faenza/mimetypes/16/stock_script.png> ###-bvnc.desktop
-[exec] (Java Web Start) {/opt/java/jre/bin/javaws-launcher } </usr/share/icons/Faenza/apps/16/sun-java6.png> ###-java-web-start.desktop

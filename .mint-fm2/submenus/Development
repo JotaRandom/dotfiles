@@ -1,3 +1,0 @@
-[exec] (Glade) {glade } </usr/share/icons/Faenza/apps/16/glade-3.png> ###-glade.desktop
-[exec] (Java Monitoring and Management Console) {/opt/java/bin/jconsole} </usr/share/icons/Faenza/apps/16/sun-java6.png> ###-java-monitoring-and-management-console.desktop
-[exec] (Java VisualVM) {/opt/java/bin/jvisualvm} </usr/share/icons/Faenza/apps/16/sun-java6.png> ###-java-visualvm.desktop
