@@ -1,6 +1,0 @@
-#!/bin/sh
-(sleep 1 && urxvt) &
-(sleep 1 && dropboxd) &
-
-
-
