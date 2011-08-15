@@ -112,6 +112,8 @@ xterm*rightScrollBar:     true
 xterm*jumpScroll:         true
 xterm*multiScroll:        true
 xterm*toolBar:            true
+xterm*background:	  black
+xterm*foregound:	  white
 
 !aterm settings--------------------------------------------------------------- 
 
@@ -245,6 +247,6 @@ XCalc*Cursor:                 hand2
 XCalc*ShapeStyle:             rectangle
 
 ! Xcursor --------------------------------------------------------------------
-Xcursor.theme: Vanilla-DMZ-AA
+!Xcursor.theme: Vanilla-DMZ-AA
 Xcursor.size:  22
 
