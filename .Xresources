@@ -248,5 +248,5 @@ XCalc*ShapeStyle:             rectangle
 
 ! Xcursor --------------------------------------------------------------------
 !Xcursor.theme: Vanilla-DMZ-AA
-Xcursor.size:  22
+!Xcursor.size:  22
 
