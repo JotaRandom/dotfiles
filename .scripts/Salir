@@ -1,5 +1,0 @@
-#!/bin/bash
-
-ktsuss killall -9 Xorg && logout
-
-
