@@ -1,0 +1,35 @@
+#
+# /etc/bash.bashrc
+#
+
+echo -e '\e[1;31m';
+echo "  ______  _____   _____  _______";
+echo " |_____/ |     | |     |    |";
+echo " |    \_ |_____| |_____|    |";
+echo -e '\e[m';
+echo "Con un gran poder biene una gran reponsabilidad"
+
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+
+export EDITOR=nano
+
+PS1='[\u@\h \W]\$ '
+PS2='> '
+PS3='> '
+PS4='+ '
+
+case ${TERM} in
+  xterm*|rxvt*|Eterm|aterm|kterm|gnome*)
+    PROMPT_COMMAND=${PROMPT_COMMAND:+$PROMPT_COMMAND; }'printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+                                                        
+    ;;
+  screen)
+    PROMPT_COMMAND=${PROMPT_COMMAND:+$PROMPT_COMMAND; }'printf "\033_%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+    ;;
+esac
+
+[ -r /etc/bash_completion   ] && . /etc/bash_completion
