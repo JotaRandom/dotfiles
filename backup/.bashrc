@@ -5,6 +5,14 @@
 # that can't tolerate any output.  So make sure this doesn't display
 # anything or bad things will happen !
 
+if [ ! -s $DISPLAY ]
+then
+	command ponysay $(uname -a)
+else
+	command cowsay $(uname -a)
+fi
+
+
 export EDITOR='nano'
 
 # Test for an interactive shell.  There is no need to set anything
