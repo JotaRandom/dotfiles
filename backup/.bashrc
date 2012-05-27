@@ -5,13 +5,13 @@
 # that can't tolerate any output.  So make sure this doesn't display
 # anything or bad things will happen !
 
-if [ ! -s $DISPLAY ]
-then
-	command ponysay $(uname -a)
-else
-	command cowsay $(uname -a)
+if [ "$TERM" = "linux" ]; then
+	function ponysay
+	{
+		exec ponysay $@
+                #RESET PALETTE HERE
+	}
 fi
-
 
 export EDITOR='nano'
 
