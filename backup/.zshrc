@@ -3,8 +3,6 @@ if [[ $TERM == "screen" ]]; then
     preexec() { echo -ne "\033k$1\033\\" }
 fi
 
-exec ponysay $(uname -a)
-
 #DEBEMAIL="gurkan@phys.ethz.ch"; export DEBEMAIL
 #DEBFULLNAME="Gürkan Sengün"; export DEBFULLNAME
 EDITOR=mcedit; export EDITOR
