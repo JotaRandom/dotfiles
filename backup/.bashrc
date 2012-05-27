@@ -5,13 +5,7 @@
 # that can't tolerate any output.  So make sure this doesn't display
 # anything or bad things will happen !
 
-if [ "$TERM" = "linux" ]; then
-	function ponysay
-	{
-		exec ponysay $@
-                #RESET PALETTE HERE
-	}
-fi
+exec ponysay $(uname -a)
 
 export EDITOR='nano'
 

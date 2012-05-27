@@ -3,13 +3,7 @@ if [[ $TERM == "screen" ]]; then
     preexec() { echo -ne "\033k$1\033\\" }
 fi
 
-if [ "$TERM" = "linux" ]; then
-    function ponysay
-    {
-                exec ponysay $@
-                #RESET PALETTE HERE
-     }
-fi
+exec ponysay $(uname -a)
 
 #DEBEMAIL="gurkan@phys.ethz.ch"; export DEBEMAIL
 #DEBFULLNAME="Gürkan Sengün"; export DEBFULLNAME
