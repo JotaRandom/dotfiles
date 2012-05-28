@@ -92,9 +92,9 @@ Button2 = : iconmgr : f.destroy
 Button3 = : iconmgr : f.iconify
 
 # This is for the window bar
-#LeftTitleButton  "/usr/X11/include/bitmaps/checkmark.xbm"  = f.delete
-LeftTitleButton	 "/usr/X11R6/include/X11/bitmaps/xm_noenter16" = f.delete
-#RightTitleButton "/usr/X11/include/bitmaps/menu12"  = f.resize
+#LeftTitleButton 	"/usr/include/bitmaps/checkmark.xbm"  = f.delete
+LeftTitleButton	"/usr/include/X11/bitmaps/xm_noenter16" = f.delete
+#RightTitleButton	"/usr/include/bitmaps/menu12"  = f.resize
 
 
 #
@@ -130,39 +130,39 @@ menu "files"
 menu "mathematica"
 {
 "Mathematica" 	f.title
-"Mathematica" 	f.exec "mathematica &"
+#"Mathematica" 	f.exec "mathematica &"
 }
 menu "editors"
 {
 "Editors"	f.title 
-"Xemacs"	f.exec "xemacs &"
-"StarOffice"	f.exec "/usr/home/keppler/office52/program/soffice &"
-"Joe"		f.exec "xterm -bg black -fg white -e joe &"
+"Xemacs"	f.exec "leafpad &"
+"OpenOffice"	f.exec "/usr/bin/openoffice.org3 &"
+"Nano"		f.exec "xterm -bg black -fg white -e nano &"
 }
 
 menu "system"
 {
 "System" 	f.title
-"Xosview"	f.exec "xosview &"
+#"Xosview"	f.exec "xosview &"
 "Top"		f.exec "xterm -bg black -fg white -e top &"
-"Gkrellm"	f.exec "gkrellm &"
+#"Gkrellm"	f.exec "gkrellm &"
 }
 
 menu "viewers"
 {
 "Viewers"	f.title
-"Ghostview"	f.exec "gv &"
-"Xdvi"		f.exec "xdvi -rv -fg black -bg white -geometry 800x700 &"
-"Acrobat"	f.exec "acroread4 -geometry 800x700 &"	
+#"Ghostview"	f.exec "gv &"
+#"Xdvi"		f.exec "xdvi -rv -fg black -bg white -geometry 800x700 &"
+#"Acrobat"	f.exec "acroread4 -geometry 800x700 &"	
 }
 menu "internet"
 {
 "Internet"    f.title
-"Netscape"      f.exec "netscape -geometry 800x700 &"
-#"IRC II"     f.exec "xterm -bg midnightblue -name irc@twm.org -fg white -e irk2 &"
+"Midori"      f.exec "midori -geometry 800x700 &"
+#"Xchat"     f.exec "xterm -bg midnightblue -name irc@twm.org -fg white -e irk2 &"
 #"Portscan"   f.exec "/home/prg/java/portscan/portscan &"
 #"ICQ"        f.exec "/usr/local/ICQJava/ICQ &"
-"Lynx"       f.exec "xterm -bg black -fg white -e lynx &"
+#"Lynx"       f.exec "xterm -bg black -fg white -e lynx &"
 #Lynx, the bug-free internetbrowser :)
 #""           f.nop
 #"PPP"        f.menu "ppp"
@@ -171,15 +171,15 @@ menu "internet"
 menu "ppp"
 {
 "PPP"       f.title
-"Linkup"    f.exec "pppd &"
-"Hang up"   f.exec "ppp-off &"
+#"Linkup"    f.exec "pppd &"
+#"Hang up"   f.exec "ppp-off &"
 }
 
 menu "graphics"
 {
 "Graphics"      f.title
-"XV"            f.exec "xv -bg black -fg white -hi black -lo grey30 &"
-"Gimp"          f.exec "gimp &"
+#"XV"            f.exec "xv -bg black -fg white -hi black -lo grey30 &"
+#"Gimp"          f.exec "gimp &"
 #"xRes"          f.exec "/home/prg/xRes &"
 #"Xpaint"        f.exec "xpaint"
 }
@@ -187,19 +187,19 @@ menu "graphics"
 menu "music"
 {
 "Music"	        f.title
-"CdPlayer"	f.exec "xterm -bg black -fg white -e cd-console &"
-"Mp3Blaster"	f.exec "xterm -bg black -fg white -e mp3blaster &"
-"RealPlayer"	f.exec "/usr/home/keppler/RealPlayer8/realplay &"
-"Xmovie"	f.exec "xmovie &"
+#"CdPlayer"	f.exec "xterm -bg black -fg white -e cd-console &"
+#"Mp3Blaster"	f.exec "xterm -bg black -fg white -e mp3blaster &"
+#"RealPlayer"	f.exec "/usr/home/keppler/RealPlayer8/realplay &"
+#"Xmovie"	f.exec "xmovie &"
 #"X11amp"        f.exec "x11amp &"
 #"Workman"       f.exec "workman &"
-#"TkMix"         f.exec "tkmix &"
+"VLC"         f.exec "vlc &"
 }
 
 menu "games"
 {
 "Games"		f.title
-"Xboard"	f.exec "xboard -rv &"
+#"Xboard"	f.exec "xboard -rv &"
 }
 
 menu "utilities"
@@ -249,19 +249,19 @@ menu "quit"
 
 menu "screensaver"
 {
-"ZZzz..."        f.title
-"Laser"          f.exec "xlock -nolock -mode laser &"
-"Qix"            f.exec "xlock -nolock -mode qix &"
-"Star trek"      f.exec "xlock -nolock -mode star &"
-"Galaxy"         f.exec "xlock -nolock -mode galaxy -wireframe&"
-"Pyrotechnical"  f.exec "xlock -nolock -mode pyro -wireframe &"
-"Swarm"          f.exec "xlock -nolock -mode swarm &"
-"Linux"          f.exec "xlock -nolock -mode flag &"
+"Screensaver"        f.title
+#"Laser"          f.exec "xlock -nolock -mode laser &"
+#"Qix"            f.exec "xlock -nolock -mode qix &"
+#"Star trek"      f.exec "xlock -nolock -mode star &"
+#"Galaxy"         f.exec "xlock -nolock -mode galaxy -wireframe&"
+#"Pyrotechnical"  f.exec "xlock -nolock -mode pyro -wireframe &"
+#"Swarm"          f.exec "xlock -nolock -mode swarm &"
+#"Linux"          f.exec "xlock -nolock -mode flag &"
 }
 
 Icons
 {
-     "XTerm"   "/usr/X11R6/include/X11/bitmaps/Term"
+     "XTerm"   "/usr/include/X11/bitmaps/terminal"
      "x11amp"  "/usr/include/X11/bitmaps/xfm_au.xbm"
 }
 
