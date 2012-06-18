@@ -5,7 +5,7 @@ fi
 
 #DEBEMAIL="gurkan@phys.ethz.ch"; export DEBEMAIL
 #DEBFULLNAME="Gürkan Sengün"; export DEBFULLNAME
-EDITOR=mcedit; export EDITOR
+EDITOR=nano; export EDITOR
 export PS1='%n@%m:%~%(!.#.$) '
 unset RPS1
 HISTSIZE=1000
