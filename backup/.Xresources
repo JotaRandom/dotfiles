@@ -1,4 +1,4 @@
-#include ".xcolours/colors"
+#include ".xcolours/colors-marzo"
 
 ! terminal colors ------------------------------------------------------------
 *background:	#1C1C1C
