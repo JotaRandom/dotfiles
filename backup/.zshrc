@@ -8,8 +8,8 @@ fi
 EDITOR=nano; export EDITOR
 export PS1='%n@%m:%~%(!.#.$) '
 unset RPS1
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=1048576
+SAVEHIST=1048576
 HISTFILE=~/.history
 
 # if you want to setup ssh key logins (and use ssh-add)
