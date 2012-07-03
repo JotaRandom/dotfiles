@@ -372,8 +372,8 @@ unset p
 : place customisations above this line
 
 if [[ -x /sbin/kexec ]] && [[ -r /proc/cmdline ]] ; then
-	alias "$(uname -r)-reboot"="kexec -l --initrd=/boot/initrd.img-"$(uname -r)" --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-"$(uname -r)""
-	alias "linux-reboot"="kexec -l --initrd=/boot/initamfs-linux.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux"
-	alias "ck-reboot"="kexec -l --initrd=/boot/initamfs-linux-ck.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux-ck"
-	alias "lts-reboot"="kexec -l --initrd=/boot/initamfs-linux-lts.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux-lts"
+	alias "$(uname -r)-reboot"="sudo kexec -l --initrd=/boot/initrd.img-"$(uname -r)" --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-"$(uname -r)""
+	alias "linux-reboot"="sudo kexec -l --initrd=/boot/initramfs-linux.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux"
+	alias "ck-reboot"="sudo kexec -l --initrd=/boot/initramfs-linux-ck.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux-ck"
+	alias "lts-reboot"="sudo kexec -l --initrd=/boot/initramfs-linux-lts.img --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-linux-lts"
 fi
