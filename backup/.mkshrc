@@ -35,7 +35,7 @@ PS1=$'\001\r''$(precmd)${USER:=$(ulimit -c 0; id -un 2>/dev/null || echo \?
 	(( m > (n = (COLUMNS/3 < 7 ? 7 : COLUMNS/3)) )) && d=${d:(-n)} || \
 	p=; print -nr -- "$p$d") '"$PS1 "
 : ${MKSH:=$(whence -p mksh)}; export EDITOR HOSTNAME MKSH TERM USER
-alias ls=ls
+alias ls=ls 
 unalias ls
 alias l='ls --color=always -F'
 alias la='l --color=always -a'
@@ -370,3 +370,7 @@ alias cls='print -n \\033c'
 unset p
 
 : place customisations above this line
+
+if [[ -x /sbin/kexec ]] && [[ -r /proc/cmdline ]] ; then
+    alias "$(uname -r)-reboot"="kexec -l --initrd=/boot/initrd.img-"$(uname -r)" --command-line=\"$(cat /proc/cmdline)\" /boot/vmlinuz-"$(uname -r)""
+fi
