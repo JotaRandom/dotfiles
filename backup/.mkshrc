@@ -37,10 +37,10 @@ PS1=$'\001\r''$(precmd)${USER:=$(ulimit -c 0; id -un 2>/dev/null || echo \?
 : ${MKSH:=$(whence -p mksh)}; export EDITOR HOSTNAME MKSH TERM USER
 alias ls=ls
 unalias ls
-alias l='ls -F'
-alias la='l -a'
-alias ll='l -l'
-alias lo='l -alo'
+alias l='ls --color=always -F'
+alias la='l --color=always -a'
+alias ll='l --color=always -l'
+alias lo='l --color=always -alo'
 whence -p rot13 >&- || alias rot13='tr \
     abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ \
     nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM'
