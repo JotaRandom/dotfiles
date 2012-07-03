@@ -1,12 +1,20 @@
-My Dotfiles
-
-Tris is the record and tweaks of my dotfiles like .bashrc .zshrc and 
+INFORMATION
+This is the record and tweaks of my dotfiles like .bashrc .zshrc and 
 others spesific or less accecible files like issue
 
 Is possible that  add others specials files or REALLY tweaked configs
 
 Frecuently...REALLY frecuently I change my WM/DE for this reazon the 
-updates aren't so freccuents
+updates aren't so freccuents.
+
+SHELLS
+I change my shell only for testing or borring, actually I try to maintain
+in my dotfiles all toce rc files for those shell.
+actually I have this rc for tose shells, adding minors or major changes
+compared to a vanilla/default config: 
+-Bash
+-Zsh
+-MKsh
 
 bye
 
