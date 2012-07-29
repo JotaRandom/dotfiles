@@ -106,3 +106,41 @@ PS4='+ '
 unset use_color safe_term match_lhs
 
 [ -r /etc/bash_completion ] && . /etc/bash_completion
+
+if ! systemd-notify --booted; then # not using systemd
+  start() {
+    sudo rc.d start $1
+  }
+
+  restart() {
+    sudo rc.d restart $1
+  }
+
+  stop() {
+    sudo rc.d stop $1
+  }
+else
+  start() {
+    sudo systemctl start $1.service
+  }
+
+  restart() {
+    sudo systemctl restart $1.service
+  }
+
+  stop() {
+    sudo systemctl stop $1.service
+  }
+
+  enable() {
+    sudo systemctl enable $1.service
+  }
+
+  status() {
+    sudo systemctl status $1.service
+  }
+
+  disable() {
+    sudo systemctl disable $1.service
+  }
+fi
