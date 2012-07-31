@@ -29,7 +29,7 @@ own_window_colour 262729
 
 #font
 use_xft yes
-xftfont sans:size=7
+xftfont Arimo:size=10
 
 # Force UTF8? note that UTF8 support required XFT
 override_utf8_locale yes
