@@ -5,7 +5,7 @@
 *foreground:	#DDEEDD
 
 ! Xft settings ---------------------------------------------------------------
-Xft.dpi:        96
+Xft.dpi:        101
 Xft.antialias:  true
 Xft.rgba:       rgb
 Xft.hinting:    true
@@ -14,7 +14,7 @@ Xft.hintstyle:  hintslight
 ! xterm ----------------------------------------------------------------------
 
 xterm*geometry:           80x25
-xterm*faceName:           terminus:bold:pixelsize=14
+xterm*faceName:           cousine:bold:pixelsize=14
 !xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
 xterm*dynamicColors:      true
 xterm*utf8:               2
