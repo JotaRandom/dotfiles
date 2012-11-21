@@ -8,8 +8,8 @@ fi
 ponysay -o
 
 # Not sure why I put this, meh
-DEBEMAIL="prflr88@gmail.com"; export DEBEMAIL
-DEBFULLNAME="Pablo Lezaeta"; export DEBFULLNAME
+DEBEMAIL="prflr88@gmail.com"
+DEBFULLNAME="Pablo Lezaeta"
 
 # editor options
 EDITOR=zile
@@ -46,8 +46,8 @@ HISTFILE=~/.zsh-history
 
 # if you want to setup ssh key logins (and use ssh-add)
 # ~/bin/sudo: cd $1; shift; if [ "x${1}" = "x" ]; then $SHELL; else $@; fi
-alias su='ssh -t root@$HOST ~/bin/sudo `pwd`'
-alias sudo='ssh -t root@$HOST ~/bin/sudo `pwd` 2>/dev/null'
+#alias su='ssh -t root@$HOST /usr/bin/sudo `pwd`'
+#alias sudo='ssh -t root@$HOST /usr/bin/sudo `pwd` 2>/dev/null'
 
 # Enable color support of ls and grep
 if [ -x /usr/bin/dircolors ]; then
@@ -78,6 +78,7 @@ export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
+export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/lib:/usr/lib:/lib:/opt"
 
 # Human file sizes
 alias df="df -Th"
@@ -151,9 +152,12 @@ alias precmd="noglob fakeprecmd"
 # All export come here
 export EDITOR VISUAL
 export DEBEMAIL DEBFULLNAME
-export GREP_OPTIONS="--color=auto --binary-files=without-match --devices=skip
+export GREP_OPTIONS="--color=auto --binary-files=without-match --devices=skip"
 
 # Allow root to use my DISPLAY
 if [ -n "$DISPLAY" ]; then
 	xhost + 2>&1 1>/dev/null
 fi
+
+# Completion and higlight everywhere
+fpath=(/usr/share/zsh/site-functions $fpath)
