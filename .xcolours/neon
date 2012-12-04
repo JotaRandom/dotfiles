@@ -1,0 +1,63 @@
+ -----------------------------------------------
+! Neon theme
+! file:     ~/.Xresources
+! author:   Aaron "ninjaaron" Christianson
+! modified: 15.08.2012
+! -----------------------------------------------
+
+! color scheme
+*background: #1e1e1e
+*foreground: #aaaaaa
+! Black + DarkGrey
+*color0:  #444444
+*color8:  #666666
+! Red
+*color1:  #ff1155
+*color9:  #ff4488 
+! Green
+*color2:  #11ff55
+*color10: #44ff88
+! Yellow
+*color3:  #FFbb33
+*color11: #FFdd66
+! Blue
+*color4:  #1155ff
+*color12: #4488ff
+! Magenta
+*color5:  #bb33ff
+*color13: #dd66ff
+! Cyan
+*color6:  #00ffbb
+*color14: #66ffdd
+! LightGrey + White
+*color7: #cccccc
+*color15: #ffffff
+! font
+URxvt.font: xft:bitocrafull,xft:Miriam Mono CLM:style=bold
+
+! scrollbar
+URxvt.scrollBar: off
+
+! selection & link handing
+URxvt.perl-ext-common:      default,url-select,keyboard-select
+URxvt.url-select.launcher:  firefox
+URxvt.url-select.underline: true
+URxvt.keysym.M-u:           perl:url-select:select_next
+URxvt.keysym.M-Escape:      perl:keyboard-select:activate
+URxvt.keysym.M-s:           perl:keyboard-select:search
+
+! fonts to choose
+URxvt.keysym.M-C-0x30: command:\033]710;xft:bitbuntufull,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x31: command:\033]710;xft:bitocrafull,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x32: command:\033]710;-*-fixed-medium-r-*-*-12-*,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x33: command:\033]710;xft:bitocra13,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x34: command:\033]710;-*-terminus-medium-*-*-*14-*,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x35: command:\033]710;-*-5thElement-*\007
+URxvt.keysym.M-C-0x36: command:\033]710;xft:5thElementHeb,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x37: command:\033]710;-*-bitocra7-*-*-*,xft:Taamey David CLM\007
+URxvt.keysym.M-C-0x38: command:\033]710;xft:bitocra7Heb,xft:Taamey David CLM\007
+URxvt.keysym.M-C-u: command:\033]710;xft:Ubuntu Mono:pixelsize=11:style=bold,xft:Taamey David CLM\007
+URxvt.keysym.M-C-f: command:\033]710;10x20,xft:Taamey David CLM\007
+URxvt.keysym.M-C-m: command:\033]710;xft:Taamey David CLM:pixelsize=20\007
+URxvt.keysym.M-C-o: command:\033]710;xft:ocra10:pixelsize=10,xft:Taamey David CLM\007
+URxvt.keysym.M-C-d: command:\033]710;xft:Dejavu Sans Mono:pixelsize=9:antialias=false,xft:Taamey David CLM\007
