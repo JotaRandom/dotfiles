@@ -1,15 +1,15 @@
-#include ".xcolours/colors-marzo"
+#include ".xcolours/derp"
 
 ! terminal colors ------------------------------------------------------------
 *background:	#1C1C1C
 *foreground:	#DDEEDD
 
 ! Xft settings ---------------------------------------------------------------
-Xft.dpi:        101
+Xft.dpi:        96
 Xft.antialias:  true
 Xft.rgba:       rgb
 Xft.hinting:    true
-Xft.hintstyle:  hintslight
+Xft.hintstyle:  hintsfull
 
 ! xterm ----------------------------------------------------------------------
 
@@ -44,3 +44,7 @@ x11-ssh-askpass.Indicator*background:   #090909
 x11-ssh-askpass*topShadowColor:         #000000
 x11-ssh-askpass*bottomShadowColor:      #000000
 x11-ssh-askpass.*borderWidth:           1
+
+! For the Xcreensaver
+*newLoginCommand: dm-tool switch-to-greeter
+
