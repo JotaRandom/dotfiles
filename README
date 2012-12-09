@@ -7,7 +7,7 @@ Is possible that  add others specials files or REALLY tweaked configs
 Frecuently...REALLY frecuently I change my WM/DE for this reazon the 
 updates aren't so freccuents.
 
-SHELLS
+Home/User
 I change my shell only for testing or borring, actually I try to maintain
 in my dotfiles all toce rc files for those shell.
 actually I have this rc for tose shells, adding minors or major changes
@@ -18,12 +18,17 @@ compared to a vanilla/default config:
 -TCsh
 -PDKsh
 
+Etc/*
+Configuration files for my Samsunng N100C-N01CL with Poulsbo graphics
+
 Poni
-Er...IMGS for [ponysay](http://github.com/erkin/ponysay) that i make, found or anythink
-Free to use, (That one Than I make) only give credits (Is enough input the source),
-all other are imgs that I found in a second search in a chance of 1:2000 in found them at
-fist try.....I want not los them again, many of them are cc other are cc-by-sa or any others
-you need find (if you are lucky) the creator and talk about premisions in this cases
+Er...IMGS for [ponysay](http://github.com/erkin/ponysay) that i make, 
+the g1, swap sex and moonstuck are non official and you are safe to use in any project,
+al other included sweetcream (sweetcream scoops) and other are property of hasbro and I only
+create the image, free to use only if you give the correct copyright to hasbro (as any art
+in deviantart make) and source to here.
+
+All MY Original Character are under the 'GNU Public License Version 2 only'.
 
 bye
 
