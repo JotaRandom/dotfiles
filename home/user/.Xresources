@@ -26,7 +26,7 @@ xterm*scrollBar:          true
 xterm*rightScrollBar:     true
 xterm*jumpScroll:         true
 xterm*multiScroll:        true
-xterm*toolBar:            false
+xterm*toolBar:            true
 
 ! xclock ---------------------------------------------------------------------
 xclock*update:            1
@@ -35,16 +35,28 @@ xclock*Foreground:        white
 xclock*background:        black
 
 ! x11-ssh-askpass ------------------------------------------------------------
-x11-ssh-askpass*font:                   -*-dina-medium-r-*-*-12-*-*-*-*-*-*-*
-x11-ssh-askpass*background:             #000000
-x11-ssh-askpass*foreground:             #ffffff
-x11-ssh-askpass.Button*background:      #000000
-x11-ssh-askpass.Indicator*foreground:   #ff9900
-x11-ssh-askpass.Indicator*background:   #090909
-x11-ssh-askpass*topShadowColor:         #000000
-x11-ssh-askpass*bottomShadowColor:      #000000
+x11-ssh-askpass*font:                   -Droid-Sans-*-*-*-*-12-*-*-*-*-*-*-*
+x11-ssh-askpass*background:             #ffffff
+x11-ssh-askpass*foreground:             #000000
+x11-ssh-askpass.Button*background:      #ffffff
+x11-ssh-askpass.Indicator*foreground:   #0099ff
+x11-ssh-askpass.Indicator*background:   #909090
+x11-ssh-askpass*topShadowColor:         #ffffff
+x11-ssh-askpass*bottomShadowColor:      #ffffff
 x11-ssh-askpass.*borderWidth:           1
 
 ! For the Xcreensaver
 *newLoginCommand: dm-tool switch-to-greeter
+
+! vt100 colourization --------------------------------------------------------
+*VT100.colorBDMode:	true
+*VT100.colorBD:		red
+*VT100.colorULMode:	true
+*VT100.colorUL:		cyan
+*VT100.veryBoldColors:	6
+
+! rxvt-unicode colourisation -------------------------------------------------
+URxvt.colorIT:	#87af5f
+URxvt.colorBD:	#d7d7d7
+URxvt.colorUL:	#87afd7
 

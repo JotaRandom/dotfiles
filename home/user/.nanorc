@@ -9,17 +9,6 @@ set fill 72
 set multibuffer
 set suspend
 
-syntax "pkgbuild" "^.*PKGBUILD$"
-color green start="^" end="$"
-color cyan "^.*(pkgname|pkgver|pkgrel|pkgdesc|force|url|license|install|source|md5sums|groups|backup|depends|makedepends|conflicts|provides|replaces).*=.*$"
-color brightcyan "\<(pkgname|pkgver|pkgrel|pkgdesc|force|url|license|install|source|md5sums|groups|backup|depends|makedepends|conflicts|provides|replaces)\>"
-color cyan "\.install"
-color brightwhite "=" "'" "\(" "\)" "\"" "#.*$" "\," "\{" "\}"
-color brightcyan "(\$|\$\{|\$\()(pkgname|pkgver|pkgrel|pkgdesc|force|url|license|install|source|md5sums|groups|backup|depends|makedepends|conflicts|provides|replaces|startdir)(|\}|\))"
-color brightred "build\(\)"
-color brightred "\<(configure|make)\>"
-color red "\<(DESTDIR|PREFIX|prefix|sysconfdir|datadir|libdir|includedir|mandir)\>"
-
 syntax "c-file" "\.(c|h)$"
 color red "\<[A-Z_]{2,}\>"
 color green "\<(float|char|int|void|static|const|struct)\>"
@@ -109,3 +98,6 @@ color cyan "(^default.+|^timeout.+)"
 color red "^title.+"
 color yellow "(initrd.+|kernel.+|root.+)"
 color green "^#.*"
+
+# Include global nanorc
+include "/usr/share/nano/pkgbuild.nanorc"
