@@ -1,2 +1,4 @@
 SUBSYSTEM=="net", ATTR{address}=="e8:03:9a:98:c7:48", NAME="eth0"
+SUBSYSTEM=="net", ATTR{address}=="d8:d3:85:25:62:4d", NAME="eth1"
 SUBSYSTEM=="net", ATTR{address}=="78:92:9c:74:3d:9e", NAME="wlan0"
+SUBSYSTEM=="net", ATTR{address}=="c4:17:fe:66:53:4c", NAME="wlan1"

@@ -34,7 +34,7 @@ source  ~/.zkbd/$TERM-${DISPLAY:-$VENDOR-$OSTYPE}
 
 unset RPS1
 
-# History set...yep I like have those weird numbers 
+# History set... yep, I like have those weird numbers 
 HISTSIZE=1048576
 SAVEHIST=1048576
 setopt HIST_IGNORE_ALL_DUPS
@@ -152,13 +152,14 @@ alias precmd="noglob fakeprecmd"
 # All export come here
 export EDITOR VISUAL
 export DEBEMAIL DEBFULLNAME
-export GREP_OPTIONS="--color=auto --binary-files=without-match --devices=skip"
+#export GREP_OPTIONS="--color=auto --binary-files=without-match --devices=skip"
 
 # Allow root to use my DISPLAY
 if [ -n "$DISPLAY" ]; then
 	xhost + 2>&1 1>/dev/null
 fi
 
-# Completion and higlight everywhere
+# Completion and highlight everywhere
 fpath=(/usr/share/zsh/site-functions $fpath)
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
