@@ -1,3 +1,6 @@
+# Set multibyte
+unsetopt MULTIBYTE
+
 # set screen window name
 if [[ $TERM == "screen" ]]; then
     preexec() { echo -ne "\033k$1\033\\" }
@@ -78,7 +81,7 @@ export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
-export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/lib:/usr/lib:/lib:/opt"
+export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/lib:/usr/lib:/lib:/usr/local/opt:/opt"
 
 # Human file sizes
 alias df="df -Th"
