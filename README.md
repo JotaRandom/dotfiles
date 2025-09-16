@@ -9,6 +9,15 @@ Frecuently...REALLY frecuently I change my WM/DE for this reazon the
 updates aren't so freccuents.
 But for now I stay on XFCE
 
+___Toshiba___
+
+This directory contains all files from my old box Toshiba, an old laptop
+I used to have like 10 yeas ago thta now i don't have anymore, but I
+keep they files for future references, also contains some interesting
+stuf i managed to extras in the named directory...
+
+inside it also you can find some of the disr like: 
+
 __Home/User__
 
 I change my shell only for testing or borring, actually I try to maintain
@@ -28,7 +37,7 @@ Configuration files for my Samsunng N100C-N01CL with Poulsbo graphics
 
 __Poni__
 
-Er...IMGS for [ponysay](http://github.com/erkin/ponysay) that i make, or found or whatever... 
+IMGS for [ponysay](http://github.com/erkin/ponysay) that i make, or found or whatever... 
 some G-1, all genderbender and batponies from moonstuck are non official and you are safe to use 
 in any project, all other included Sweetcream (sweetcream scoops) for example or others are 
 property of they respective authors and I only create the image or refinde, redesign or adapt 
@@ -38,6 +47,10 @@ in deviantART make) and source to here or to the respective authors from here or
 __usr__
 
 More configs related to usr
+
+__Toshiba Satellite C845D-SP4327SL__
+
+Contain the dsl file extracted directly from Windows an tested.
 
 NOTE:
 

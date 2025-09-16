@@ -1,0 +1,62 @@
+#include ".xcolours/derp"
+
+! terminal colors ------------------------------------------------------------
+*background:	#1C1C1C
+*foreground:	#DDEEDD
+
+! Xft settings ---------------------------------------------------------------
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintsfull
+
+! xterm ----------------------------------------------------------------------
+
+xterm*geometry:           80x25
+xterm*faceName:           cousine:bold:pixelsize=14
+!xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
+xterm*dynamicColors:      true
+xterm*utf8:               2
+xterm*eightBitInput:      true
+xterm*saveLines:          512
+xterm*scrollKey:          true
+xterm*scrollTtyOutput:    false
+xterm*scrollBar:          true
+xterm*rightScrollBar:     true
+xterm*jumpScroll:         true
+xterm*multiScroll:        true
+xterm*toolBar:            true
+
+! xclock ---------------------------------------------------------------------
+xclock*update:            1
+xclock*analog:            false
+xclock*Foreground:        white
+xclock*background:        black
+
+! x11-ssh-askpass ------------------------------------------------------------
+x11-ssh-askpass*font:                   -Droid-Sans-*-*-*-*-12-*-*-*-*-*-*-*
+x11-ssh-askpass*background:             #ffffff
+x11-ssh-askpass*foreground:             #000000
+x11-ssh-askpass.Button*background:      #ffffff
+x11-ssh-askpass.Indicator*foreground:   #0099ff
+x11-ssh-askpass.Indicator*background:   #909090
+x11-ssh-askpass*topShadowColor:         #ffffff
+x11-ssh-askpass*bottomShadowColor:      #ffffff
+x11-ssh-askpass.*borderWidth:           1
+
+! For the Xcreensaver
+*newLoginCommand: dm-tool switch-to-greeter
+
+! vt100 colourization --------------------------------------------------------
+*VT100.colorBDMode:	true
+*VT100.colorBD:		red
+*VT100.colorULMode:	true
+*VT100.colorUL:		cyan
+*VT100.veryBoldColors:	6
+
+! rxvt-unicode colourisation -------------------------------------------------
+URxvt.colorIT:	#87af5f
+URxvt.colorBD:	#d7d7d7
+URxvt.colorUL:	#87afd7
+
