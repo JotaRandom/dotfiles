@@ -52,6 +52,21 @@ __Toshiba Satellite C845D-SP4327SL__
 
 Contain the dsl file extracted directly from Windows an tested.
 
+___L420___
+
+New laptop i got, the directory constain my new dotsfiles, as i'm just restarting its may lag or
+even not be compared to the old dotfiles of my old Toshiba, but i'm working on them... has been
+10 years since i touched it all.
+
+__etc__
+
+just constain the usr configs ordered by where they belong.
+
+__home__
+
+constain just my home dortiles.
+
+
 NOTE:
 
 * All **MY** Original Character are under the 'GNU Public License Version 2 only'.
