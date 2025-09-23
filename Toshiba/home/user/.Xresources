@@ -14,7 +14,7 @@ Xft.hintstyle:  hintsfull
 ! xterm ----------------------------------------------------------------------
 
 xterm*geometry:           80x25
-xterm*faceName:           cousine:bold:pixelsize=14
+!xterm*faceName:           luxi:bold:pixelsize=14
 !xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
 xterm*dynamicColors:      true
 xterm*utf8:               2
