@@ -1,0 +1,46 @@
+# .twmrc configuration for twm
+
+# Font settings
+Font "Noto Sans-10"
+
+# Color settings inspired by Bluecurve GTK2 theme
+BorderColor "#3C7BAC"  # Bluecurve-like blue for window borders
+TitleForeground "white"  # White text for title bars
+TitleBackground "#3C7BAC"  # Bluecurve-like blue for title bars
+MenuForeground "black"  # Black text for menus
+MenuBackground "#D3E4F3"  # Lighter blue-gray for menu background
+IconForeground "white"  # White text for icons
+IconBackground "#3C7BAC"  # Bluecurve-like blue for icon backgrounds
+
+# Border width
+BorderWidth 2
+
+# Title bar settings
+TitleFont "Noto Sans-10"
+ResizeFont "Noto Sans-10"
+MenuFont "Noto Sans-10"
+IconFont "Noto Sans-10"
+
+# Window behavior
+AutoRaise { "xterm" }  # Automatically raise xterm windows when focused
+NoTitle { "xclock" }   # No title bar for xclock
+RandomPlacement        # Place new windows randomly if unpecified
+
+# Mouse bindings
+Button1 = : root : f.menu "mainmenu"  # Left-click on root opens menu
+Button2 = : window : f.move          # Middle-click on window to move
+Button3 = : window : f.resize        # Right-click on window to resize
+
+# Keyboard bindings
+"Ctrl+Alt+t" = : all : f.exec "xterm"  # Launch xterm with Ctrl+Alt+T
+
+# Main menu definition
+menu "mainmenu"
+{
+    "TWM Menu"        f.title
+    "Xterm"           f.exec "xterm &"
+    "Xclock"          f.exec "xclock &"
+    "Refresh"         f.refresh
+    "Restart"         f.restart
+    "Exit"            f.quit
+}
