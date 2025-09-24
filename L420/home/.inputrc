@@ -1,0 +1,7 @@
+# Enable case-insensitive completion
+set completion-ignore-case on
+# Show all matches on first tab
+set show-all-if-ambiguous on
+# Vim-like key bindings (optional)
+set editing-mode vi
+set keymap vi

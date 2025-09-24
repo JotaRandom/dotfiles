@@ -1,0 +1,16 @@
+[user]
+	name = 
+	email = 
+	signingkey = 
+	autocrlf = input
+[commit]
+	gpgsign = true
+[core]
+	editor = nano
+	excludesfile = ~/.gitignore
+[color]
+	ui = auto
+[alias]
+	st = status
+	ci = commit
+	br = branch

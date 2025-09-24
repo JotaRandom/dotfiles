@@ -1,0 +1,75 @@
+! XTerm configuration
+! Set background and foreground colors
+XTerm*background: black
+XTerm*foreground: white
+
+! Set Tango color scheme
+XTerm*color0:  #2E3436
+XTerm*color1:  #CC0000
+XTerm*color2:  #4E9A06
+XTerm*color3:  #C4A000
+XTerm*color4:  #3465A4
+XTerm*color5:  #75507B
+XTerm*color6:  #06989A
+XTerm*color7:  #D3D7CF
+XTerm*color8:  #555753
+XTerm*color9:  #EF2929
+XTerm*color10: #8AE234
+XTerm*color11: #FCE94F
+XTerm*color12: #729FCF
+XTerm*color13: #AD7FA8
+XTerm*color14: #34E2E2
+XTerm*color15: #EEEEEC
+
+! Set font to Noto Sans Mono, size 10
+XTerm*faceName: Noto Sans Mono
+XTerm*faceSize: 10
+
+! Set terminal geometry to 120 columns by 24 rows
+XTerm*geometry: 120x24
+
+! Enable scroll bar
+XTerm*scrollBar: true
+XTerm*rightScrollBar: true
+XTerm*scrollBar_width: 10
+
+! Enable visual bell instead of audible bell
+XTerm*visualBell: true
+
+! Enable mouse support for scrolling and selection
+XTerm*pointerColor: white
+XTerm*pointerColorBackground: black
+XTerm*pointerShape: xterm
+
+! Allow copying/pasting with clipboard
+XTerm*selectToClipboard: true
+
+! Set cursor style and blinking
+XTerm*cursorColor: #D3D7CF
+XTerm*cursorBlink: true
+
+! Increase scrollback buffer to 8192 lines
+XTerm*saveLines: 8192
+
+! Enable UTF-8 encoding
+XTerm*locale: true
+XTerm*utf8: 1
+
+! Additional X11 resource settings
+! Set default cursor for X11 applications
+*pointerColor: white
+*pointerColorBackground: black
+*pointerShape: left_ptr
+
+! Set default font for other X11 applications
+*font: -misc-fixed-medium-r-normal--13-120-75-75-c-70-iso10646-1
+
+! Customize X11 application colors (e.g., for xclock, xcalc)
+*Foreground: white
+*Background: black
+
+! Enable anti-aliasing for fonts in X11 applications
+Xft.antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintfull
+Xft.rgba: rgb

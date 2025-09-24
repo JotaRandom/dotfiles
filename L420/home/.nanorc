@@ -1,103 +1,48 @@
-set autoindent
-set boldtext
-set const
-set historylog
-set morespace
-set smooth
-set regexp
-set fill 72
-set multibuffer
-set suspend
+# GNU Nano configuration file for enhanced syntax highlighting and Vim-like usability
+# Includes all syntax files from /usr/share/nano-syntax-highlighting/
+# Supports RPM spec files (via rpmspec.nanorc) and Debian control files (via debian.nanorc)
+# Vim-like options without changing default key bindings; compatible with Nano 8.6
 
-syntax "c-file" "\.(c|h)$"
-color red "\<[A-Z_]{2,}\>"
-color green "\<(float|char|int|void|static|const|struct)\>"
-color brightyellow "\<(if|while|do|else|case|switch)\>"
-color brightcyan "^#( )*(define|include|ifn?def|endif|elif|else|if)"
+# Load all syntax highlighting files
+include "/usr/share/nano-syntax-highlighting/*.nanorc"
 
-syntax "php" "\.php[2345s~]?$"
-color brightblue "(.*)\("
-color blue "\$[a-zA-Z_0-9$]*|[=!<>]"
-color green "(var|class|function|echo|case|break|default|exit|switch|if|else|elseif|@|while)\s"
-color green "[.,{}();]"
-color red "('.*')|(\".*\")"
-color brightyellow "(#.*|//.*)$"
-color brightyellow start="/\*" end="\*/"
-color brightblue "(<\?(php)?|\?>)"
-color white start="\?>" end="<\?(php)?"
+# General display and editing options (Vim-like: smooth, visible, structured)
+set autoindent          # Automatically indent new lines (like Vim's autoindent)
+set backup              # Create backup files (~suffix) on save (like Vim's backup)
+set backupdir "~/.nano/backups"  # Directory for backups (create if needed)
+set boldtext            # Use bold for highlighted text (enhances visibility)
+set casesensitive       # Case-sensitive searches (like Vim default)
+set linenumbers         # Show line numbers (like Vim's :set number)
+set locking             # Use Vim-style file locking (.swp files) to prevent concurrent edits
+set multibuffer         # Allow multiple buffers (like Vim's buffers)
+set noconvert           # Do not convert files (raw editing)
+set nonewlines          # Do not add newline at end of file (like Vim's noendofline)
+set nowrap              # Soft wrap long lines (like Vim's nowrap)
+set softwrap            # Soft-wrap lines for better readability
+set tabsize 4           # Tab width of 4 (common in Vim configs)
+set trimblanks          # Trim trailing whitespace on save
 
-syntax "HTML" "\.html$"
-color blue start="<" end=">"
-color red "&[^; ]*;"
+# Search and replace options (Vim-like: incremental, persistent)
+set historylog          # Log search/replace history (persistent like Vim's history)
 
-syntax "patch" "\.(patch|diff)$"
-color brightgreen "^\+.*"
-color green "^\+\+\+.*"
-color brightblue "^ .*"
-color brightred "^-.*"
-color red "^---.*"
-color brightyellow "^@@.*"
-color magenta "^diff.*"
+# Color scheme (basic dark theme for readability, customizable)
+set titlecolor "brightwhite,blue"  # Title bar
+set statuscolor "green"            # Status bar
+set numbercolor "brightblue"       # Line numbers
+set keycolor "cyan"                # Function key prompts
+set functioncolor "yellow"         # Other prompts
 
-syntax "Java" "\.java$"
-color green "\<(boolean|byte|char|double|float|int|long|new|short|this|transient|void)\>"
-color red "\<(break|case|catch|continue|default|do|else|finally|for|if|return|switch|throw|try|while)\>"
-color cyan "\<(abstract|class|extends|final|implements|import|instanceof|interface|native|package|private|protected|public|static|strictfp|super|synchronized|throws|volatile)\>"
-color red ""[^\"]*""
-color yellow "\<(true|false|null)\>"
-color blue "//.*"
-color blue start="/\*" end="\*/"
-color brightblue start="/\*\*" end="\*/"
-color brightgreen,green " +$"
+# Syntax-specific overrides (if needed; wildcard includes defaults)
+# Example: Enhance RPM/Debian if base files are insufficient
+syntax "rpmspec" "\.spec$"
+color brightcyan "^(Name|Version|Release|Summary|License|Group|URL|Source|BuildArch):"
+color yellow "^%(\w+)"
+color brightgreen "^(Requires|Provides|Conflicts|Obsoletes):"
+color red "^#.*"
 
-syntax "ml" ".*\.([jrs]?html?|xml|sgml?)$"
-color white "^.+$"
-color green  start="<" end=">"
-color cyan   "<[^> ]+"
-color cyan   ">"
-color yellow start="<!DOCTYPE" end="[/]?>"
-color yellow start="<!--" end="-->"
-color red    "&[^;]*;"
-
-## syntax highlighting in xorg.conf
-##
-syntax "xorg" "xorg\.conf$"
-color brightwhite "(Section|EndSection|Sub[sS]ection|EndSub[sS]ection)"
-# keywords
-color yellow "[^A-Za-z0-9](Identifier|Screen|InputDevice|Option|RightOf|LeftOf|Driver|RgbPath|FontPath|ModulePath|Load|VendorName|ModelName|BoardName|BusID|Device|Monitor|DefaultDepth|View[pP]ort|Depth|Virtual|Modes|Mode|DefaultColorDepth|Modeline|\+vsync|\+hsync|HorizSync|VertRefresh)[^A-Za-z0-9]"
-# numbers
-color magenta "[0-9]"
-# strings
-color green ""(\\.|[^\"])*""
-# comments
-color white "#.*"
-
-
-# Generic conf/rc/sh file syntax highlighting
-#############################################
-syntax "conf/rc/sh" "conf$|rc$|sh$"
-color white ".+"
+syntax "debian" "debian/control$" "debian/rules$"
+color brightmagenta "^(Package|Source|Section|Priority|Maintainer|Depends|Recommends|Suggests|Conflicts|Replaces|Provides|Architecture|Description):"
 color green "^#.*"
+color yellow "^(override_dh|_clean|_build|_install|_binary):"
 
-# .nanorc syntax highlighting
-#############################
-syntax "nanorc" "[\.]*nanorc$"
-color white "^ *(set|unset).*$"
-color cyan "^ *(set|unset) (autoindent|backup|const|cut|fill|keypad|multibuffer|noconvert|nofollow|nohelp|nowrap|operatingdir|preserve|quotestr|regexp|smooth|speller|suspend|tabsize|tempfile|historylog|view)"
-color brightwhite "^ *syntax [^ ]*"
-color brightblue "^ *set\>" "^ *unset\>" "^ *syntax\>"
-color white "^ *color\>.*"
-color yellow "^ *color (bright)?(black|blue|cyan|green|magenta|red|white|yellow)\>"
-color magenta "^ *color\>"
-color green "^#.*$"
-
-# grub.conf/cfg syntax highlighting
-###############################
-syntax "grub.conf/cfg" "grub\.conf|cfg"
-color cyan "(^default.+|^timeout.+)"
-color red "^title.+"
-color yellow "(initrd.+|kernel.+|root.+)"
-color green "^#.*"
-
-# Include global nanorc
-#include "/usr/share/nano/pkgbuild.nanorc"
+# End of configuration
