@@ -1,0 +1,14 @@
+#!/bin/sh
+# ~/.xserverrc - Configuración personalizada del servidor X
+# Útil junto con .xinitrc para Cinnamon vía startx
+
+# Ruta explícita al binario X (evita problemas con PATH)
+XSERVER="/usr/bin/X"
+
+# Opciones comunes:
+# -nolisten tcp    → Mejora seguridad (desactiva conexiones remotas)
+# -dpi 96          → Fuerza DPI (útil en pantallas HiDPI)
+# -keeptty         → Mantiene control de la TTY
+# -layout es       → Layout de teclado español (ajuste según necesidad)
+
+exec "$XSERVER" -nolisten tcp -dpi 96 -keeptty "$@"
