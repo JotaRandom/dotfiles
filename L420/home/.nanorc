@@ -1,48 +1,27 @@
-# GNU Nano configuration file for enhanced syntax highlighting and Vim-like usability
-# Includes all syntax files from /usr/share/nano-syntax-highlighting/
-# Supports RPM spec files (via rpmspec.nanorc) and Debian control files (via debian.nanorc)
-# Vim-like options without changing default key bindings; compatible with Nano 8.6
+# ~/.nanorc – Para nano 8.6
 
-# Load all syntax highlighting files
-include "/usr/share/nano-syntax-highlighting/*.nanorc"
+include "/usr/share/nano/*.nanorc"
 
-# General display and editing options (Vim-like: smooth, visible, structured)
-set autoindent          # Automatically indent new lines (like Vim's autoindent)
-set backup              # Create backup files (~suffix) on save (like Vim's backup)
-set backupdir "~/.nano/backups"  # Directory for backups (create if needed)
-set boldtext            # Use bold for highlighted text (enhances visibility)
-set casesensitive       # Case-sensitive searches (like Vim default)
-set linenumbers         # Show line numbers (like Vim's :set number)
-set locking             # Use Vim-style file locking (.swp files) to prevent concurrent edits
-set multibuffer         # Allow multiple buffers (like Vim's buffers)
-set noconvert           # Do not convert files (raw editing)
-set nonewlines          # Do not add newline at end of file (like Vim's noendofline)
-set nowrap              # Soft wrap long lines (like Vim's nowrap)
-set softwrap            # Soft-wrap lines for better readability
-set tabsize 4           # Tab width of 4 (common in Vim configs)
-set trimblanks          # Trim trailing whitespace on save
+set titlecolor      bold,white,blue     # Barra superior: blanco negrita sobre azul
+set statuscolor     bold,white,blue     # Barra inferior: blanco negrita sobre azul
+set promptcolor     bold,cyan,blue      # Prompt: cian negrita sobre azul
+set keycolor        cyan                # Teclas de atajos: cian
+set functioncolor   white               # Nombres de funciones: blanco
+set numbercolor     yellow              # Números de línea: amarillo
+set selectedcolor   black,cyan          # Selección: negro sobre cian
+set scrollercolor   cyan                # Barra de scroll: cian
+set errorcolor      bold,red,black      # Errores: rojo negrita
+set spotlightcolor  black,yellow        # Búsqueda: negro sobre amarillo
 
-# Search and replace options (Vim-like: incremental, persistent)
-set historylog          # Log search/replace history (persistent like Vim's history)
-
-# Color scheme (basic dark theme for readability, customizable)
-set titlecolor "brightwhite,blue"  # Title bar
-set statuscolor "green"            # Status bar
-set numbercolor "brightblue"       # Line numbers
-set keycolor "cyan"                # Function key prompts
-set functioncolor "yellow"         # Other prompts
-
-# Syntax-specific overrides (if needed; wildcard includes defaults)
-# Example: Enhance RPM/Debian if base files are insufficient
-syntax "rpmspec" "\.spec$"
-color brightcyan "^(Name|Version|Release|Summary|License|Group|URL|Source|BuildArch):"
-color yellow "^%(\w+)"
-color brightgreen "^(Requires|Provides|Conflicts|Obsoletes):"
-color red "^#.*"
-
-syntax "debian" "debian/control$" "debian/rules$"
-color brightmagenta "^(Package|Source|Section|Priority|Maintainer|Depends|Recommends|Suggests|Conflicts|Replaces|Provides|Architecture|Description):"
-color green "^#.*"
-color yellow "^(override_dh|_clean|_build|_install|_binary):"
-
-# End of configuration
+set linenumbers                         # Números de línea con padding automático
+set constantshow                        # Mostrar Line X/Y Column Z siempre
+set stateflags                          # Mostrar [Modified]
+set minibar                             # Barra inferior compacta
+set indicator                           # Indicador de scroll
+set nonewlines                          # No añadir línea final
+set nowrap                              # No ajustar líneas largas
+set tabsize 8                           # Tabulaciones de 8 espacios
+set tabstospaces                        # Tabs → espacios
+set autoindent                          # Indentación automática
+set cutfromcursor                       # ^K corta desde cursor
+set mouse                               # Soporte de ratón
