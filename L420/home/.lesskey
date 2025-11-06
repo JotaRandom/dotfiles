@@ -1,0 +1,34 @@
+# Nano-like key bindings for less, with optional arrow keys
+
+# Navegación básica (estilo Nano)
+^P          forw-line
+^N          back-line
+^A          forw-line-force
+^E          back-line-force
+
+# Flechas opcionales para navegación vertical
+\kd         forw-line   # Flecha arriba (up)
+\ku         back-line   # Flecha abajo (down)
+
+# Búsqueda
+/           forw-search
+?           back-search
+n           repeat-search
+N           repeat-search-all
+
+# Salir
+q           quit
+^C          quit
+
+# Ir al inicio/fin
+g           goto-line 1
+G           goto-end
+
+# Página arriba/abajo
+^F          forw-screen
+^B          back-screen
+space       forw-screen
+b           back-screen
+
+# Ayuda
+h           help
