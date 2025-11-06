@@ -76,3 +76,8 @@ set enable-keypad On
 # Alt+d → inserta fecha ISO
 "\eh": "\u@\h "
 # Alt+h → inserta usuario@host
+
+# Soporte para ñ y acentos en entrada
+set convert-meta off
+set input-meta on
+set output-meta on

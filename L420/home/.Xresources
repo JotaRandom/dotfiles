@@ -131,3 +131,8 @@ xman*foreground:          #000000
 ! Forzar codificación Latin-1
 *locale:            true
 *inputMethod:       none
+
+! Forzar UTF-8 en xterm
+xterm*locale: true
+xterm*utf8: 2
+xterm*eightBitOutput: true

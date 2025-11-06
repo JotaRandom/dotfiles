@@ -1,55 +1,68 @@
-# Bash configuration file for consistent, colorful, and informative shell
-# Uses Tango color palette to match .Xresources
+# ~/.bashrc
+# Bash retro: prompt DOS + colores siempre ON + soporte latino
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# --------------------------------------------------------------
+# 1. COLORES PERMANENTES (ls, grep, etc.)
+# --------------------------------------------------------------
+# Forzar --color=always en alias comunes
+alias ls='ls --color=always --literal'
+alias dir='ls --color=always --literal -l'
+alias ll='ls --color=always --literal -la'
+alias grep='grep --color=always'
+alias egrep='egrep --color=always'
+alias fgrep='fgrep --color=always'
+alias diff='diff --color=always'
 
-# Display welcome message: Utilizando bash en hostname
-echo -e "\033[38;2;211;215;207mUtilizando bash en $HOSTNAME\033[0m"
+# Exportar variables para programas que las lean
+export GREP_COLORS='mt=01;32'  # Verde brillante para coincidencias
+export LS_COLORS='di=01;34:ln=01;36:ex=01;32:*.*=00'  # Estilo DOS-like
 
-# Set a custom prompt: username@hostname:directory $ (Tango colors)
-PS1='\[\e[38;2;211;215;207m\]\u@\h\[\e[m\]:\[\e[38;2;78;154;6m\]\w\[\e[m\] \$ '
+# --------------------------------------------------------------
+# 2. PROMPT ESTILO DOS (C:\> pero con verde)
+# --------------------------------------------------------------
+# Verde fosforescente (como xterm)
+GREEN='\[\e[01;32m\]'   # Brillante
+RESET='\[\e[0m\]'
 
-# Enable color support for ls and grep
-if [ -x /usr/bin/dircolors ]; then
-    eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
+# Prompt simple: C:\ruta>
+PS1="${GREEN}C:${PWD#>}${RESET}> "
+
+# Si estás en tmux, añade [tmux]
+if [ -n "$TMUX" ]; then
+    PS1="[tmux] $PS1"
 fi
 
-# Common aliases for productivity
-alias ll='ls -l --human-readable'
-alias la='ls -la --human-readable'
-alias nano='nano --rcfile ~/.nanorc'
-alias vi='nano'
-alias less='less -R'
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
-
-# History settings: large, timestamped, append mode
-HISTCONTROL=ignoreboth
-HISTSIZE=8192
-HISTFILESIZE=8192
-HISTTIMEFORMAT='%F %T '
+# --------------------------------------------------------------
+# 3. HISTORIAL Y COMPLETADO
+# --------------------------------------------------------------
+HISTSIZE=1000
+HISTFILESIZE=2000
 shopt -s histappend
-shopt -s cmdhist
+shopt -s cdspell
+shopt -s autocd 2>/dev/null
 
-# Enable programmable completion
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
+# --------------------------------------------------------------
+# 4. SOPORTE LATINO (ñ, acentos)
+# --------------------------------------------------------------
+export LANG=es_CL.UTF-8
+export LC_ALL=es_CL.UTF-8
+
+# --------------------------------------------------------------
+# 5. ALIAS ÚTILES ESTILO DOS
+# --------------------------------------------------------------
+alias cls='clear'
+alias copy='cp'
+alias move='mv'
+alias del='rm'
+alias rd='rmdir'
+alias md='mkdir'
+alias type='cat'
+alias ver='uname -a; echo "Bash $(bash --version | head -1)"'
+alias exit='exit'
+
+# --------------------------------------------------------------
+# 6. CARGAR .inputrc (teclas de edición)
+# --------------------------------------------------------------
+if [ -f ~/.inputrc ]; then
+    bind -f ~/.inputrc
 fi
-
-# Environment variables
-export EDITOR=nano
-export VISUAL=nano
-export TERM=xterm-256color
-export LESSCHARSET=utf-8
-
-# Source additional user-specific configurations
-[ -f ~/.bash_aliases ] && . ~/.bash_aliases
-[ -f ~/.bash_functions ] && . ~/.bash_functions

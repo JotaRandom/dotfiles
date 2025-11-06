@@ -46,7 +46,7 @@ fi
 # Locale y codificación
 export LANG=es_CL.UTF-8
 export LC_ALL=es_CL.UTF-8
-export LANGUAGE=es_CL
+export LANGUAGE=es_CL.UTF-8
 
 # Cargar teclado latinoamericano
 setxkbmap latam
