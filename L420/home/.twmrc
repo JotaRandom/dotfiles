@@ -1,46 +1,119 @@
-# .twmrc configuration for twm
+# ==============================================================
+# .twmrc – Configuración de twm para emular Windows 95
+# Compatible con .Xresources anterior (SIN advertencias)
+# ==============================================================
 
-# Color settings inspired by Bluecurve GTK2 theme
+# --------------------------------------------------------------
+# 1. COMPORTAMIENTO GENERAL
+# --------------------------------------------------------------
+NoGrabServer
+DecorateTransients
+RandomPlacement = off
+ResizeFont = "-misc-fixed-medium-r-normal--13-"
+TitleFont = "-misc-fixed-bold-r-normal--13-"
+MenuFont = "-misc-fixed-medium-r-normal--13-"
+IconFont = "-misc-fixed-medium-r-normal--13-"
+
+# --------------------------------------------------------------
+# 2. BOTONES DE TÍTULO (izquierda y derecha)
+# --------------------------------------------------------------
+# Izquierda: Icono de aplicación (cuadrado)
+LeftTitleButton = "xlogo11" : f.iconify
+
+# Derecha: Minimizar | Maximizar | Cerrar
+RightTitleButton = "%" : f.menu "WindowOps"
+Button = 1 : f.menu "WindowOps"
+
+# --------------------------------------------------------------
+# 3. MENÚ DE OPERACIONES DE VENTANA (clic derecho en título)
+# --------------------------------------------------------------
+menu "WindowOps"
+{
+    "Operaciones de Ventana" f.title
+    "Mover"                  f.move
+    "Redimensionar"          f.resize
+    "Minimizar"              f.iconify
+    "Maximizar"              f.maximize
+    ""                       f.nop
+    "Cerrar"                 f.delete
+    ""                       f.nop
+    "Salir de TWM"           f.quit
+}
+
+# --------------------------------------------------------------
+# 4. MENÚ PRINCIPAL (clic en fondo de escritorio)
+# --------------------------------------------------------------
+menu "MainMenu"
+{
+    "Menú Principal" f.title
+    "xterm (DOS)"     f.exec "xterm &"
+    "Reloj"           f.exec "xclock &"
+    "Calculadora"     f.exec "xcalc &"
+    "Carga del sistema" f.exec "xload &"
+    ""                f.nop
+    "Reiniciar TWM"   f.restart
+    "Salir"           f.quit
+}
+
+# Clic central en fondo → Menú principal
+Button = 2 : root : f.menu "MainMenu"
+
+# --------------------------------------------------------------
+# 5. ICONOS CLÁSICOS DE WINDOWS 95 (bitmaps)
+# --------------------------------------------------------------
+# Si tienes bitmaps en /usr/share/pixmaps o ~/.twm/bitmaps/
+# Ejemplo: crea un directorio ~/.twm/bitmaps/ con archivos .xbm
+
+# Icono de aplicación genérico (cuadrado con X)
+Icon = "xlogo11"
+
+# Icono para xterm (disquete o C: si tienes)
+# Icon "xterm" = "diskette"
+
+# --------------------------------------------------------------
+# 6. FONDO DE ESCRITORIO (opcional)
+# --------------------------------------------------------------
+# Color sólido (gris plata, coherente con .Xresources)
 Color
 {
-    BorderColor "#3C7BAC"  # Bluecurve-like blue for window borders
-    DefaultBackground "#3C7BAC"  # Bluecurve-like blue for title bars
-    DefaultForeground "white"    # White text for title bars
-    MenuBackground "#D3E4F3"     # Lighter blue-gray for menu background
-    MenuForeground "black"       # Black text for menus
-    IconBackground "#3C7BAC"     # Bluecurve-like blue for icon backgrounds
-    IconForeground "white"       # White text for icons
+    DefaultBackground = "#c0c0c0"
 }
 
-# Font settings (using simplified XLFD for Noto Sans at size 10)
-TitleFont "-*-noto sans-*-r-*-*-10-*-*-*-*-*-*-*"
-ResizeFont "-*-noto sans-*-r-*-*-10-*-*-*-*-*-*-*"
-MenuFont "-*-noto sans-*-r-*-*-10-*-*-*-*-*-*-*"
-IconFont "-*-noto sans-*-r-*-*-10-*-*-*-*-*-*-*"
+# Opcional: bitmap clásico de Windows 95
+# Pixmap = "/ruta/a/windows95.bmp"  # (requiere xpm, no xbpm)
+# NoBackground
 
-# Border width
-BorderWidth 2
+# --------------------------------------------------------------
+# 7. GEOMETRÍA Y COMPORTAMIENTO
+# --------------------------------------------------------------
+BorderWidth = 3
+TitlePadding = 4
+FramePadding = 2
+ButtonIndent = 1
 
-# Window behavior
-AutoRaise { "xterm" }  # Automatically raise xterm windows when focused
-NoTitle { "xclock" }   # No title bar for xclock
-RandomPlacement        # Place new windows randomly if unspecified
+# Ventanas maximizadas ocupan toda la pantalla
+FullScreenZoom
 
-# Mouse bindings
-Button1 = : root : f.menu "mainmenu"  # Left-click on root opens menu
-Button2 = : window : f.move          # Middle-click on window to move
-Button3 = : window : f.resize        # Right-click on window to resize
+# No mostrar título en iconos
+NoIconTitle
 
-# Keyboard bindings
-"Ctrl+Alt+t" = : all : f.exec "xterm"  # Launch xterm with Ctrl+Alt+T
+# --------------------------------------------------------------
+# 8. TECLADO (atajos estilo Windows)
+# --------------------------------------------------------------
+# Alt + F4 = Cerrar ventana
+"Alt<Key>F4" = all : f.delete
 
-# Main menu definition
-menu "mainmenu"
-{
-    "TWM Menu"        f.title
-    "Xterm"           f.exec "xterm &"
-    "Xclock"          f.exec "xclock &"
-    "Refresh"         f.refresh
-    "Restart"         f.restart
-    "Exit"            f.quit
-}
+# Alt + Tab = Ciclar ventanas
+"Alt<Key>Tab" = all : f.next
+
+# Win + D = Mostrar escritorio (iconificar todo)
+"Mod4<Key>D" = all : f.iconifyall
+
+# --------------------------------------------------------------
+# 9. ICON MANAGER (barra de tareas opcional)
+# --------------------------------------------------------------
+IconManagerDontShow = { "xclock", "xload" }  # No mostrar en barra
+ShowIconManager
+IconManagerGeometry = "300x1-1-1"  # Abajo, 300px ancho
+IconManagerBackground = "#c0c0c0"
+IconManagerForeground = "#000000"

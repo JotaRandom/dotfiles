@@ -1,0 +1,3 @@
+# ~/.Xdefaults
+! Compatibilidad con .Xresources
+#include ".Xresources"

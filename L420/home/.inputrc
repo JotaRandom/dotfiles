@@ -1,7 +1,78 @@
-# Enable case-insensitive completion
-set completion-ignore-case on
-# Show all matches on first tab
-set show-all-if-ambiguous on
-# Vim-like key bindings (optional)
-set editing-mode vi
-set keymap vi
+# ~/.inputrc - Configuración validada para Readline 8.3: emulación de nano con colores vía LS_COLORS
+
+# === Modo de edición: emulación de nano ===
+set editing-mode emacs
+set keymap emacs
+
+# --- Movimiento del cursor (como nano) ---
+"\e[1;3D": backward-word
+# Alt+Izquierda → palabra atrás
+"\e[1;3C": forward-word
+# Alt+Derecha → palabra adelante
+"\e[1;5D": beginning-of-line
+# Ctrl+Izquierda → inicio de línea
+"\e[1;5C": end-of-line
+# Ctrl+Derecha → fin de línea
+
+# --- Edición de texto ---
+"\e ": kill-word
+# Alt+Espacio → borrar palabra adelante
+"\e\177": backward-kill-word
+# Alt+Backspace → borrar palabra atrás
+"\C-w": backward-kill-word
+# Ctrl+w → borrar palabra atrás (como nano)
+"\C-u": unix-line-discard
+# Ctrl+u → borrar hasta inicio
+"\C-k": kill-line
+# Ctrl+k → borrar hasta fin
+
+# --- Búsqueda e historial (como nano Ctrl+W / Ctrl+R) ---
+"\C-s": reverse-search-history
+# Ctrl+s → búsqueda hacia atrás
+"\C-r": forward-search-history
+# Ctrl+r → búsqueda hacia adelante
+
+# --- Otras funciones útiles de nano ---
+"\C-t": " | less\n"
+# Ctrl+t → paginar salida
+"\C-o": "\C-e\C-u echo \"Guardar como? \"; read file; cat > \"$file\"\n"
+# Ctrl+o → guardar (ejemplo interactivo)
+"\C-x": "\C-e\C-u exit\n"
+# Ctrl+x → salir
+
+# === Completado con colores (usa LS_COLORS del entorno) ===
+set colored-stats On
+# Activa colores en completado (requiere LS_COLORS definida)
+set colored-completion-prefix On
+# Colorea el prefijo común
+set completion-prefix-display-length 2
+# Trunca prefijo si >2 caracteres
+set show-all-if-ambiguous On
+# Autocompleta si único
+set completion-ignore-case On
+# Ignora mayúsculas
+set completion-query-items 100
+# Pregunta si >100
+
+# === Comportamiento general robusto ===
+set bell-style visible
+# Pitido visual (sin sonido)
+
+set expand-tilde On
+# Expande ~ en completado
+set history-preserve-point On
+# Mantiene posición del cursor en historial
+set mark-directories On
+# Añade / a directorios
+set mark-symlinked-directories On
+# Ídem para enlaces
+set revert-all-at-newline On
+# Restaura línea al pulsar Enter
+set enable-keypad On
+# Soporte para teclas especiales
+
+# === Macros útiles adicionales ===
+"\ed": "date -u +%Y-%m-%dT%H:%M:%SZ\n"
+# Alt+d → inserta fecha ISO
+"\eh": "\u@\h "
+# Alt+h → inserta usuario@host

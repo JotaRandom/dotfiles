@@ -43,6 +43,17 @@ elif command -v mate-power-manager >/dev/null; then
     mate-power-manager &
 fi
 
+# Locale y codificación
+export LANG=es_CL.UTF-8
+export LC_ALL=es_CL.UTF-8
+export LANGUAGE=es_CL
+
+# Cargar teclado latinoamericano
+setxkbmap latam
+
+# Cargar Xmodmap (refuerzo)
+# xmodmap ~/.Xmodmap &
+
 # ------------------------------------------------------------------
 # 4. Iniciar Cinnamon
 # ------------------------------------------------------------------
