@@ -2,5 +2,5 @@
 *~
 PKGBUILD/*/*
 PKGBUILD/*/*.*
-
-!PKGBUILD/*/
+!PKGBUILD
+!PKGBUILD/*
