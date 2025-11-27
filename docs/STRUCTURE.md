@@ -6,6 +6,7 @@ Top-level:
   - desktop/: xfce, x11, etc.
   - system/: etc/ config (udev, modprobe.d, X11)
   - pkgbuilder/: scripts y PKGBUILD relacionados
+    - PKGBUILD/: colecciones de PKGBUILDs; algunos paquetes se mantienen como submodules (distros/PKGBUILD/*) para facilitar su actualización desde AUR.
   - scripts/: utilidades para instalar/desplegar
 - machines/: archivos específicos por hardware (archivos DSDT, perfiles, dumps)
   - L420/: máquina actual (hardware y archivos históricos específicos)

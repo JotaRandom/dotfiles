@@ -12,6 +12,8 @@ Pasos para reinstalar y aplicar tu configuración (Linux, WSL):
    cd ~/dotfiles
    git lfs install
    git lfs pull
+   # Clonar también los submodules (PKGBUILD):
+   git submodule update --init --recursive
    ```
 2. Instalar dependencias (ej. stow):
    - Debian/Ubuntu: `sudo apt install stow git-lfs`
