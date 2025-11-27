@@ -7,6 +7,7 @@ Breve colección de configuraciones, ajustes y archivos de configuración person
 - **`machines/`**: archivos específicos por máquina (histórico) — ahora incluye `machines/L420` (mi máquina actual) y `machines/Toshiba` (antigua).
 - **`assets/`**: recursos multimedia y binarios (por ejemplo `assets/poni` con imágenes de `ponysay`).
 - **`distros/`**: configuraciones ajustadas por distribución (PopOS, PKGBUILD, etc.).
+	- **`distros/PKGBUILD/`**: algunas carpetas de PKGBUILD se mantienen como submodules apuntando a sus repos en AUR; revisa `docs/CONTRIBUTING.md` para instrucciones sobre cómo actualizar.
 - **`CC-SA-4.0`**, **`GPL-2.0`**: Archivos de licencia presentes en la raíz del repositorio.
 
 **Descripción rápida**
