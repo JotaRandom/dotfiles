@@ -29,6 +29,23 @@ Breve colección de configuraciones, ajustes y archivos de configuración person
 - **Archivos históricos**: Algunas carpetas (por ejemplo `Toshiba/`) están aquí solo como referencia y no todas las configuraciones están garantizadas para funcionar en hardware moderno.
  - **Archivos históricos**: Las máquinas antiguas (por ejemplo `machines/Toshiba`) se encuentran en `machines/` como referencia. Para despliegue, utiliza los módulos en `modules/`.
 
+**Quick start — Reinstalación**
+- Para preparar y aplicar tu configuración tras reinstalar un sistema Linux/WSL:
+	```bash
+	git clone https://github.com/JotaRandom/dotfiles.git ~/dotfiles
+	cd ~/dotfiles
+	git lfs install
+	git lfs pull
+	./scripts/install.sh
+	# o especifica los módulos que quieres aplicar:
+	./scripts/install.sh modules/shell/bash modules/tmux
+	```
+- En Windows, preferiblemente usa WSL o ejecuta `scripts/install.ps1` con permisos de administrador:
+	```powershell
+	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+	.\scripts\install.ps1 modules/shell/bash
+	```
+
 **Contribuir**
 - **Pull requests**: Bienvenidas pequeñas mejoras, correcciones de ortografía y actualización de notas.
 - **Issues**: Usa GitHub Issues para reportar errores en los scripts o para preguntar sobre cómo desplegar algo en un entorno específico.
