@@ -1,0 +1,18 @@
+[submodule "distros/PKGBUILD/bluecurve-theme-git"]
+	path = distros/PKGBUILD/bluecurve-theme-git
+	url = ssh://aur@aur.archlinux.org/bluecurve-theme-git.git
+[submodule "distros/PKGBUILD/micropolis-java"]
+	path = distros/PKGBUILD/micropolis-java
+	url = ssh://aur@aur.archlinux.org/micropolis-java.git
+[submodule "distros/PKGBUILD/xapp-symbolic-icons-git"]
+	path = distros/PKGBUILD/xapp-symbolic-icons-git
+	url = ssh://aur@aur.archlinux.org/xapp-symbolic-icons-git.git
+[submodule "distros/PKGBUILD/xapp-symbolic-icons"]
+	path = distros/PKGBUILD/xapp-symbolic-icons
+	url = ssh://aur@aur.archlinux.org/xapp-symbolic-icons.git
+[submodule "distros/PKGBUILD/xfce-theme-greybird-git"]
+	path = distros/PKGBUILD/xfce-theme-greybird-git
+	url = ssh://aur@aur.archlinux.org/xfce-theme-greybird-git.git
+[submodule "distros/PKGBUILD/xfwm4-theme-pop-git"]
+	path = distros/PKGBUILD/xfwm4-theme-pop-git
+	url = ssh://aur@aur.archlinux.org/xfwm4-theme-pop-git.git
