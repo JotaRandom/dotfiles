@@ -2,6 +2,20 @@
 
 Breve colección de configuraciones, ajustes y archivos de configuración personalizados usados por mí en varias máquinas (laptops antiguas y nuevas). El repositorio agrupa dotfiles para diferentes equipos y entornos, junto con extras y notas históricas.
 
+**One-line Quick Start (Linux / WSL)**
+Para clonar, preparar y aplicar la configuración en una sola línea (Linux / WSL):
+```bash
+git clone --recurse-submodules https://github.com/JotaRandom/dotfiles.git ~/dotfiles && cd ~/dotfiles && git lfs install && git lfs pull && git submodule update --init --recursive && ./scripts/install.sh
+```
+
+**One-line Quick Start (PowerShell / Windows)**
+Para clonar, preparar y aplicar la configuración en una sola línea (PowerShell):
+```powershell
+git clone https://github.com/JotaRandom/dotfiles.git $HOME\dotfiles; cd $HOME\dotfiles; git lfs install; git lfs pull; git submodule update --init --recursive; .\scripts\install.ps1
+```
+
+Lee `docs/INSTALL.md` si necesitas más detalle o alternativas (stow, configuraciones por distro, o ajustes manuales).
+
 **Estructura**
 - **`modules/`**: módulos de dotfiles por función listos para usar con `stow` (ej. `modules/shell/bash`, `modules/desktop/xfce`, `modules/system/etc`).
 - **`machines/`**: archivos específicos por máquina (histórico) — ahora incluye `machines/L420` (mi máquina actual) y `machines/Toshiba` (antigua).
