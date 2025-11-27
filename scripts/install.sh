@@ -30,7 +30,7 @@ if [[ "${1:-}" == "--hwdb" ]]; then
   shift
 fi
 
-MODULES=("modules/shell/bash" "modules/shell/zsh" "modules/shell/fish" "modules/shell/ksh" "modules/shell/tcsh" "modules/shell/mksh" "modules/tmux" "modules/windowing/x11" "modules/desktop/xfce" "modules/system/etc" "modules/apps/xmms" "modules/editor/nvim" "modules/editor/vscode" "modules/editor/emacs" "modules/editor/vim" "modules/editor/nano" "modules/editor/latex")
+MODULES=("modules/shell/bash" "modules/shell/zsh" "modules/shell/fish" "modules/shell/ksh" "modules/shell/tcsh" "modules/shell/mksh" "modules/apps/tmux" "modules/apps/xmms" "modules/windowing/x11" "modules/desktop/xfce" "modules/system/etc" "modules/editor/nvim" "modules/editor/vscode" "modules/editor/emacs" "modules/editor/vim" "modules/editor/nano" "modules/editor/latex")
 if [[ $# -gt 0 ]]; then
   MODULES=("$@")
 fi

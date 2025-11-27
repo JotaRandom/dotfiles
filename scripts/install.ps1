@@ -9,7 +9,7 @@ function Ensure-GitLFS {
 }
 
 if ($Modules.Count -eq 0) {
-    $Modules = @('modules/shell/bash','modules/shell/zsh','modules/tmux')
+    $Modules = @('modules/shell/bash','modules/shell/zsh','modules/apps/tmux','modules/apps/xmms')
 }
 
 Ensure-GitLFS
