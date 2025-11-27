@@ -1,17 +1,24 @@
+# Fish sample configuration
+set -gx EDITOR nvim
+function fish_prompt
+    set_color green
+    printf "(%s) %s> " (basename (pwd)) (date "+%H:%M")
+    set_color normal
+end
 # Fish configuration — archivo principal
 # - Usa la paleta "Tango" y hace que la shell sea consistente con X11 resources
 # - Guarda este archivo en: ~/.config/fish/config.fish
 
 # Mensaje de bienvenida (solo en shells interactivas)
-printf "\033[38;2;211;215;207mUtilizando fish en %s\033[0m\n" $hostname
+printf "\033[38;2;211;215;207mUtilizando fish en %s\033[0m\n" (hostname)
 
 ## Prompt: usuario@host:directorio $ (colores)
 function fish_prompt
-    set_color -o D3D7CF
-    echo -n "$USER@$hostname"
+    set_color green
+    echo -n "$USER@"(hostname)
     set_color normal
     echo -n ':'
-    set_color -o 4E9A06
+    set_color 4E9A06
     echo -n (prompt_pwd)
     set_color normal
     echo -n ' $ '

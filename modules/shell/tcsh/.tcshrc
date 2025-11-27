@@ -1,0 +1,3 @@
+# C shell (tcsh) sample configuration
+setenv EDITOR vi
+alias ll 'ls -l'

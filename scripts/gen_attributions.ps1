@@ -17,8 +17,8 @@ Listado:
 
 "@
 
-$files = Get-ChildItem -Path $AssetsPath -File | Sort-Object Name | ForEach-Object { "- `" + $_.Name + "` - Autor desconocido (Licencia desconocida)" }
+$files = Get-ChildItem -Path $AssetsPath -File | Sort-Object Name | ForEach-Object { "- " + $_.Name + " - Autor desconocido (Licencia desconocida)" }
 
 $header + ($files -join "`n") | Out-File -FilePath $OutFile -Encoding UTF8
 
-Write-Host "Generado $OutFile con $(($files).Count) entradas"
+Write-Host ("Generado {0} con {1} entradas" -f $OutFile, ($files).Count)

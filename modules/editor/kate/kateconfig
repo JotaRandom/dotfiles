@@ -1,0 +1,4 @@
+# Kate config example
+[General]
+show_line_numbers=true
+tab_width=2

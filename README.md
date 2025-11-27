@@ -64,6 +64,15 @@ Lee `docs/INSTALL.md` si necesitas más detalle o alternativas (stow, configurac
 	./scripts/update-submodules.sh micropolis-java  # Actualiza solo micropolis-java
 	```
 
+	**Auto-setup de teclado (Latin American)**
+	Si deseas que el `layout` `latam` se aplique automáticamente cuando conectas un teclado, tienes dos opciones según el entorno:
+
+	- Xorg (recomendado para X11): usa `./scripts/install.sh --xorg`. Esto instala un `InputClass` para Xorg que establece `XkbLayout` a `latam` para teclados.
+	- hwdb / udev (recomendado para Wayland o si quieres una solución a nivel kernel): copia `modules/system/etc/udev/hwdb.d/90-latin-layout.hwdb` y corre `sudo systemd-hwdb update && sudo udevadm trigger`, o usa `./scripts/install.sh --hwdb`.
+
+	 Revisa `docs/INSTALL.md` para más detalles e instrucciones manuales.
+
+
 Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y `docs/CONTRIBUTING.md`.
 
 **Quick start — Reinstalación**
@@ -75,7 +84,7 @@ Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y
 	git lfs pull
 	./scripts/install.sh
 	# o especifica los módulos que quieres aplicar:
-	./scripts/install.sh modules/shell/bash modules/tmux
+	./scripts/install.sh modules/shell/bash modules/shell/fish modules/editor/nvim modules/editor/vscode
 	```
 - En Windows, preferiblemente usa WSL o ejecuta `scripts/install.ps1` con permisos de administrador:
 	```powershell

@@ -1,0 +1,3 @@
+; Kakoune basic config
+set global default-reg 'a'
+set-option global tabstop 2

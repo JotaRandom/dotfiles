@@ -1,0 +1,4 @@
+; Nushell minimal sample configuration.
+[settings]
+prompt = 'nu'
+set -g editor 'nvim'

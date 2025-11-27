@@ -1,0 +1,16 @@
+# Elvish configuration: plantilla mínima
+export EDITOR=vi
+
+# Alias ejemplos
+alias ll = 'ls -al'
+# Elvish configuration: plantilla mínima
+# Añade tus alias y funciones aquí
+
+# Variables de entorno
+export EDITOR=vi
+
+# Alias ejemplos
+alias ll = 'ls -al'
+
+# Prompt simple
+set prompt = &{echo -n (pwd) ' > '}

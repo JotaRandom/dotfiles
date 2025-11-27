@@ -3,8 +3,11 @@ Estructura del repositorio (propuesta híbrida)
 Top-level:
 - modules/: módulos stowables y compartidos (dotfiles por función)
   - shell/: bash, zsh, fish, etc.
+    - shells incluidos: `bash`, `zsh`, `fish`, `ksh`, `tcsh`, `mksh`, `elvish`, `xonsh`, `pwsh`.
   - desktop/: xfce, x11, etc.
   - system/: etc/ config (udev, modprobe.d, X11)
+  - editor/: configuración base para varios editores: `nvim`, `emacs`, `vscode`, `vim`, `nano`, `helix`, `kakoune`, `micro`, `gedit`, `kate`, `latex`.
+    - Cada editor tiene su propio directorio con archivos de configuración mínimos: `modules/editor/<editor>/`.
   - pkgbuilder/: scripts y PKGBUILD relacionados
     - PKGBUILD/: colecciones de PKGBUILDs; algunos paquetes se mantienen como submodules (distros/PKGBUILD/*) para facilitar su actualización desde AUR.
   - scripts/: utilidades para instalar/desplegar
