@@ -3,10 +3,10 @@
 Breve colección de configuraciones, ajustes y archivos de configuración personalizados usados por mí en varias máquinas (laptops antiguas y nuevas). El repositorio agrupa dotfiles para diferentes equipos y entornos, junto con extras y notas históricas.
 
 **Estructura**
-- **`L420/`**: Configuraciones y archivos relacionados con mi Lenovo ThinkPad L420.
-- **`Toshiba/`**: Copias históricas de configuraciones de un Toshiba antiguo (archivos de referencia, `dsdt.dsl`, etc.).
-- **`PopOS/`**, **`PKGBUILD/`**, **`etc/`**, **`usr/`**: Configs para distintas distribuciones, paquetes y ajustes de sistema.
-- **`Poni/`**: Imágenes y recursos creados o adaptados para `ponysay` (ver `Poni/` para detalles sobre autores y licencias de cada imagen).
+- **`modules/`**: módulos de dotfiles por función listos para usar con `stow` (ej. `modules/shell/bash`, `modules/desktop/xfce`, `modules/system/etc`).
+- **`machines/`**: archivos específicos por máquina (histórico) — ahora incluye `machines/L420` (mi máquina actual) y `machines/Toshiba` (antigua).
+- **`assets/`**: recursos multimedia y binarios (por ejemplo `assets/poni` con imágenes de `ponysay`).
+- **`distros/`**: configuraciones ajustadas por distribución (PopOS, PKGBUILD, etc.).
 - **`CC-SA-4.0`**, **`GPL-2.0`**: Archivos de licencia presentes en la raíz del repositorio.
 
 **Descripción rápida**
@@ -20,13 +20,14 @@ Breve colección de configuraciones, ajustes y archivos de configuración person
 - **Desplegar dotfiles (ejemplos)**:
 	- Con `stow` (recomendado en sistemas Unix):
 		1. `cd ~/dotfiles`
-		2. `stow <carpeta>` (por ejemplo `stow L420` para enlazar los archivos al `$HOME`).
+		2. `stow modules/shell/bash` (por ejemplo `stow modules/shell/bash` para enlazar `.bashrc` al `$HOME`).
 	- Enlace manual (Linux/macOS): `ln -s ~/dotfiles/.bashrc ~/.bashrc`.
 	- Enlace manual (PowerShell, requiere permisos/Developer Mode): `New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\\.bashrc" -Target "$pwd\\.bashrc"`
 
 **Notas importantes**
 - **Symlinks en Windows**: Crear enlaces simbólicos en Windows puede requerir permisos de administrador o activar el modo desarrollador.
 - **Archivos históricos**: Algunas carpetas (por ejemplo `Toshiba/`) están aquí solo como referencia y no todas las configuraciones están garantizadas para funcionar en hardware moderno.
+ - **Archivos históricos**: Las máquinas antiguas (por ejemplo `machines/Toshiba`) se encuentran en `machines/` como referencia. Para despliegue, utiliza los módulos en `modules/`.
 
 **Contribuir**
 - **Pull requests**: Bienvenidas pequeñas mejoras, correcciones de ortografía y actualización de notas.
@@ -34,6 +35,10 @@ Breve colección de configuraciones, ajustes y archivos de configuración person
 
 **Licencia**
 - Este repositorio contiene archivos bajo distintas licencias; revisa `CC-SA-4.0` y `GPL-2.0` en la raíz. Además, revisa cualquier archivo individual que incluya un aviso de copyright.
+
+**Notas sobre Git LFS**
+- Este repositorio usa Git LFS para almacenar archivos binarios grandes (por ejemplo las imágenes en `assets/poni`). Si clonas el repo, instala Git LFS y corre `git lfs install` antes de clonar para evitar problemas con archivos binarios.
+
 
 **Contacto**
 - Para preguntas o sugerencias, abre un issue en este repositorio o contacta al mantenedor (ver perfil de GitHub `JotaRandom`).
