@@ -30,6 +30,28 @@ Breve colección de configuraciones, ajustes y archivos de configuración person
 - **Archivos históricos**: Algunas carpetas (por ejemplo `Toshiba/`) están aquí solo como referencia y no todas las configuraciones están garantizadas para funcionar en hardware moderno.
  - **Archivos históricos**: Las máquinas antiguas (por ejemplo `machines/Toshiba`) se encuentran en `machines/` como referencia. Para despliegue, utiliza los módulos en `modules/`.
 
+**Preparar el repositorio (checklist rápido)**
+- Clona y prepara submodules y LFS:
+	```bash
+	git clone --recurse-submodules https://github.com/JotaRandom/dotfiles.git ~/dotfiles
+	cd ~/dotfiles
+	git lfs install
+	git lfs pull
+	git submodule update --init --recursive
+	```
+- Instala dotfiles (stow / scripts):
+	```bash
+	./scripts/install.sh            # Unix/WSL (usa stow)
+	.\scripts\install.ps1         # PowerShell (Windows - ejecutar con permisos si requiere symlinks)
+	```
+- Opcional: actualizar PKGBUILD submodules (todos o un paquete específico):
+	```bash
+	./scripts/update-submodules.sh           # Actualiza todos los submodules
+	./scripts/update-submodules.sh micropolis-java  # Actualiza solo micropolis-java
+	```
+
+Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y `docs/CONTRIBUTING.md`.
+
 **Quick start — Reinstalación**
 - Para preparar y aplicar tu configuración tras reinstalar un sistema Linux/WSL:
 	```bash
