@@ -1,16 +1,23 @@
 [user]
+	# Datos por defecto del usuario. Puedes rellenarlos o sobreescribirlos en
+	# tu configuración local (~/.gitconfig) para mantener tu firma personal.
 	name = 
 	email = 
 	signingkey = 
 	autocrlf = input
 [commit]
+	# Firma GPG por defecto para commits (recomendado si firmas tus commits)
 	gpgsign = true
 [core]
+	# Editor por defecto para mensajes de commit
 	editor = nano
+	# Archivo global .gitignore
 	excludesfile = ~/.gitignore
 [color]
+	# Activar colores en la salida por defecto
 	ui = auto
 [alias]
+	# Alias comunes para ahorrar tecleo
 	st = status
 	ci = commit
 	br = branch

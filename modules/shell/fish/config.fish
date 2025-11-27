@@ -1,11 +1,11 @@
-# Fish configuration file for consistent, colorful, and informative shell
-# Uses Tango color palette to match .Xresources
-# Save to ~/.config/fish/config.fish
+# Fish configuration — archivo principal
+# - Usa la paleta "Tango" y hace que la shell sea consistente con X11 resources
+# - Guarda este archivo en: ~/.config/fish/config.fish
 
-# Display welcome message: Utilizando fish en hostname
+# Mensaje de bienvenida (solo en shells interactivas)
 printf "\033[38;2;211;215;207mUtilizando fish en %s\033[0m\n" $hostname
 
-# Set prompt: username@hostname:directory $ (Tango colors)
+## Prompt: usuario@host:directorio $ (colores)
 function fish_prompt
     set_color -o D3D7CF
     echo -n "$USER@$hostname"
@@ -27,11 +27,11 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-# History settings: large, persistent
+# Historial: persistente y de tamaño amplio
 set fish_history_size 8192
 set fish_history_path ~/.local/share/fish/fish_history
 
-# Enable color support for ls and grep
+## Soporte de color para herramientas comunes (ls, grep)
 if type -q dircolors
     eval (dircolors -c)
     alias ls='ls --color=auto'

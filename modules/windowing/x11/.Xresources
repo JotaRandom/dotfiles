@@ -1,11 +1,17 @@
 ! ==============================================================
 ! .Xresources – Tema retro: DOS (xterm) + Windows 95 (twm y apps)
-! SIN ADVERTENCIAS: recursos globales definidos UNA SOLA VEZ
-! Cargar con: xrdb -merge ~/.Xresources
+! Uso/propósito: mantiene un tema consistente entre terminal y apps X11.
+! Cómo usar:
+!  - xrdb -merge ~/.Xresources       # aplicar los recursos al X server
+!  - Crea o ajusta font/colores si usas otra paleta
+! Notas: muchos window managers heredan estas propiedades; modifica sólo
+! si conoces el impacto en tu entorno de ventanas.
 ! ==============================================================
 
 ! --------------------------------------------------------------
 ! 1. RECURSOS GLOBALES (definidos una sola vez – prioridad máxima)
+! Estas definiciones aplican a la mayoría de widgets y aplicaciones
+! y son intencionadas para dar una apariencia "Win95" retro.
 ! --------------------------------------------------------------
 *background:              #c0c0c0        ! Gris plata Windows 95 (fondo general)
 *foreground:              #000000        ! Negro (texto estándar)

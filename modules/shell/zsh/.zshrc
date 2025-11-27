@@ -1,16 +1,18 @@
-# Zsh configuration file for consistent, colorful, and informative shell
-# Uses Tango color palette to match .Xresources
+# Zsh configuration — opciones principales y aliases
+# Este archivo configura prompt, color, historial y completado.
+# Usa colores type "Tango" y respeta variables de entorno globales (*.Xresources).
 
-# Display welcome message: Utilizando zsh en hostname
+## Mensaje de bienvenida (útil en sesiones interactivas)
 printf "\033[38;2;211;215;207mUtilizando zsh en %s\033[0m\n" $HOST
 
-# Set prompt: username@hostname:directory $ (Tango colors)
+# Prompt: username@host:pwd $
+# - %n: usuario, %m: hostname corto, %~: directorio relativo
 autoload -U colors && colors
 PS1='%F{white}%n@%m%f:%F{142}%~%f \$ '
 
-# Enable color support for ls and grep
+## Color en herramientas estándar
 if [ -x /usr/bin/dircolors ]; then
-    eval "$(dircolors -b)"
+    eval "$(dircolors -b)"    # carga esquema de colores para terminal
     alias ls='ls --color=auto'
     alias grep='grep --color=auto'
 fi
@@ -25,7 +27,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-# History settings: large, timestamped, append mode
+## Historial: tamaño y opciones para mantener historial sano y completo
 HISTFILE=~/.zsh_history
 HISTSIZE=8192
 SAVEHIST=8192
@@ -35,7 +37,7 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_SAVE_BY_COPY
 setopt EXTENDED_HISTORY
 
-# Enable completion
+## Autocompletado y comportamiento de coincidencias (case-insensitive)
 autoload -Uz compinit
 compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
@@ -46,6 +48,6 @@ export VISUAL=nano
 export TERM=xterm-256color
 export LESSCHARSET=utf-8
 
-# Source additional user-specific configurations
+# Cargar alias y funciones definidos por usuario si existen
 [ -f ~/.zsh_aliases ] && . ~/.zsh_aliases
 [ -f ~/.zsh_functions ] && . ~/.zsh_functions
