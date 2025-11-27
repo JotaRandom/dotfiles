@@ -11,7 +11,7 @@ Submodules (PKGBUILD / AUR packages)
 - Para actualizar un submodule a su última versión upstream:
 	```bash
 	cd distros/PKGBUILD/<package>
-	git pull origin master  # o la rama correspondiente
+	git pull origin main  # o la rama correspondiente
 	cd -
 	git add distros/PKGBUILD/<package>
 	git commit -m "chore: update submodule <package> to latest upstream"
@@ -47,3 +47,4 @@ Workflow recomendado:
 1. Crear una rama: `git checkout -b feature/<nueva-config>`.
 2. Añadir cambios pequeños y testear `stow` si aplicable.
 3. Abrir un Pull Request con descripción detallada y capturas o notas de prueba.
+

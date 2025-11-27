@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  shell-lint:
+    name: Bash lint & syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Bash syntax check
+        run: |
+          for f in ./scripts/*.sh; do bash -n "$f"; done
+      - name: Run shellcheck
+        run: |
+          for f in ./scripts/*.sh; do shellcheck "$f" || true; done
+
+  powershell-lint:
+    name: PowerShell lint
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Analyze PowerShell scripts
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path scripts\*.ps1 -Recurse
+
+  lfs-and-submodule-check:
+    name: LFS & submodules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Validate submodules
+        run: |
+          git submodule status --recursive
+      - name: Check LFS tracked assets
+        run: |
+          git lfs ls-files || true
+      - name: Check .gitattributes includes assets/**
+        run: |
+          grep -E '^assets/\*\* filter=lfs' .gitattributes
