@@ -1,77 +1,39 @@
-_INFORMATION_
+**Dotfiles**
 
-This is the record and tweaks of my dotfiles like .bashrc .zshrc and 
-others spesific or less accecible files like issue
+Breve colección de configuraciones, ajustes y archivos de configuración personalizados usados por mí en varias máquinas (laptops antiguas y nuevas). El repositorio agrupa dotfiles para diferentes equipos y entornos, junto con extras y notas históricas.
 
-Is possible that  add others specials files or REALLY tweaked configs
+**Estructura**
+- **`L420/`**: Configuraciones y archivos relacionados con mi Lenovo ThinkPad L420.
+- **`Toshiba/`**: Copias históricas de configuraciones de un Toshiba antiguo (archivos de referencia, `dsdt.dsl`, etc.).
+- **`PopOS/`**, **`PKGBUILD/`**, **`etc/`**, **`usr/`**: Configs para distintas distribuciones, paquetes y ajustes de sistema.
+- **`Poni/`**: Imágenes y recursos creados o adaptados para `ponysay` (ver `Poni/` para detalles sobre autores y licencias de cada imagen).
+- **`CC-SA-4.0`**, **`GPL-2.0`**: Archivos de licencia presentes en la raíz del repositorio.
 
-Frecuently...REALLY frecuently I change my WM/DE for this reazon the 
-updates aren't so freccuents.
-But for now I stay on XFCE
+**Descripción rápida**
+- **Propósito**: Guardar y versionar configuraciones útiles (por ejemplo, `.bashrc`, `.zshrc`, archivos de `X11`, `udev`, `modprobe.d`, etc.) para poder replicarlas o consultarlas en el futuro.
+- **Alcance**: Incluye configuraciones activas y antiguas. Algunas carpetas son históricas y se mantienen por referencia.
 
-___Toshiba___
+**Instalación y uso**
+- **Clonar el repositorio**:
+	- Linux/macOS: `git clone https://github.com/JotaRandom/dotfiles.git ~/dotfiles`
+	- Windows PowerShell: `git clone https://github.com/JotaRandom/dotfiles.git $HOME\dotfiles`
+- **Desplegar dotfiles (ejemplos)**:
+	- Con `stow` (recomendado en sistemas Unix):
+		1. `cd ~/dotfiles`
+		2. `stow <carpeta>` (por ejemplo `stow L420` para enlazar los archivos al `$HOME`).
+	- Enlace manual (Linux/macOS): `ln -s ~/dotfiles/.bashrc ~/.bashrc`.
+	- Enlace manual (PowerShell, requiere permisos/Developer Mode): `New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\\.bashrc" -Target "$pwd\\.bashrc"`
 
-This directory contains all files from my old box Toshiba, an old laptop
-I used to have like 10 yeas ago thta now i don't have anymore, but I
-keep they files for future references, also contains some interesting
-stuf i managed to extras in the named directory...
+**Notas importantes**
+- **Symlinks en Windows**: Crear enlaces simbólicos en Windows puede requerir permisos de administrador o activar el modo desarrollador.
+- **Archivos históricos**: Algunas carpetas (por ejemplo `Toshiba/`) están aquí solo como referencia y no todas las configuraciones están garantizadas para funcionar en hardware moderno.
 
-inside it also you can find some of the disr like: 
+**Contribuir**
+- **Pull requests**: Bienvenidas pequeñas mejoras, correcciones de ortografía y actualización de notas.
+- **Issues**: Usa GitHub Issues para reportar errores en los scripts o para preguntar sobre cómo desplegar algo en un entorno específico.
 
-__Home/User__
+**Licencia**
+- Este repositorio contiene archivos bajo distintas licencias; revisa `CC-SA-4.0` y `GPL-2.0` en la raíz. Además, revisa cualquier archivo individual que incluya un aviso de copyright.
 
-I change my shell only for testing or borring, actually I try to maintain
-in my dotfiles all toce rc files for those shell.
-actually I have this rc for tose shells, adding minors or major changes
-compared to a vanilla/default config: 
-
-* Bash
-* Zsh
-* MKsh
-* TCsh
-* PDKsh
-
-__Etc__
-
-Configuration files for my Samsunng N100C-N01CL with Poulsbo graphics
-
-__Poni__
-
-IMGS for [ponysay](http://github.com/erkin/ponysay) that i make, or found or whatever... 
-some G-1, all genderbender and batponies from moonstuck are non official and you are safe to use 
-in any project, all other included Sweetcream (sweetcream scoops) for example or others are 
-property of they respective authors and I only create the image or refinde, redesign or adapt 
-these for ponysay, feel free to use only if you give the correct copyright to hasbro (as any art
-in deviantART make) and source to here or to the respective authors from here or DA.
-
-__usr__
-
-More configs related to usr
-
-__Toshiba Satellite C845D-SP4327SL__
-
-Contain the dsl file extracted directly from Windows an tested.
-
-___L420___
-
-New laptop i got, the directory constain my new dotsfiles, as i'm just restarting its may lag or
-even not be compared to the old dotfiles of my old Toshiba, but i'm working on them... has been
-10 years since i touched it all.
-
-__etc__
-
-just constain the usr configs ordered by where they belong.
-
-__home__
-
-constain just my home dortiles.
-
-
-NOTE:
-
-* All **MY** Original Character are under the 'GNU Public License Version 2 only'.
-* All the text, histories or configs whitout a copyright notice inside them are 
-licensed under 'Creative Commons 4.0 Share-Alike'.
-
-Bye!
-
+**Contacto**
+- Para preguntas o sugerencias, abre un issue en este repositorio o contacta al mantenedor (ver perfil de GitHub `JotaRandom`).
