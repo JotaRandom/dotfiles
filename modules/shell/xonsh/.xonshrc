@@ -1,0 +1,5 @@
+# Xonsh config sample
+# Minimal xonsh configuration
+
+aliases['ll'] = 'ls -al'
+env['EDITOR'] = 'nvim'

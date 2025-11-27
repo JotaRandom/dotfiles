@@ -1,0 +1,144 @@
+! ==============================================================
+! .Xresources – Tema retro: DOS (xterm) + Windows 95 (twm y apps)
+! Uso/propósito: mantiene un tema consistente entre terminal y apps X11.
+! Cómo usar:
+!  - xrdb -merge ~/.Xresources       # aplicar los recursos al X server
+!  - Crea o ajusta font/colores si usas otra paleta
+! Notas: muchos window managers heredan estas propiedades; modifica sólo
+! si conoces el impacto en tu entorno de ventanas.
+! ==============================================================
+
+! --------------------------------------------------------------
+! 1. RECURSOS GLOBALES (definidos una sola vez – prioridad máxima)
+! Estas definiciones aplican a la mayoría de widgets y aplicaciones
+! y son intencionadas para dar una apariencia "Win95" retro.
+! --------------------------------------------------------------
+*background:              #c0c0c0        ! Gris plata Windows 95 (fondo general)
+*foreground:              #000000        ! Negro (texto estándar)
+*borderColor:             #808080        ! Gris medio (bordes)
+*highlightBackground:     #000080        ! Azul marino (selección activa)
+*highlightForeground:     #ffffff        ! Blanco (texto seleccionado)
+
+! Sombras 3D para widgets Xaw y twm
+*topShadowColor:          #dfdfdf        ! Luz (borde superior/izquierdo)
+*bottomShadowColor:       #808080        ! Sombra (borde inferior/derecho)
+*shadowWidth:             2
+*highlightThickness:      2
+*threeD:                  true           ! Forzar estilo 3D en Xaw
+
+! Fuente global tipo "MS Sans Serif" o similar
+*font:                    -misc-fixed-medium-r-normal--13-*
+
+! --------------------------------------------------------------
+! 2. XTERM – Emulación MS-DOS (sobrescribe solo lo necesario)
+! --------------------------------------------------------------
+xterm*background:         #000000        ! Fondo negro DOS
+xterm*foreground:         #00ff00        ! Verde fosforescente CRT
+xterm*cursorColor:        #00ff00
+xterm*cursorBlink:        true
+xterm*saveLines:          1000
+xterm*scrollBar:          false
+xterm*metaSendsEscape:    true
+xterm*eightBitInput:      false
+xterm*faceName:           fixed
+xterm*faceSize:           13
+xterm*internalBorder:     4
+xterm*reverseWrap:        true
+xterm*cursorStyle:        bar
+
+! --------------------------------------------------------------
+! 3. TWM – Estilo Windows 95 (hereda global, ajusta títulos y menús)
+! --------------------------------------------------------------
+Twm*TitleBackground:      #000080        ! Azul activo
+Twm*TitleForeground:      #ffffff
+Twm*TitleFont:            -misc-fixed-bold-r-normal--13-*
+
+Twm*InactiveTitleBackground: #808080
+Twm*InactiveTitleForeground: #c0c0c0
+
+Twm*BorderWidth:          3
+Twm*TitlePadding:         4
+
+Twm*ButtonBackground:     #c0c0c0
+Twm*ButtonForeground:     #000000
+
+Twm*MenuBackground:       #c0c0c0
+Twm*MenuForeground:       #000000
+Twm*MenuBorderWidth:      1
+Twm*MenuShadowColor:      #808080
+
+Twm*IconBackground:       #c0c0c0
+Twm*IconBorderColor:      #808080
+Twm*IconManagerBackground: #c0c0c0
+Twm*IconManagerForeground: #000000
+
+Twm*UsePPosition:         on
+Twm*RandomPlacement:      off
+Twm*NoTitle:              off
+
+! --------------------------------------------------------------
+! 4. WIDGETS XAW (Athena) – Heredan global, solo ajustes específicos
+! --------------------------------------------------------------
+*borderWidth:             1
+
+! Botones (heredan fondo global #c0c0c0)
+*Command*shapeStyle:      Rectangle
+*Command*highlightThickness: 1
+*Command*topShadowContrast: 20
+*Command*bottomShadowContrast: 40
+
+! Etiquetas (heredan global)
+*Label*foreground:        #000000
+
+! Listas y áreas de texto (fondo blanco para legibilidad)
+*List*background:         #ffffff
+*List*foreground:         #000000
+*Text*background:         #ffffff
+*Text*foreground:         #000000
+
+! --------------------------------------------------------------
+! 5. APLICACIONES ESPECÍFICAS (heredan global, solo ajustes mínimos)
+! --------------------------------------------------------------
+xclock*analog:            false
+xclock*padding:           4
+xclock*update:            1
+
+xcalc*buttonBorderWidth:  1
+
+xload*label:              Carga:
+
+xbiff*width:              50
+xbiff*height:             30
+xbiff*foreground:         #ff0000
+
+xeyes*foreground:         #000000
+
+xfontsel*foreground:      #000000
+
+xman*foreground:          #000000
+
+! --------------------------------------------------------------
+! 6. TRADUCCIONES DE TECLADO (opcional, para compatibilidad DOS)
+! --------------------------------------------------------------
+*VT100*translations: #override \
+    <Key>Insert: string(0x1b) string("[2~") \n\
+    <Key>Home:   string(0x1b) string("[H") \n\
+    <Key>End:    string(0x1b) string("[F")
+    
+! --------------------------------------------------------------
+! FUENTES CON SOPORTE LATINO (para ñ, áéíóú, ¿¡)
+! --------------------------------------------------------------
+*faceName:          xos4 Terminus:pixelsize=14
+*faceNameDoublesize: xos4 Terminus:pixelsize=28
+
+! Si no tienes Terminus, usa:
+! *faceName: -misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1
+
+! Forzar codificación Latin-1
+*locale:            true
+*inputMethod:       none
+
+! Forzar UTF-8 en xterm
+xterm*locale: true
+xterm*utf8: 2
+xterm*eightBitOutput: true

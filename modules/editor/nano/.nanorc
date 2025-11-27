@@ -1,0 +1,9 @@
+## nano minimal .nanorc
+set linenumbers
+set tabstospaces
+set tabsize 2
+set multibuffer
+set smooth
+
+## Enable some syntax files if present
+include "/usr/share/nano/*.nanorc"

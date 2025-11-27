@@ -1,0 +1,3 @@
+# MirBSD Korn Shell sample configuration
+export EDITOR=vi
+alias ll='ls -l'

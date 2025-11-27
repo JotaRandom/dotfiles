@@ -1,0 +1,15 @@
+# XMMS2 config minimal example
+# Default path: ~/.xmms2/config (this file is placed for stow at $HOME/.xmms2rc)
+# This file is a minimal example to set a default music directory and volume
+player.audio.volume = 80
+player.audio.output_device = "default"
+library.dir = "$HOME/Music"
+
+# Network settings: enable client-server mode (optional)
+daemon.enabled = true
+daemon.listen = "/run/user/$UID/xmms2.sock"
+
+# Use libc URL handler for local files
+io.auto_buffer = true
+
+# End of file
