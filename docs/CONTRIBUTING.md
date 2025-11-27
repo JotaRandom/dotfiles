@@ -30,6 +30,19 @@ Submodules (PKGBUILD / AUR packages)
 	git submodule update --init --recursive
 	```
 
+Agregar un nuevo paquete AUR como submodule:
+```bash
+# Ejemplo: agregar paquete 'my-pkg' desde AUR
+git submodule add ssh://aur@aur.archlinux.org/my-pkg.git distros/PKGBUILD/my-pkg
+git commit -m "chore: add AUR submodule my-pkg"
+git push origin <branch>
+```
+
+Si prefieres HTTPS remotos (no recomendable para push a AUR, que suele usar SSH):
+```bash
+git submodule add https://aur.archlinux.org/my-pkg.git distros/PKGBUILD/my-pkg
+```
+
 Workflow recomendado:
 1. Crear una rama: `git checkout -b feature/<nueva-config>`.
 2. Añadir cambios pequeños y testear `stow` si aplicable.
