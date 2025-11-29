@@ -79,3 +79,40 @@ jobs:
       - name: Check .gitattributes includes assets/**
         run: |
           grep -E '^assets/\*\* filter=lfs' .gitattributes
+
+  stow-test:
+    name: Verify modules with stow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Install stow and tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y stow
+      - name: Stow-test (create temp target and apply all modules)
+        run: |
+          set -e
+          TMP=$(mktemp -d)
+          echo "Testing stow modules with target: $TMP"
+          cd modules
+          # Iterate modules and try to stow to temporary directory
+          for m in */ ; do
+            m=$(basename "$m")
+            echo "Testing module: $m"
+            # Use explicit target to avoid modifying home
+            stow -v -t "$TMP" "$m" || { echo "stow failed for module: $m"; exit 1; }
+          done
+          # Check at least one symlink was created
+          SYMLINKS_COUNT=$(find "$TMP" -type l | wc -l || true)
+          echo "Symlinks created: $SYMLINKS_COUNT"
+          if [ "$SYMLINKS_COUNT" -lt 1 ]; then
+            echo "No symlinks created by stow; verify module structure"
+            ls -R "$TMP" || true
+            exit 1
+          fi
+      - name: Cleanup
+        run: |
+          echo "Removing temp"; rm -rf "$TMP" || true

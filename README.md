@@ -73,3 +73,29 @@ Instala `git-lfs` antes de trabajar con los assets (ej.: `assets/poni`) si clona
 
 ## Contacto
 Abre un issue o contacta al mantenedor (perfil `JotaRandom` en GitHub).
+
+## ¿Cómo agregar un nuevo dotfile (módulo stow)?
+Si quieres añadir un nuevo dotfile al repositorio usando `stow`, sigue estos pasos:
+
+1) Crea un nuevo módulo bajo `modules/` con el nombre que prefieras (por ejemplo `modules/myapp`).
+	- Los archivos deben replicar la estructura destino a partir del home del usuario; por ejemplo, si quieres añadir `~/.config/myapp/config.yml`, crea `modules/myapp/.config/myapp/config.yml`.
+	- Para dotfiles que están directamente en el home (p. ej. `.bashrc`), coloca el fichero bajo `modules/mybash/.bashrc`.
+
+2) Prueba localmente con `stow` antes de commitear:
+```bash
+cd modules
+# Probar sin aplicar directamente (no-ops): stow -n -t $HOME myapp
+# Para aplicar a un directorio temporal y verificar symlink real (reversible):
+TMP=$(mktemp -d)
+stow -v -t "$TMP" myapp
+ls -l "$TMP"  # verifica symlinks/tablas creadas
+rm -rf "$TMP"
+```
+
+3) Añade un `README` dentro de tu módulo si necesitas documentar opciones o dependencias especiales.
+
+4) Asegúrate de que cualquier script que añadas tenga la shebang y el permiso de ejecución. Nuestro pre-commit hook y CI intentarán marcar archivos con `#!` como ejecutables en el índice.
+
+5) Crea un PR explicando qué hace el módulo y cómo probarlo. En CI, hemos añadido una verificación (`stow-test`) que aplica todos los módulos en `modules/` a un target temporal y verifica que se creen symlinks; esto ayudará a detectar problemas en la estructura de módulos.
+
+Consejo: Mantén los módulos pequeños y con un propósito único (p. ej. `modules/nvim` sólo para configuración de neovim), así es más fácil revisarlos y probarlos.
