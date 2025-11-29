@@ -86,11 +86,20 @@ for MOD in "${MODULES[@]}"; do
           # Prefer Neovim user config path
           echo "$TARGET/.config/nvim/init.vim";;
         settings.json)
-          # VSCode user settings
+          # VSCode user settings or micro
           if [[ "$module_name" == "vscode" ]]; then
             echo "$TARGET/.config/Code/User/settings.json"
+          elif [[ "$module_name" == "micro" ]]; then
+            echo "$TARGET/.config/micro/settings.json"
           else
             # unknown mapping, default to HOME
+            echo "$TARGET/$srcfile"
+          fi;;
+        config.json)
+          # micro: config.json -> ~/.config/micro/config.json
+          if [[ "$module_name" == "micro" ]]; then
+            echo "$TARGET/.config/micro/config.json"
+          else
             echo "$TARGET/$srcfile"
           fi;;
         *)
