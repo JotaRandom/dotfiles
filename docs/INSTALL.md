@@ -33,6 +33,17 @@ Nota sobre archivos de sistema:
 - Este instalador solo aplica dotfiles de usuario en `$HOME`.
 - Módulos que contienen archivos bajo `etc/` (por ejemplo `modules/system/etc/thinkfan.conf`) son considerados archivos a nivel sistema y **no serán aplicados** por `scripts/install.sh` para evitar que se instalen en ubicaciones como `/etc` inadvertidamente. Si deseas aplicar dichos archivos deberás copiarlos manualmente con permisos de root y siguiendo las instrucciones del módulo.
 
+Nota sobre archivos de configuración XDG y archivos en el root del módulo
+---------------------------------------------------------------
+El instalador (`scripts/install.sh`) ahora mantiene la estructura de origen de los módulos (para que los dotfiles sigan centralizados en su ruta de origen dentro de `modules/`) y aplica ciertos archivos raíz a su ubicación XDG correcta automáticamente cuando corresponde. Esto evita mover archivos en el repositorio solo para adaptarlos a una convención de instalación.
+
+Ejemplos de mapeos automáticos que el instalador maneja:
+- `config.fish` → `~/.config/fish/config.fish`
+- `init.vim` → `~/.config/nvim/init.vim`
+- `settings.json` en el módulo `modules/editor/vscode` → `~/.config/Code/User/settings.json`
+
+El instalador seguirá usando `stow` para el resto de los archivos en cada módulo. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
+
 
 ### Opción A: Xorg InputClass (recomendado para X11)
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.
