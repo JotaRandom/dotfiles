@@ -70,7 +70,8 @@ for MOD in "${MODULES[@]}"; do
     # dry-run check: list conflicting targets
     CONFLICTS=()
     while IFS= read -r -d $'\0' SRC; do
-      REL=${SRC#./}
+      # compute REL relative to the module root (strip the module folder prefix)
+      REL=${SRC#${BASENAME}/}
       TARGET_PATH="$TARGET/$REL"
       if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
         # if symlink and pointing to same source, ignore
