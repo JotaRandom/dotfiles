@@ -184,11 +184,19 @@ for MOD in "${MODULES[@]}"; do
     TMP_NAME="${BASENAME}.tmp"
     mkdir -p "$TMP_MOD_DIR/$TMP_NAME"
     # Copy module contents but exclude files at root that map to other locations and exclude etc/
-    (cd "$(dirname "$MOD")" && rsync -a --exclude 'etc/' \
-      --exclude 'config.fish' --exclude 'init.vim' --exclude 'init.el' --exclude 'settings.json' \
-      --exclude 'config.json' --exclude 'config.toml' --exclude 'kakrc' --exclude 'kateconfig' \
-      --exclude 'gedit-settings.xml' --exclude 'chrome-flags.conf' --exclude 'README.md' \
-      "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
+    if command -v rsync >/dev/null 2>&1; then
+      (cd "$(dirname "$MOD")" && rsync -a --exclude 'etc/' \
+        --exclude 'config.fish' --exclude 'init.vim' --exclude 'init.el' --exclude 'settings.json' \
+        --exclude 'config.json' --exclude 'config.toml' --exclude 'kakrc' --exclude 'kateconfig' \
+        --exclude 'gedit-settings.xml' --exclude 'chrome-flags.conf' --exclude 'README.md' \
+        "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
+    else
+      # fallback: copy everything then remove excluded entries
+      (cd "$(dirname "$MOD")" && cp -a "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
+      for ex in etc config.fish init.vim init.el settings.json config.json config.toml kakrc kateconfig gedit-settings.xml chrome-flags.conf README.md; do
+        rm -rf "$TMP_MOD_DIR/$TMP_NAME/$ex" || true
+      done
+    fi
 
     # Handle mapped root files (create proper XDG symlinks)
     for f in $(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 1 -type f -printf "%f\n" 2>/dev/null || true); do
