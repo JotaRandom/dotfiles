@@ -88,6 +88,14 @@ Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y
 	./scripts/install.sh modules/shell/bash modules/shell/fish modules/editor/nvim modules/editor/vscode
 	```
 Nota: El instalador `./scripts/install.sh` aplica solo dotfiles de usuario en `$HOME` (stow), y no modifica archivos de sistema como `/etc/*`. Para cambios a nivel sistema aplica los archivos manualmente con permisos root según las instrucciones en `docs/INSTALL.md`.
+
+Desarrolladores: Si quieres que los hooks locales se activen automáticamente en tu clone, ejecuta:
+
+```bash
+./scripts/setup-githooks.sh
+```
+
+Esto configurará `core.hooksPath` a `.githooks` para esta copia local del repo y activará el pre-commit que ajusta el bit ejecutable en archivos dentro de `scripts/`.
 	```powershell
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 	.\scripts\install.ps1 modules/shell/bash
