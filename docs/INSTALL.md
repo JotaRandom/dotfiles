@@ -33,13 +33,19 @@ Nota sobre archivos de sistema:
 - Este instalador solo aplica dotfiles de usuario en `$HOME`.
 - Módulos que contienen archivos bajo `etc/` (por ejemplo `modules/system/etc/thinkfan.conf`) son considerados archivos a nivel sistema y **no serán aplicados** por `scripts/install.sh` para evitar que se instalen en ubicaciones como `/etc` inadvertidamente. Si deseas aplicar dichos archivos deberás copiarlos manualmente con permisos de root y siguiendo las instrucciones del módulo.
 
-Nota sobre archivos de configuración XDG y archivos en el root del módulo
----------------------------------------------------------------
-El instalador (`scripts/install.sh`) ahora mantiene la estructura de origen de los módulos (para que los dotfiles sigan centralizados en su ruta de origen dentro de `modules/`) y aplica ciertos archivos raíz a su ubicación XDG correcta automáticamente cuando corresponde. Esto evita mover archivos en el repositorio solo para adaptarlos a una convención de instalación.
+ Nota sobre archivos de configuración XDG y archivos en el root del módulo
+ ---------------------------------------------------------------
+ El instalador (`scripts/install.sh`) ahora mantiene la estructura de origen de los módulos (para que los dotfiles sigan centralizados en su ruta de origen dentro de `modules/`) y aplica ciertos archivos raíz a su ubicación XDG correcta automáticamente cuando corresponde. Esto evita mover archivos en el repositorio solo para adaptarlos a una convención de instalación.
 
-El instalador detecta varios ficheros raíz comunes y los mapea a rutas XDG o a rutas estándar de la aplicación.
-Ejemplos de mapeos automáticos que el instalador maneja:
-- `config.fish` → `$XDG_CONFIG_HOME/fish/config.fish` (por defecto `$HOME/.config/fish/config.fish`)
+ Nota para usuarios de Windows / PowerShell
+ ----------------------------------------
+ El instalador PowerShell (`scripts/install.ps1`) tiene ahora el mismo comportamiento XDG-aware por defecto: respeta `XDG_CONFIG_HOME`, `XDG_DATA_HOME` y `XDG_STATE_HOME` si están definidos y, en su defecto, utilizará `APPDATA` / `LOCALAPPDATA` o `~/.config`/`~/.local` según corresponda. También creará los directorios faltantes antes de crear enlaces simbólicos.
+
+ Si un fichero raíz del módulo no corresponde a una ruta XDG conocida, el instalador lo "dotificará" en tu `HOME` (ej.: `katerc` → `~/.katerc`) en lugar de colocarlo tal cual en el directorio raíz del home.
+
+ El instalador detecta varios ficheros raíz comunes y los mapea a rutas XDG o a rutas estándar de la aplicación.
+ Ejemplos de mapeos automáticos que el instalador maneja:
+ - `config.fish` → `$XDG_CONFIG_HOME/fish/config.fish` (por defecto `$HOME/.config/fish/config.fish`)
 - `init.vim` → `$XDG_CONFIG_HOME/nvim/init.vim` (por defecto `$HOME/.config/nvim/init.vim`)
 - `settings.json` en el módulo `modules/editor/vscode` → `$XDG_CONFIG_HOME/Code/User/settings.json`
 - `settings.json` / `config.json` en `modules/editor/micro` → `$XDG_CONFIG_HOME/micro/*.json`
