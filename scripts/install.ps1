@@ -1,8 +1,5 @@
 Param(
-    [string[]]$Modules = @(),
-    [switch]$Force,
-    [switch]$NoBackup,
-    [switch]$DryRun
+    [string[]]$Modules = @()
 )
 
 function Ensure-GitLFS {
@@ -23,59 +20,51 @@ foreach ($module in $Modules) {
         Write-Host "Advertencia: módulo $modulePath no existe" -ForegroundColor Yellow
         continue
     }
-    # Detect conflicts: for each file in module, compute target path
+    # Phase 1 - collect all files and detect conflicts
+    $allFiles = Get-ChildItem -Path $modulePath -File -Recurse
     $conflicts = @()
-    Get-ChildItem -Path $modulePath -File -Recurse | ForEach-Object {
+    foreach ($f in $allFiles) {
         $rel = $_.FullName.Substring($modulePath.Length).TrimStart('\')
         $dest = Join-Path $env:USERPROFILE $rel
         $destDir = Split-Path $dest -Parent
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
         if (Test-Path $dest) {
-            # if it is a symlink pointing to the same source, ignore
-            if ((Test-Path $dest -PathType Leaf) -or (Test-Path $dest -PathType Container)) {
-                $isSame = $false
-                try { 
-                    $linkTarget = (Get-Item -Path $dest -Force).Target
-                    if ($linkTarget -and (Resolve-Path $linkTarget).ProviderPath -eq $_.FullName) { $isSame = $true }
-                } catch { }
-                if (-not $isSame) { $conflicts += $dest }
-            } else { $conflicts += $dest }
+            # if it is a symlink pointing to same target, ignore; else record conflict
+            $isSame = $false
+            try {
+                $item = Get-Item -Path $dest -Force -ErrorAction SilentlyContinue
+                if ($item -and $item.PSIsContainer -eq $false -and $item.LinkType -ne $null) {
+                    $linkTarget = $item.Target
+                    if ($linkTarget -and (Resolve-Path $linkTarget -ErrorAction SilentlyContinue).ProviderPath -eq $f.FullName) { $isSame = $true }
+                }
+            } catch { }
+            if (-not $isSame) { $conflicts += $dest }
         } else {
             New-Item -ItemType SymbolicLink -Path $dest -Target $_.FullName -Force | Out-Null
             Write-Host "Creado symlink: $dest -> $($_.FullName)" -ForegroundColor Green
         }
     }
-    if ($conflicts.Count -gt 0) {
-        Write-Host "Conflictos detectados para módulo $module:`n$($conflicts -join "`n")" -ForegroundColor Yellow
-        if ($DryRun) {
-            Write-Host "(Dry-run) no se aplicarán cambios" -ForegroundColor Yellow
-            continue
-        }
-        if ($Force) {
-            Write-Host "Forzando sobrescritura (se eliminarán los archivos existentes)" -ForegroundColor Yellow
-            foreach ($c in $conflicts) { Remove-Item -Recurse -Force -Path $c -ErrorAction SilentlyContinue }
-        } elseif (-not $NoBackup) {
+        if ($conflicts.Count -gt 0) {
+            Write-Host "Conflictos detectados para módulo $module:`n$($conflicts -join "`n")" -ForegroundColor Yellow
             $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
             Write-Host "Respaldando archivos conflictivos a: $backupDir" -ForegroundColor Cyan
             foreach ($c in $conflicts) {
-                $destPath = Join-Path $backupDir ($c.TrimStart($env:USERPROFILE+'\'))
+                $relPath = $c.Substring($env:USERPROFILE.Length).TrimStart('\')
+                $destPath = Join-Path $backupDir $relPath
                 $destDir = Split-Path $destPath -Parent
                 New-Item -ItemType Directory -Force -Path $destDir | Out-Null
                 Move-Item -Path $c -Destination $destPath -Force -ErrorAction SilentlyContinue
             }
-        } else {
-            Write-Host "Omitiendo la instalación del módulo $module por conflictos" -ForegroundColor Yellow
-            continue
         }
-        # After resolving, create the symlinks again for the module
-        Get-ChildItem -Path $modulePath -File -Recurse | ForEach-Object {
-            $rel = $_.FullName.Substring($modulePath.Length).TrimStart('\')
+        # After resolving conflicts, create symlinks for all files
+        foreach ($f in $allFiles) {
+            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
             $dest = Join-Path $env:USERPROFILE $rel
             $destDir = Split-Path $dest -Parent
             if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
             if (Test-Path $dest) { Remove-Item -Recurse -Force -Path $dest -ErrorAction SilentlyContinue }
-            New-Item -ItemType SymbolicLink -Path $dest -Target $_.FullName -Force | Out-Null
-            Write-Host "Creado symlink: $dest -> $($_.FullName)" -ForegroundColor Green
+            New-Item -ItemType SymbolicLink -Path $dest -Target $f.FullName -Force | Out-Null
+            Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
     }
 }
