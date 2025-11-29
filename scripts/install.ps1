@@ -2,17 +2,24 @@ Param(
     [string[]]$Modules = @()
 )
 
-function Ensure-GitLFS {
+function Test-GitLFS {
+    [CmdletBinding()]
+    param()
+
     if (-not (Get-Command git-lfs -ErrorAction SilentlyContinue)) {
-        Write-Host "git-lfs no encontrado. Intenta instalar con "winget" o "scoop" o instala manualmente" -ForegroundColor Yellow
+        Write-Warning "git-lfs no encontrado. Instálalo con 'winget', 'scoop' o manualmente."
+        return $false
     }
+    return $true
 }
 
 if ($Modules.Count -eq 0) {
     $Modules = @('modules/shell/bash','modules/shell/zsh','modules/apps/tmux','modules/apps/xmms')
 }
 
-Ensure-GitLFS
+if (-not (Test-GitLFS)) {
+    Write-Warning "git-lfs no disponible; algunas características (LFS) pueden no funcionar"
+}
 
 foreach ($module in $Modules) {
     $modulePath = Join-Path $PSScriptRoot $module
@@ -24,7 +31,7 @@ foreach ($module in $Modules) {
     $allFiles = Get-ChildItem -Path $modulePath -File -Recurse
     $conflicts = @()
     foreach ($f in $allFiles) {
-        $rel = $_.FullName.Substring($modulePath.Length).TrimStart('\')
+        $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
         $dest = Join-Path $env:USERPROFILE $rel
         $destDir = Split-Path $dest -Parent
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
@@ -40,12 +47,13 @@ foreach ($module in $Modules) {
             } catch { }
             if (-not $isSame) { $conflicts += $dest }
         } else {
-            New-Item -ItemType SymbolicLink -Path $dest -Target $_.FullName -Force | Out-Null
-            Write-Host "Creado symlink: $dest -> $($_.FullName)" -ForegroundColor Green
+            New-Item -ItemType SymbolicLink -Path $dest -Target $f.FullName -Force | Out-Null
+            Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
     }
         if ($conflicts.Count -gt 0) {
-            Write-Host "Conflictos detectados para módulo $module:`n$($conflicts -join "`n")" -ForegroundColor Yellow
+            $join = $conflicts -join "`n"
+            Write-Host "Conflictos detectados para módulo ${module}:`n$join" -ForegroundColor Yellow
             $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
             Write-Host "Respaldando archivos conflictivos a: $backupDir" -ForegroundColor Cyan
             foreach ($c in $conflicts) {
@@ -67,7 +75,6 @@ foreach ($module in $Modules) {
             Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
     }
-}
 
 Write-Host "Instalación (PowerShell) finalizada. Revisa los enlaces simbólicos." -ForegroundColor Cyan
 
