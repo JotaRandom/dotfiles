@@ -1,6 +1,4 @@
-````markdown
 # dotfiles
-
 Colección personal de configuraciones y dotfiles para distintas máquinas y entornos. Aquí se agrupan módulos de configuración, archivos históricos y extras organizados para ser fáciles de desplegar con `stow` (en Unix) o mediante scripts en Windows.
 
 ## Inicio rápido (Linux / WSL)
@@ -47,7 +45,8 @@ Este repositorio sirve como un lugar para guardar y versionar configuraciones (d
    ```
    En Windows:
    ```powershell
-	```
+   .\scripts\install.ps1 modules/shell/bash
+   ```
 Nota: El instalador `./scripts/install.sh` aplica solo dotfiles de usuario en `$HOME` (stow), y no modifica archivos de sistema como `/etc/*`. Para cambios a nivel sistema aplica los archivos manualmente con permisos root según las instrucciones en `docs/INSTALL.md`.
 
 Desarrolladores: Los instaladores `scripts/install.sh` y `scripts/install.ps1` configuran automáticamente `core.hooksPath` a `.githooks`
