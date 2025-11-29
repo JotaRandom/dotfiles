@@ -53,8 +53,9 @@ En Windows (PowerShell):
 .\scripts\install.ps1 modules/shell/bash
 ```
 
-### Nota sobre cambios a nivel sistema
-Los instaladores incluidos solo aplican dotfiles de usuario en `$HOME`. No se modifican archivos de sistema (`/etc/*`) automáticamente. Para aplicar archivos de sistema, sigue las instrucciones manuales en `docs/INSTALL.md`.
+### Nota sobre cambios a nivel sistema y conflictos
+Los instaladores incluidos solo aplican dotfiles de usuario en `$HOME`. No se modifican archivos de sistema (`/etc/*`) automáticamente. Si al aplicar los módulos hay archivos conflictivos en `$HOME` (por ejemplo un `~/.bashrc` ya existente), el instalador preferirá los dotfiles del repositorio y respaldará los archivos anteriores en `$HOME/.dotfiles_backup/<timestamp>/` antes de reemplazarlos.
+Para aplicar archivos de sistema (por ejemplo `X11`), sigue las instrucciones manuales en `docs/INSTALL.md`.
 
 ## Hooks Git
 El repositorio incluye hooks en `.githooks` que, por ejemplo, marcan archivos con shebang como ejecutables en el índice.
