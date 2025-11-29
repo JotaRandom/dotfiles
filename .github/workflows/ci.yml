@@ -146,6 +146,28 @@ jobs:
             ls -R "$TMP" || true
             exit 1
           fi
+
+      - name: Check for top-level files in modules that could pollute $HOME
+        run: |
+          set -e
+          cd modules
+          FAIL=0
+          ALLOWED='^config.fish$|^init.vim$|^settings.json$|^config.json$|^chrome-flags.conf$|^README.md$'
+          for m in */ ; do
+            m=$(basename "$m")
+            # find files in module root (not dotfiles) that are not in our allowed list
+            while IFS= read -r -d $'\0' f; do
+              fname=$(basename "$f")
+              if [[ ! "$fname" =~ $ALLOWED ]] && [[ ! "$fname" =~ ^\..+ ]]; then
+                echo "Module $m contains root-level file that may install to \$HOME: $fname" >&2
+                FAIL=1
+              fi
+            done < <(find "$m" -maxdepth 1 -type f -print0 || true)
+          done
+          if [ "$FAIL" -eq 1 ]; then
+            echo "Top-level files detected in modules. Either move them into a .config/ tree, make them dotfiles (start with .), or ensure installer mapping handles them." >&2
+            exit 1
+          fi
       - name: Cleanup
         run: |
           echo "Removing temp"; rm -rf "$TMP" || true
