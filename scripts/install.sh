@@ -71,7 +71,7 @@ for MOD in "${MODULES[@]}"; do
     CONFLICTS=()
     while IFS= read -r -d $'\0' SRC; do
       # compute REL relative to the module root (strip the module folder prefix)
-      REL=${SRC#${BASENAME}/}
+      REL=${SRC#"${BASENAME}"/}
       TARGET_PATH="$TARGET/$REL"
       if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
         # if symlink and pointing to same source, ignore
@@ -90,7 +90,7 @@ for MOD in "${MODULES[@]}"; do
       BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
       echo "Respaldando archivos conflictivos a: $BACKUP_DIR"
       for c in "${CONFLICTS[@]}"; do
-        RELPATH="${c#$HOME/}"
+        RELPATH="${c#"$HOME"/}"
         mkdir -p "$(dirname "$BACKUP_DIR/$RELPATH")" || true
         mv "$c" "$BACKUP_DIR/$RELPATH" || true
       done

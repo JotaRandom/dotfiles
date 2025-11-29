@@ -36,6 +36,12 @@ if [ ! -d "$BACKUP_DIR/$TIMESTAMP" ]; then
   exit 2
 fi
 
+# support help
+if [ "$TIMESTAMP" = "-h" ] || [ "$TIMESTAMP" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 if [ "$#" -eq 1 ]; then
   echo "Modules in backup $TIMESTAMP:";
   ls -1 "$BACKUP_DIR/$TIMESTAMP";

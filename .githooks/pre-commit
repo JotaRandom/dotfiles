@@ -7,6 +7,42 @@ if command -v pwsh >/dev/null 2>&1; then
   pwsh -ExecutionPolicy Bypass -File "$(git rev-parse --show-toplevel)/.githooks/pre-commit.ps1"
   exit 0
 fi
+
+if command -v powershell >/dev/null 2>&1; then
+  powershell -ExecutionPolicy Bypass -File "$(git rev-parse --show-toplevel)/.githooks/pre-commit.ps1"
+  exit 0
+fi
+
+# Fallback: POSIX logic (for Bash)
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+CHANGED=0
+for f in $STAGED; do
+  if [ -f "$f" ]; then
+    if head -n 1 "$f" | grep -q '^#!'; then
+      git update-index --chmod=+x "$f" && CHANGED=1 || true
+    fi
+  fi
+done
+
+if [ "$CHANGED" -eq 1 ]; then
+  echo "Marked staged files with shebang as executable in index"
+fi
+
+exit 0
+#!/usr/bin/env bash
+# Cross-platform pre-commit hook: ensure scripts/*.sh are executable in the index
+set -euo pipefail
+
+# If PowerShell is available, run the PowerShell hook on Windows
+if command -v pwsh >/dev/null 2>&1; then
+  pwsh -ExecutionPolicy Bypass -File "$(git rev-parse --show-toplevel)/.githooks/pre-commit.ps1"
+  exit 0
+fi
+
 if command -v powershell >/dev/null 2>&1; then
   powershell -ExecutionPolicy Bypass -File "$(git rev-parse --show-toplevel)/.githooks/pre-commit.ps1"
   exit 0
