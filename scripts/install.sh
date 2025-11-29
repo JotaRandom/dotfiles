@@ -2,6 +2,23 @@
 # Minimal installer for user dotfiles (uses GNU Stow)
 
 set -euo pipefail
+FORCE=0
+BACKUP=1
+DRY_RUN=0
+
+while [[ ${1:-} =~ ^- ]]; do
+  case "$1" in
+    -f|--force)
+      FORCE=1; shift ;;
+    -n|--dry-run)
+      DRY_RUN=1; shift ;;
+    --no-backup)
+      BACKUP=0; shift ;;
+    -h|--help)
+      usage; exit 0 ;;
+    *) break ;;
+  esac
+done
 
 usage(){
   cat <<EOF
@@ -64,8 +81,58 @@ TARGET="$HOME"
 echo "Usando target: $TARGET"
 for MOD in "${MODULES[@]}"; do
   if [ -d "$MOD" ]; then
-    echo "stow -v -t $TARGET $(basename "$MOD")"
-    (cd "$(dirname "$MOD")"; stow -v -t "$TARGET" "$(basename "$MOD")")
+    BASENAME=$(basename "$MOD")
+    echo "Preparing to stow: $BASENAME -> $TARGET"
+
+    # dry-run check: list conflicting targets
+    CONFLICTS=()
+    while IFS= read -r -d $'\0' SRC; do
+      REL=${SRC#./}
+      TARGET_PATH="$TARGET/$REL"
+      if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
+        # if symlink and pointing to same source, ignore
+        if [ -L "$TARGET_PATH" ]; then
+          if [ "$(readlink -f "$TARGET_PATH")" = "$(readlink -f "$MOD/$REL")" ]; then
+            continue
+          fi
+        fi
+        CONFLICTS+=("$TARGET_PATH")
+      fi
+    done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -print0)
+
+    if [ ${#CONFLICTS[@]} -gt 0 ]; then
+      echo "Conflictos detectados al aplicar module $BASENAME:" >&2
+      for c in "${CONFLICTS[@]}"; do echo "  - $c" >&2; done
+
+      if [ $DRY_RUN -eq 1 ]; then
+        echo "(dry-run) Skipping backup/overwrite for $BASENAME"
+        continue
+      fi
+
+      if [ $FORCE -eq 1 ]; then
+        echo "Forzando sobrescritura de los archivos conflictivos para $BASENAME"
+        for c in "${CONFLICTS[@]}"; do
+          rm -rf "$c" || true
+        done
+      elif [ $BACKUP -eq 1 ]; then
+        BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+        echo "Respaldando archivos conflictivos a: $BACKUP_DIR"
+        for c in "${CONFLICTS[@]}"; do
+          mkdir -p "$(dirname "$BACKUP_DIR/$c")" || true
+          mv "$c" "$BACKUP_DIR/$c" || true
+        done
+      else
+        echo "Omitiendo $BASENAME (archivos en conflicto presentes)." >&2
+        continue
+      fi
+    fi
+
+    echo "stow -v -t $TARGET $BASENAME"
+    if [ $DRY_RUN -eq 1 ]; then
+      echo "(dry-run) not actually applying $BASENAME"
+    else
+      (cd "$(dirname "$MOD")"; stow -v -t "$TARGET" "$BASENAME")
+    fi
   else
     echo "Advertencia: módulo $MOD no existe"
   fi
