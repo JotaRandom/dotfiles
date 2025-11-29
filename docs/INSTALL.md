@@ -33,3 +33,17 @@ Precauciones:
 ### Opción A: Xorg InputClass (recomendado para X11)
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.
 2. Reinicia la sesión gráfica tras copiar el archivo a /etc/X11/xorg.conf.d/.
+
+## Hooks Git (Opcional)
+Este repositorio incluye un hook pre-commit en `.githooks/pre-commit` que asegura que los archivos dentro
+de `scripts/` con un shebang (`#!`) reciban el bit de ejecución (`+x`) en el índice al hacer commit, para evitar
+problemas en plataformas Unix. Para activar los hooks en tu copia local ejecuta:
+
+```bash
+./scripts/setup-githooks.sh
+```
+
+Después de ejecutar el script, el hook correrá localmente antes de cada commit. Si deseas revertir este cambio:
+```bash
+git config --unset core.hooksPath
+```
