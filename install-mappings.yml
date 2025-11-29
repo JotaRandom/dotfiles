@@ -37,11 +37,11 @@ chrome-flags.conf: xdg:chrome/chrome-flags.conf
 .inputrc: home:.inputrc
 .dmrc: home:.dmrc
 .lesshst: home:.lesshst
-.elvishrc: home:.elvishrc
+.elvishrc: xdg:elvish/init.el
 .kshrc: home:.kshrc
 .mkshrc: home:.mkshrc
 .tcshrc: home:.tcshrc
-.xonshrc: home:.xonshrc
+.xonshrc: xdg:xonsh/xonshrc
 .zshrc: home:.zshrc
 .Xdefaults: home:.Xdefaults
 .xserverrc: home:.xserverrc
