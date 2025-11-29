@@ -59,16 +59,18 @@ Lee `docs/INSTALL.md` si necesitas más detalle o alternativas (stow, configurac
 	.\scripts\install.ps1         # PowerShell (Windows - ejecutar con permisos si requiere symlinks)
 	```
 - Opcional: actualizar PKGBUILD submodules (todos o un paquete específico):
+		**Auto-setup de teclado (Latin American)**
+		Si deseas que el `layout` `latam` se aplique automáticamente cuando conectas un teclado, sigue las
+		opciones manuales:                                                                                     
+		- Xorg (recomendado para X11): copia `modules/system/etc/X11/90-latin-keyboard.conf` a `/etc/X11/xorg.conf.d/` y reinicia la sesión gráfica para aplicar `XkbLayout latam`.
+		- hwdb / udev (recomendado para Wayland o si quieres una solución a nivel kernel): copia `modules/system/etc/udev/hwdb.d/90-latin-layout.hwdb` a `/etc/udev/hwdb.d/` y ejecuta `sudo systemd-hwdb update && sudo udevadm trigger`.
+		Revisa `docs/INSTALL.md` para más detalles e instrucciones manuales.
 	```bash
 	./scripts/update-submodules.sh           # Actualiza todos los submodules
 	./scripts/update-submodules.sh micropolis-java  # Actualiza solo micropolis-java
 	```
 
-	**Auto-setup de teclado (Latin American)**
-	Si deseas que el `layout` `latam` se aplique automáticamente cuando conectas un teclado, tienes dos opciones según el entorno:
-
-	- Xorg (recomendado para X11): usa `./scripts/install.sh --xorg`. Esto instala un `InputClass` para Xorg que establece `XkbLayout` a `latam` para teclados.
-	- hwdb / udev (recomendado para Wayland o si quieres una solución a nivel kernel): copia `modules/system/etc/udev/hwdb.d/90-latin-layout.hwdb` y corre `sudo systemd-hwdb update && sudo udevadm trigger`, o usa `./scripts/install.sh --hwdb`.
+	- Xorg (recomendado para X11): copia `modules/system/etc/X11/+.conf` a `/etc/X11/xorg.conf.d/` y reinicia la sesión gráfica para aplicar los cambios.
 
 	 Revisa `docs/INSTALL.md` para más detalles e instrucciones manuales.
 
