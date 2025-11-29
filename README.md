@@ -33,8 +33,8 @@ Lee `docs/INSTALL.md` para instrucciones detalladas, alternativas y ejemplos por
 
 ## Propósito
 Este repositorio sirve como un lugar para guardar y versionar configuraciones (dotfiles), snippets, y archivos de configuración que se usan en mis equipos o que pueden servir como referencia. Algunas carpetas contienen material histórico o configuraciones destinadas a máquinas concretas.
-
 ## Instalación y uso
+# dotfiles
 1. Clona el repositorio y prepara submodules y LFS (ver inicio rápido).
 2. Instala dependencias necesarias (por ejemplo `stow` en Linux):
    - Debian/Ubuntu: `sudo apt install stow git-lfs`
@@ -58,7 +58,7 @@ ejecutar el instalador, puedes correr:
 ```
 
 Esto configurará `core.hooksPath` a `.githooks` para esta copia local del repo y activará el pre-commit que ajusta el bit ejecutable en archivos dentro de `scripts/`.
-	```powershell
+Lee `docs/INSTALL.md` para instrucciones detalladas, alternativas y ejemplos por distribución.
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 	.\scripts\install.ps1 modules/shell/bash
 	```
