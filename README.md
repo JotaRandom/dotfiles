@@ -112,3 +112,7 @@ rm -rf "$TMP"
 5) Crea un PR explicando qué hace el módulo y cómo probarlo. En CI, hemos añadido una verificación (`stow-test`) que aplica todos los módulos en `modules/` a un target temporal y verifica que se creen symlinks; esto ayudará a detectar problemas en la estructura de módulos.
 
 Consejo: Mantén los módulos pequeños y con un propósito único (p. ej. `modules/nvim` sólo para configuración de neovim), así es más fácil revisarlos y probarlos.
+
+## CI y submódulos
+
+Detalles sobre el tratamiento de submódulos SSH por el CI se encuentran en `docs/CI.md`. El flujo de CI **no intentará** actualizar o clonar submódulos privados: solo comprobará que `.gitmodules` contiene entradas válidas y seguirá sin error en runners públicos.
