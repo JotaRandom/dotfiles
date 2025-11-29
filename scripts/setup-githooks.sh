@@ -13,12 +13,12 @@ echo "Configured Git hooks path to '.githooks' in this repository. If you want t
 
 # Ensure scripts/*.sh with a shebang are executable in the index (idempotent)
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  for f in $(git ls-files "scripts/*.sh" 2>/dev/null || true); do
+  for f in $(git ls-files 2>/dev/null || true); do
     if [ -f "$f" ]; then
       if head -n 1 "$f" | grep -q '^#!'; then
         git update-index --chmod=+x "$f" || true
       fi
     fi
   done
-  echo "Ensured executable bit is set for scripts/*.sh with a shebang in the git index."
+  echo "Ensured executable bit is set for tracked files with a shebang in the git index."
 fi

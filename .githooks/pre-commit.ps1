@@ -7,15 +7,15 @@ if (-not $staged) { exit 0 }
 
 $changed = $false
 foreach ($f in $staged) {
-    if ($f -like 'scripts/*.sh') {
-        if (Test-Path $f) {
-            # Set the executable bit in git index
+    if (Test-Path $f) {
+        $firstLine = Get-Content -Path $f -TotalCount 1 -ErrorAction SilentlyContinue
+        if ($firstLine -and $firstLine -match '^#!') {
             git update-index --chmod=+x $f
             $changed = $true
         }
     }
 }
 if ($changed) {
-    Write-Host "Marked staged scripts/*.sh as executable in index"
+    Write-Host "Marked staged files with shebang as executable in index"
 }
 exit 0

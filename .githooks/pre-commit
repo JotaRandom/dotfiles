@@ -20,17 +20,15 @@ fi
 
 CHANGED=0
 for f in $STAGED; do
-  case "$f" in
-    scripts/*.sh)
-      if [ -f "$f" ]; then
-        git update-index --chmod=+x "$f" && CHANGED=1 || true
-      fi
-      ;;
-  esac
+  if [ -f "$f" ]; then
+    if head -n 1 "$f" | grep -q '^#!'; then
+      git update-index --chmod=+x "$f" && CHANGED=1 || true
+    fi
+  fi
 done
 
 if [ "$CHANGED" -eq 1 ]; then
-  echo "Marked staged scripts/*.sh as executable in index"
+  echo "Marked staged files with shebang as executable in index"
 fi
 
 exit 0
