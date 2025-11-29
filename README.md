@@ -1,3 +1,84 @@
+````markdown
+# dotfiles
+
+Colección personal de configuraciones y dotfiles para distintas máquinas y entornos. Aquí se agrupan módulos de configuración, archivos históricos y extras organizados para ser fáciles de desplegar con `stow` (en Unix) o mediante scripts en Windows.
+
+## Inicio rápido (Linux / WSL)
+Clona y aplica la configuración en una sola línea:
+```bash
+git clone --recurse-submodules https://github.com/JotaRandom/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+git lfs install
+git lfs pull
+git submodule update --init --recursive
+./scripts/install.sh
+```
+
+## Inicio rápido (PowerShell / Windows)
+```powershell
+git clone https://github.com/JotaRandom/dotfiles.git $HOME\dotfiles
+cd $HOME\dotfiles
+git lfs install
+git lfs pull
+git submodule update --init --recursive
+.\scripts\install.ps1
+```
+
+Lee `docs/INSTALL.md` para instrucciones detalladas, alternativas y ejemplos por distribución.
+
+## Estructura del repositorio
+- `modules/`: módulos de dotfiles por función. Ej: `modules/shell/bash`, `modules/editor/nvim`.
+- `machines/`: configuraciones y archivos específicos por equipo (referencia histórica).
+- `assets/`: recursos multimedia y archivos binarios (se manejan con Git LFS).
+- `distros/`: configuraciones por distro y submodules de PKGBUILD.
+- `scripts/`: scripts de utilidad (instaladores, actualizaciones, githooks).
+
+## Propósito
+Este repositorio sirve como un lugar para guardar y versionar configuraciones (dotfiles), snippets, y archivos de configuración que se usan en mis equipos o que pueden servir como referencia. Algunas carpetas contienen material histórico o configuraciones destinadas a máquinas concretas.
+
+## Instalación y uso
+1. Clona el repositorio y prepara submodules y LFS (ver inicio rápido).
+2. Instala dependencias necesarias (por ejemplo `stow` en Linux):
+   - Debian/Ubuntu: `sudo apt install stow git-lfs`
+   - Arch: `sudo pacman -S stow git-lfs`
+3. Aplica los módulos que necesites con `stow` o usa los instaladores:
+   ```bash
+   ./scripts/install.sh modules/shell/bash modules/editor/nvim
+   ```
+   En Windows:
+   ```powershell
+   .\scripts\install.ps1 modules/shell/bash
+   ```
+
+### Nota sobre cambios a nivel sistema
+Los instaladores incluidos (`scripts/install.sh` y `scripts/install.ps1`) aplican únicamente dotfiles de usuario (en `$HOME`) y **no** modifican archivos de sistema (`/etc/*`) de forma automática. Si necesitas aplicar configuraciones de sistema (por ejemplo, archivos de `X11`), sigue las instrucciones manuales en `docs/INSTALL.md`.
+
+## Hooks Git
+Este repositorio incluye un pre-commit hook en `.githooks/` que marca archivos con `shebang` como ejecutables en el índice al hacer commit para evitar problemas en entornos Unix.
+
+- Activación automática: los instaladores (`scripts/install.sh` y `scripts/install.ps1`) configuran `core.hooksPath` a `.githooks` para la copia local del repo cuando se ejecutan (esta operación es idempotente y segura). Si prefieres hacerlo manualmente, ejecuta:
+```bash
+./scripts/setup-githooks.sh
+```
+- Para revertir la configuración en tu copia local:
+```bash
+git config --unset core.hooksPath
+```
+
+## Desarrollo y contribuciones
+- Pull requests: bienvenidas. Haz PRs pequeños y fáciles de revisar.
+- Issues: usa GitHub Issues para reportar errores o proponer mejoras.
+
+## Licencias
+Revisa `CC-SA-4.0` y `GPL-2.0` en la raíz del repositorio; hay archivos con diferentes licencias, revisa los archivos individuales si es necesario.
+
+## Notas sobre Git LFS
+Este repositorio usa Git LFS para recursos grandes (por ejemplo, `assets/poni`). Antes de clonar o trabajar con estos assets, asegúrate de tener `git-lfs` instalado y ejecutado.
+
+## Contacto
+Si tienes preguntas o sugerencias, abre un issue o contacta al mantenedor (ver perfil `JotaRandom` en GitHub).
+
+````
 **Dotfiles**
 
 Breve colección de configuraciones, ajustes y archivos de configuración personalizados usados por mí en varias máquinas (laptops antiguas y nuevas). El repositorio agrupa dotfiles para diferentes equipos y entornos, junto con extras y notas históricas.
