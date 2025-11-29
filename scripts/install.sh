@@ -62,6 +62,38 @@ git lfs install || true
 
 TARGET="$HOME"
 echo "Usando target: $TARGET"
+
+# Load mapping rules if available (install-mappings.yml)
+declare -A _MAPPER_GLOBAL _MAPPER_MODULE
+DEFAULT_ACTION="dotify"
+MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
+if [ -f "$MAPPINGS_FILE" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    # strip comments
+    line="${line%%#*}"
+    # trim
+    line="${line#${line%%[![:space:]]*}}"
+    line="${line%${line##*[![:space:]]}}"
+    [ -z "$line" ] && continue
+    if [[ "$line" =~ ^default_action:[[:space:]]*([a-zA-Z_]+) ]]; then
+      DEFAULT_ACTION="${BASH_REMATCH[1]}"
+      continue
+    fi
+    if [[ "$line" =~ ^([^:]+):[[:space:]]*(.+)$ ]]; then
+      key="${BASH_REMATCH[1]}"; val="${BASH_REMATCH[2]}"
+      # trim spaces
+      key="${key#${key%%[![:space:]]*}}"; key="${key%${key##*[![:space:]]}}"
+      val="${val#${val%%[![:space:]]*}}"; val="${val%${val##*[![:space:]]}}"
+      # module-specific mapping: name|module
+      if [[ "$key" == *"|"* ]]; then
+        name="${key%%|*}"; mod="${key##*|}"
+        _MAPPER_MODULE["$name|$mod"]="$val"
+      else
+        _MAPPER_GLOBAL["$key"]="$val"
+      fi
+    fi
+  done < "$MAPPINGS_FILE"
+fi
 for MOD in "${MODULES[@]}"; do
   if [ -d "$MOD" ]; then
     BASENAME=$(basename "$MOD")
@@ -83,7 +115,24 @@ for MOD in "${MODULES[@]}"; do
       XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
       XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
       XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-      case "$(basename "$srcfile")" in
+      # prefer declarative mapping from install-mappings.yml if present
+      local base="$(basename "$srcfile")"
+      if [[ -n "${_MAPPER_MODULE["$base|$module_name"]+x}" ]]; then
+        mapping="${_MAPPER_MODULE["$base|$module_name"]}"
+      elif [[ -n "${_MAPPER_GLOBAL["$base"]+x}" ]]; then
+        mapping="${_MAPPER_GLOBAL["$base"]}"
+      else
+        mapping=""
+      fi
+      if [ -n "$mapping" ]; then
+        case "$mapping" in
+          xdg:*) echo "${XDG_CONFIG_HOME}/${mapping#xdg:}"; return;;
+          home:*) echo "$TARGET/${mapping#home:}"; return;;
+          *) echo "$TARGET/$srcfile"; return;;
+        esac
+      fi
+
+      case "$base" in
         config.fish)
           echo "$XDG_CONFIG_HOME/fish/config.fish";;
         init.vim)
@@ -224,7 +273,7 @@ for MOD in "${MODULES[@]}"; do
     (cd "$TMP_MOD_DIR"; stow -v -t "$TARGET" "$TMP_NAME") || true
     # cleanup
     rm -rf "$TMP_MOD_DIR"
-    
+
   else
     echo "Advertencia: módulo $MOD no existe"
   fi
@@ -233,7 +282,7 @@ done
 echo "Instalación finalizada. Este instalador solo aplica dotfiles de usuario en \\${HOME}."
 echo "Si necesitas aplicar cambios a nivel sistema (Xorg, etc.), hazlo manualmente con permisos de root."
 echo "Recuerda revisar los archivos instalados para asegurarte de que todo esté como deseas."
- 
+
 # Auto-configure git hooks (if available) — this is safe and idempotent and only affects local git config
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   REPO_ROOT=$(git rev-parse --show-toplevel)

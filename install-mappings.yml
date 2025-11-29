@@ -1,0 +1,24 @@
+# Declarative install mappings used by scripts/install.sh and CI (simple key/value format)
+# Format:
+#   default_action: dotify  # default for unmapped root-level files: dotify | home | error
+#   <filename> : <dest>
+#   <filename>|<module_name> : <dest>   # module-specific override
+# Destination values: xdg:<relative/path>   -> placed under $XDG_CONFIG_HOME/<relative/path>
+#                     home:<path>           -> placed under $HOME/<path>
+#                     note: If no mapping exists, installer will follow default_action
+
+default_action: dotify
+
+# Common mappings
+config.fish: xdg:fish/config.fish
+init.vim: xdg:nvim/init.vim
+settings.json|vscode: xdg:Code/User/settings.json
+settings.json|micro: xdg:micro/settings.json
+config.json|micro: xdg:micro/config.json
+init.el|emacs: home:.emacs.d/init.el
+config.toml|helix: xdg:helix/config.toml
+config.toml|nushell: xdg:nushell/config.toml
+kakrc|kakoune: xdg:kak/kakrc
+kateconfig|kate: xdg:kate/kateconfig
+gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml
+chrome-flags.conf: xdg:chrome/chrome-flags.conf

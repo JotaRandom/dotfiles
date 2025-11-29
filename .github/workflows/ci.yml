@@ -152,7 +152,20 @@ jobs:
           set -e
           cd modules
           FAIL=0
-          ALLOWED='^config.fish$|^init.vim$|^init.el$|^settings.json$|^config.json$|^config.toml$|^kakrc$|^kateconfig$|^gedit-settings.xml$|^chrome-flags.conf$|^README.md$'
+          # Build ALLOWED regex from install-mappings.yml if present (keys before ':'), otherwise fallback
+          ALLOWED=''
+          if [ -f ../install-mappings.yml ]; then
+            keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' ../install-mappings.yml | tr '\n' '|' | sed 's/|$//') || true
+            if [ -n "$keys" ]; then
+              # create regex like ^key1$|^key2$|^\.dotfiles
+              # escape keys safely (basic)
+              esc=$(echo "$keys" | sed -E 's/([^a-zA-Z0-9_\-\.])/\\\\\\1/g') || true
+              ALLOWED="^$(echo "$esc" | sed 's/|/\$|^/g')$|^\\..+"
+            fi
+          fi
+          if [ -z "$ALLOWED" ]; then
+            ALLOWED='^config.fish$|^init.vim$|^init.el$|^settings.json$|^config.json$|^config.toml$|^kakrc$|^kateconfig$|^gedit-settings.xml$|^chrome-flags.conf$|^README.md$'
+          fi
           for m in */ ; do
             m=$(basename "$m")
             # find files in module root (not dotfiles) that are not in our allowed list
