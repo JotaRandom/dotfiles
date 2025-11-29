@@ -44,6 +44,8 @@ Ejemplos de mapeos automáticos que el instalador maneja:
 
 El instalador seguirá usando `stow` para el resto de los archivos en cada módulo. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
 
+Nota: archivos de documentación como `README.md` o archivos auxiliares que no estén destinados a ser configuraciones de usuario se excluyen al crear la copia temporal para `stow` y no se instalarán en `~/.` para evitar que el directorio home se contamine con documentación del módulo.
+
 
 ### Opción A: Xorg InputClass (recomendado para X11)
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.
