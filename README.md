@@ -64,6 +64,11 @@ cp -a "$HOME/.dotfiles_backup/<timestamp>/." "$HOME/"
 ```
 Ten cuidado: esto sobrescribirá los archivos actuales. Verifica el contenido del backup antes de restaurar.
 
+### Opcional: script de restauración
+Para facilitar la restauración, puedes usar los scripts de ayuda incluidos:
+ - Bash: `scripts/restore-backup.sh <timestamp> <module>`
+ - PowerShell: `scripts/restore-backup.ps1 -Timestamp <timestamp> -Module <module>`
+Sin argumentos, estos scripts listan los backups y módulos disponibles. Solicitan confirmación antes de restaurar y tratan de preservar los archivos existentes cuando es posible.
 ## Hooks Git
 El repositorio incluye hooks en `.githooks` que, por ejemplo, marcan archivos con shebang como ejecutables en el índice.
 - Activación automática: los instaladores configuran `core.hooksPath` a `.githooks` en tu clon local (idempotente).
