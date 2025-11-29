@@ -79,18 +79,22 @@ for MOD in "${MODULES[@]}"; do
     # Helper: map some well-known module-root filenames into XDG / proper destinations
     map_target(){
       local srcfile="$1" module_name="$2"
+      # Use XDG dirs when available, fall back to standard locations
+      XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+      XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+      XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
       case "$(basename "$srcfile")" in
         config.fish)
-          echo "$TARGET/.config/fish/config.fish";;
+          echo "$XDG_CONFIG_HOME/fish/config.fish";;
         init.vim)
           # Prefer Neovim user config path
-          echo "$TARGET/.config/nvim/init.vim";;
+          echo "$XDG_CONFIG_HOME/nvim/init.vim";;
         settings.json)
           # VSCode user settings or micro
           if [[ "$module_name" == "vscode" ]]; then
-            echo "$TARGET/.config/Code/User/settings.json"
+            echo "$XDG_CONFIG_HOME/Code/User/settings.json"
           elif [[ "$module_name" == "micro" ]]; then
-            echo "$TARGET/.config/micro/settings.json"
+            echo "$XDG_CONFIG_HOME/micro/settings.json"
           else
             # unknown mapping, default to HOME
             echo "$TARGET/$srcfile"
@@ -98,13 +102,47 @@ for MOD in "${MODULES[@]}"; do
         config.json)
           # micro: config.json -> ~/.config/micro/config.json
           if [[ "$module_name" == "micro" ]]; then
-            echo "$TARGET/.config/micro/config.json"
+            echo "$XDG_CONFIG_HOME/micro/config.json"
           else
             echo "$TARGET/$srcfile"
           fi;;
         chrome-flags.conf)
           # Chrome flags (desktop module)
-          echo "$TARGET/.config/chrome/chrome-flags.conf";;
+          echo "$XDG_CONFIG_HOME/chrome/chrome-flags.conf";;
+        init.el)
+          # Emacs: put init.el under ~/.emacs.d/init.el
+          if [[ "$module_name" == "emacs" ]]; then
+            echo "$TARGET/.emacs.d/init.el"
+          else
+            echo "$TARGET/$srcfile"
+          fi;;
+        config.toml)
+          # Common toml configs (helix, nushell)
+          if [[ "$module_name" == "helix" ]]; then
+            echo "$XDG_CONFIG_HOME/helix/config.toml"
+          elif [[ "$module_name" == "nushell" ]]; then
+            echo "$XDG_CONFIG_HOME/nushell/config.toml"
+          else
+            echo "$TARGET/$srcfile"
+          fi;;
+        kakrc)
+          if [[ "$module_name" == "kakoune" ]]; then
+            echo "$XDG_CONFIG_HOME/kak/kakrc"
+          else
+            echo "$TARGET/$srcfile"
+          fi;;
+        kateconfig)
+          if [[ "$module_name" == "kate" ]]; then
+            echo "$XDG_CONFIG_HOME/kate/kateconfig"
+          else
+            echo "$TARGET/$srcfile"
+          fi;;
+        gedit-settings.xml)
+          if [[ "$module_name" == "gedit" ]]; then
+            echo "$XDG_CONFIG_HOME/gedit/gedit-settings.xml"
+          else
+            echo "$TARGET/$srcfile"
+          fi;;
         *)
           echo "$TARGET/$srcfile";;
       esac
@@ -147,8 +185,9 @@ for MOD in "${MODULES[@]}"; do
     mkdir -p "$TMP_MOD_DIR/$TMP_NAME"
     # Copy module contents but exclude files at root that map to other locations and exclude etc/
     (cd "$(dirname "$MOD")" && rsync -a --exclude 'etc/' \
-      --exclude 'config.fish' --exclude 'init.vim' --exclude 'settings.json' \
-      --exclude 'config.json' --exclude 'chrome-flags.conf' --exclude 'README.md' \
+      --exclude 'config.fish' --exclude 'init.vim' --exclude 'init.el' --exclude 'settings.json' \
+      --exclude 'config.json' --exclude 'config.toml' --exclude 'kakrc' --exclude 'kateconfig' \
+      --exclude 'gedit-settings.xml' --exclude 'chrome-flags.conf' --exclude 'README.md' \
       "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
 
     # Handle mapped root files (create proper XDG symlinks)

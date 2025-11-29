@@ -152,7 +152,7 @@ jobs:
           set -e
           cd modules
           FAIL=0
-          ALLOWED='^config.fish$|^init.vim$|^settings.json$|^config.json$|^chrome-flags.conf$|^README.md$'
+          ALLOWED='^config.fish$|^init.vim$|^init.el$|^settings.json$|^config.json$|^config.toml$|^kakrc$|^kateconfig$|^gedit-settings.xml$|^chrome-flags.conf$|^README.md$'
           for m in */ ; do
             m=$(basename "$m")
             # find files in module root (not dotfiles) that are not in our allowed list

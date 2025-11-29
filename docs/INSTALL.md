@@ -37,10 +37,22 @@ Nota sobre archivos de configuración XDG y archivos en el root del módulo
 ---------------------------------------------------------------
 El instalador (`scripts/install.sh`) ahora mantiene la estructura de origen de los módulos (para que los dotfiles sigan centralizados en su ruta de origen dentro de `modules/`) y aplica ciertos archivos raíz a su ubicación XDG correcta automáticamente cuando corresponde. Esto evita mover archivos en el repositorio solo para adaptarlos a una convención de instalación.
 
+El instalador detecta varios ficheros raíz comunes y los mapea a rutas XDG o a rutas estándar de la aplicación.
 Ejemplos de mapeos automáticos que el instalador maneja:
-- `config.fish` → `~/.config/fish/config.fish`
-- `init.vim` → `~/.config/nvim/init.vim`
-- `settings.json` en el módulo `modules/editor/vscode` → `~/.config/Code/User/settings.json`
+- `config.fish` → `$XDG_CONFIG_HOME/fish/config.fish` (por defecto `$HOME/.config/fish/config.fish`)
+- `init.vim` → `$XDG_CONFIG_HOME/nvim/init.vim` (por defecto `$HOME/.config/nvim/init.vim`)
+- `settings.json` en el módulo `modules/editor/vscode` → `$XDG_CONFIG_HOME/Code/User/settings.json`
+- `settings.json` / `config.json` en `modules/editor/micro` → `$XDG_CONFIG_HOME/micro/*.json`
+- `init.el` en `modules/editor/emacs` → `~/.emacs.d/init.el`
+- `config.toml` en `modules/editor/helix` → `$XDG_CONFIG_HOME/helix/config.toml`
+- `config.toml` en `modules/shell/nushell` → `$XDG_CONFIG_HOME/nushell/config.toml`
+- `kakrc` en `modules/editor/kakoune` → `$XDG_CONFIG_HOME/kak/kakrc`
+- `kateconfig` en `modules/editor/kate` → `$XDG_CONFIG_HOME/kate/kateconfig`
+- `gedit-settings.xml` en `modules/editor/gedit` → `$XDG_CONFIG_HOME/gedit/gedit-settings.xml`
+- `chrome-flags.conf` → `$XDG_CONFIG_HOME/chrome/chrome-flags.conf`
+
+Los mapeos respetan las variables XDG (p. ej. `XDG_CONFIG_HOME`). Consulta la especificación/XDG Base Directory para detalles:
+https://wiki.archlinux.org/title/XDG_Base_Directory
 
 El instalador seguirá usando `stow` para el resto de los archivos en cada módulo. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
 
