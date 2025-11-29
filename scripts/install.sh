@@ -10,7 +10,7 @@ If no modules specified, defaults to a curated set of user dotfile modules that 
 install without modifying system-level configuration.
 
 This script only installs dotfiles under the current user's home directory using GNU Stow.
-System-level configuration (e.g., files under /etc like Xorg or udev/hwdb) is NOT modified by this script.
+System-level configuration (e.g., files under /etc like Xorg) is NOT modified by this script.
 EOF
 }
 
@@ -72,5 +72,5 @@ for MOD in "${MODULES[@]}"; do
 done
 
 echo "Instalación finalizada. Este instalador solo aplica dotfiles de usuario en \\${HOME}."
-echo "Si necesitas aplicar cambios a nivel sistema (Xorg, hwdb, etc.), hazlo manualmente con permisos de root."
+echo "Si necesitas aplicar cambios a nivel sistema (Xorg, etc.), hazlo manualmente con permisos de root."
 echo "Recuerda revisar los archivos instalados para asegurarte de que todo esté como deseas."

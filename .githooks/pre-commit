@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Pre-commit hook: Ensure scripts under scripts/ with shebang become executable in the index
+set -euo pipefail
+
+# Get list of staged files (added/modified)
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -z "$STAGED" ]; then	exit 0
+fi
+
+CHANGED=0
+for f in $STAGED; do
+  # Only consider files under scripts/
+  case "$f" in
+    scripts/*)
+      if [ -f "$f" ]; then
+        # If file has shebang, make it executable in the index
+        if head -n 1 "$f" | grep -q '^#!'; then
+          git update-index --chmod=+x "$f"
+          CHANGED=1
+        fi
+      fi
+      ;;
+  esac
+done
+
+if [ "$CHANGED" -eq 1 ]; then
+  echo "Fixed executable bit for staged scripts; the index has been updated."
+  # Keep commit proceeding. We changed the index, but the commit will include that change.
+fi
+
+exit 0

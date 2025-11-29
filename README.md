@@ -78,7 +78,6 @@ Lee `docs/INSTALL.md` si necesitas más detalle o alternativas (stow, configurac
 Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y `docs/CONTRIBUTING.md`.
 
 **Quick start — Reinstalación**
-- Para preparar y aplicar tu configuración tras reinstalar un sistema Linux/WSL:
 	```bash
 	git clone https://github.com/JotaRandom/dotfiles.git ~/dotfiles
 	cd ~/dotfiles
@@ -88,7 +87,7 @@ Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y
 	# o especifica los módulos que quieres aplicar:
 	./scripts/install.sh modules/shell/bash modules/shell/fish modules/editor/nvim modules/editor/vscode
 	```
-- En Windows, preferiblemente usa WSL o ejecuta `scripts/install.ps1` con permisos de administrador:
+Nota: El instalador `./scripts/install.sh` aplica solo dotfiles de usuario en `$HOME` (stow), y no modifica archivos de sistema como `/etc/*`. Para cambios a nivel sistema aplica los archivos manualmente con permisos root según las instrucciones en `docs/INSTALL.md`.
 	```powershell
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 	.\scripts\install.ps1 modules/shell/bash
