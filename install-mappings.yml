@@ -1,52 +1,59 @@
-# Declarative install mappings used by scripts/install.sh and CI (simple key/value format)
-# Format:
-#   default_action: dotify  # default for unmapped root-level files: dotify | home | error
-#   <filename> : <dest>
-#   <filename>|<module_name> : <dest>   # module-specific override
-# Destination values: xdg:<relative/path>   -> placed under $XDG_CONFIG_HOME/<relative/path>
-#                     home:<path>           -> placed under $HOME/<path>
-#                     note: If no mapping exists, installer will follow default_action
-
+# Declarative install mappings used by scripts/install.sh and CI
+# Simple, human-friendly layout. Destinations: xdg:, xdg_state:, xdg_data:, home:, ignore
 default_action: dotify
 
-# Common mappings
+## Apps (XDG-config)
+chrome-flags.conf: xdg:chrome/chrome-flags.conf
 config.fish: xdg:fish/config.fish
-init.vim: xdg:nvim/init.vim
-settings.json|vscode: xdg:Code/User/settings.json
-settings.json|micro: xdg:micro/settings.json
 config.json|micro: xdg:micro/config.json
-init.el|emacs: home:.emacs.d/init.el
 config.toml|helix: xdg:helix/config.toml
 config.toml|nushell: xdg:nushell/config.toml
+gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml
+init.el|emacs: xdg:emacs/init.el
+init.vim: xdg:nvim/init.vim
 kakrc|kakoune: xdg:kak/kakrc
 kateconfig|kate: xdg:kate/kateconfig
-gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml
-chrome-flags.conf: xdg:chrome/chrome-flags.conf
+settings.json|micro: xdg:micro/settings.json
+settings.json|vscode: xdg:Code/User/settings.json
 
-# Dotfiles and other user config files (installed to HOME by default)
+## Docs (ignored)
+README.md: ignore
+
+## Dotfiles (home by default; alphabetical)
+.bashrc: home:.bashrc
+.dmrc: home:.dmrc
+.elvishrc: xdg:elvish/init.el
+.inputrc: xdg:readline/inputrc
+.kshrc: home:.kshrc
+.latexmkrc: xdg:latexmk/latexmkrc
+.lesshst: xdg_state:less/lesshst
+.lesskey: xdg:less/lesskey
+.mkshrc: home:.mkshrc
+.nanorc: xdg:nano/nanorc
+.profile: home:.profile
 .tmux.conf: xdg:tmux/tmux.conf
 .tmuxrc: xdg:tmux/tmux.conf
-.xmms2rc: home:.xmms2rc
 .twmrc: home:.twmrc
-.latexmkrc: home:.latexmkrc
-.nanorc: xdg:nano/nanorc
-.vimrc: home:.vimrc
-.profile: home:.profile
-.bashrc: home:.bashrc
-.lesskey: home:.lesskey
-.inputrc: home:.inputrc
-.dmrc: home:.dmrc
-.lesshst: home:.lesshst
-.elvishrc: xdg:elvish/init.el
-.kshrc: home:.kshrc
-.mkshrc: home:.mkshrc
-.tcshrc: home:.tcshrc
-.xonshrc: xdg:xonsh/xonshrc
-.zshrc: home:.zshrc
-.Xdefaults: home:.Xdefaults
-.xserverrc: home:.xserverrc
+.vimrc: xdg:vim/vimrc
+.xmms2rc: home:.xmms2rc
+.xonshrc: xdg:xonsh/rc.xsh
 .xinitrc: home:.xinitrc
-.Xmodmap: home:.Xmodmap
+.xserverrc: home:.xserverrc
+.Xmodmap: xdg:X11/Xmodmap
 .Xresources: home:.Xresources
-.gitconfig: home:.gitconfig
-profile.ps1|pwsh: xdg:powershell/profile.ps1
+.zshrc: xdg:zsh/.zshrc
+.tcshrc: home:.tcshrc
+
+## Session / system
+makepkg.conf: xdg:pacman/makepkg.conf
+.xsession: home:.xsession
+.xsessionrc: home:.xsessionrc
+.Xsession: home:.Xsession
+.xsession-errors: home:.xsession-errors
+
+## Misc / other
+.gitconfig: xdg:git/config
+profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1
+thinkfan.conf: ignore
+.Xdefaults: ignore
+

@@ -164,7 +164,8 @@ jobs:
             fi
           fi
           if [ -z "$ALLOWED" ]; then
-            ALLOWED='^config.fish$|^init.vim$|^init.el$|^settings.json$|^config.json$|^config.toml$|^kakrc$|^kateconfig$|^gedit-settings.xml$|^chrome-flags.conf$|^README.md$'
+            # default to only allowing dotfiles in absence of explicit mappings
+            ALLOWED='^\..+'
           fi
           for m in */ ; do
             m=$(basename "$m")
@@ -182,6 +183,11 @@ jobs:
             echo "Top-level files detected in modules. The installer will dotify or map known files; consider adding a mapping if necessary." >&2
           fi
           fi
+      - name: Enforce mapping coverage for module root files
+        run: |
+          set -e
+          chmod +x ./.github/scripts/check-mappings.sh
+          ./.github/scripts/check-mappings.sh
       - name: Cleanup
         run: |
           echo "Removing temp"; rm -rf "$TMP" || true

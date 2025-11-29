@@ -39,33 +39,88 @@ foreach ($module in $Modules) {
         continue
     }
 
-    # Map target path for a module relative file (respect XDG where applicable)
+    # Parse install-mappings.yml (YAML-lite) so this installer is mapping-driven
+    $MAPPINGS_FILE = Join-Path $PSScriptRoot '..\install-mappings.yml'
+    $MAPPER_GLOBAL = @{}
+    $MAPPER_MODULE = @{}
+    $DEFAULT_ACTION = 'dotify'
+    if (Test-Path $MAPPINGS_FILE) {
+        Get-Content $MAPPINGS_FILE | ForEach-Object {
+            $line = $_ -replace '#.*',''    # strip comments
+            $line = $line.Trim()
+            if ([string]::IsNullOrWhiteSpace($line)) { return }
+            if ($line -match '^default_action:\s*(\w+)') { $DEFAULT_ACTION = $matches[1]; return }
+            if ($line -match '^([^:]+):\s*(.+)$') {
+                $k = $matches[1].Trim()
+                $v = $matches[2].Trim()
+                if ($k -like '*|*') {
+                    $parts = $k -split '\|',2
+                    $name = $parts[0].Trim()
+                    $mod  = $parts[1].Trim()
+                    $MAPPER_MODULE["$name|$mod"] = $v
+                } else {
+                    $MAPPER_GLOBAL[$k] = $v
+                }
+            }
+        }
+    }
+
+    # Build set of root-level mapped filenames for this repo (used to influence behavior)
+    $MAPPED_NAMES = @{}
+    foreach ($k in $MAPPER_GLOBAL.Keys) { $MAPPED_NAMES[$k] = $true }
+    foreach ($k in $MAPPER_MODULE.Keys) { $name = $k -split '\|',2 | Select-Object -First 1; $MAPPED_NAMES[$name] = $true }
+
     function Map-Target {
         param($relPath, $moduleName)
-        # nested paths -> keep relative under HOME
+        # if this is a nested path (contains backslash), default to HOME/<relPath>
         if ($relPath -match '\\') { return Join-Path $HOME $relPath }
-        # dotfile already? place under HOME directly
-        if ($relPath -match '^\.') { return Join-Path $HOME $relPath }
-        switch -regex ($relPath) {
-            '^config\.fish$' { return Join-Path $XDG_CONFIG_HOME 'fish\\config.fish' }
-            '^init\.vim$'     { return Join-Path $XDG_CONFIG_HOME 'nvim\\init.vim' }
-            '^settings\.json$' {
-                if ($moduleName -match 'vscode') { return Join-Path $XDG_CONFIG_HOME 'Code\\User\\settings.json' }
-                if ($moduleName -match 'micro')  { return Join-Path $XDG_CONFIG_HOME 'micro\\settings.json' }
-                return Join-Path $HOME $relPath
+
+        $base = Split-Path $relPath -Leaf
+
+        # check module-specific mapping first
+        if ($MAPPER_MODULE.ContainsKey("$base|$moduleName")) { $mapping = $MAPPER_MODULE["$base|$moduleName"] }
+        elseif ($MAPPER_GLOBAL.ContainsKey($base)) { $mapping = $MAPPER_GLOBAL[$base] }
+        else { $mapping = $null }
+
+        if ($mapping) {
+            if ($mapping -in @('ignore','skip')) { return '__IGNORE__' }
+            if ($mapping -like 'xdg:*') {
+                $sub = $mapping.Substring(4) -replace '/','\\'
+                return Join-Path $XDG_CONFIG_HOME $sub
             }
-            '^config\.json$' { if ($moduleName -match 'micro') { return Join-Path $XDG_CONFIG_HOME 'micro\\config.json' } else { return Join-Path $HOME $relPath } }
-            '^init\.el$'     { if ($moduleName -match 'emacs') { return Join-Path $HOME '.emacs.d\\init.el' } else { return Join-Path $HOME $relPath } }
-            '^config\.toml$' {
-                if ($moduleName -match 'helix') { return Join-Path $XDG_CONFIG_HOME 'helix\\config.toml' }
-                if ($moduleName -match 'nushell') { return Join-Path $XDG_CONFIG_HOME 'nushell\\config.toml' }
-                return Join-Path $HOME $relPath
+            if ($mapping -like 'xdg_state:*') {
+                $sub = $mapping.Substring(10) -replace '/','\\'
+                return Join-Path $XDG_STATE_HOME $sub
             }
-            '^kakrc$' { return Join-Path $XDG_CONFIG_HOME 'kak\\kakrc' }
-            '^kateconfig$' { return Join-Path $XDG_CONFIG_HOME 'kate\\kateconfig' }
-            '^gedit-settings\.xml$' { return Join-Path $XDG_CONFIG_HOME 'gedit\\gedit-settings.xml' }
-            '^chrome-flags\.conf$' { return Join-Path $XDG_CONFIG_HOME 'chrome\\chrome-flags.conf' }
-            default { return Join-Path $HOME ('.' + $relPath) }
+            if ($mapping -like 'xdg_data:*') {
+                $sub = $mapping.Substring(9) -replace '/','\\'
+                return Join-Path $XDG_DATA_HOME $sub
+            }
+            if ($mapping -like 'xdg_cache:*') {
+                $sub = $mapping.Substring(10) -replace '/','\\'
+                return Join-Path $env:LOCALAPPDATA $sub
+            }
+            if ($mapping -like 'home:*') {
+                $sub = $mapping.Substring(5) -replace '/','\\'
+                return Join-Path $HOME $sub
+            }
+            # no prefix — treat mapping as path relative to HOME
+            $sub = $mapping -replace '/','\\'
+            return Join-Path $HOME $sub
+        }
+
+        # No mapping: follow DEFAULT_ACTION
+        switch ($DEFAULT_ACTION) {
+            'dotify' {
+                if ($base -match '^\.') { return Join-Path $HOME $base }
+                else { return Join-Path $HOME ('.' + $base) }
+            }
+            'home' { return Join-Path $HOME $base }
+            'error' { return '__ERROR__' }
+            default {
+                if ($base -match '^\.') { return Join-Path $HOME $base }
+                else { return Join-Path $HOME ('.' + $base) }
+            }
         }
     }
 
@@ -73,8 +128,10 @@ foreach ($module in $Modules) {
     $allFiles = Get-ChildItem -Path $modulePath -File -Recurse
     $conflicts = @()
     foreach ($f in $allFiles) {
-        # Skip README and module docs — not intended to be linked into $HOME
-        if ($f.Name -ieq 'README.md') { continue }
+        # Determine mapping for this file and skip if install-mappings.yml marks it as ignore
+        $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
+        $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
+        if ($dest -eq '__IGNORE__') { continue }
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
         $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
         $destDir = Split-Path $dest -Parent
@@ -110,10 +167,10 @@ foreach ($module in $Modules) {
         }
         # After resolving conflicts, create symlinks for all files
         foreach ($f in $allFiles) {
-            # Skip README and module docs — not intended to be linked into $HOME
-            if ($f.Name -ieq 'README.md') { continue }
-            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
+            # Determine mapping for this file and skip if marked ignore
+            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
             $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
+            if ($dest -eq '__IGNORE__') { continue }
             $destDir = Split-Path $dest -Parent
             if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
             if (Test-Path $dest) { Remove-Item -Recurse -Force -Path $dest -ErrorAction SilentlyContinue }

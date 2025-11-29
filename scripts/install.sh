@@ -94,6 +94,10 @@ if [ -f "$MAPPINGS_FILE" ]; then
     fi
   done < "$MAPPINGS_FILE"
 fi
+# Build a quick set of mapped root filenames from the mapping file
+declare -A _MAPPED_NAMES
+for k in "${!_MAPPER_GLOBAL[@]}"; do _MAPPED_NAMES["$k"]=1; done
+for k in "${!_MAPPER_MODULE[@]}"; do name="${k%%|*}"; _MAPPED_NAMES["$name"]=1; done
 for MOD in "${MODULES[@]}"; do
   if [ -d "$MOD" ]; then
     BASENAME=$(basename "$MOD")
@@ -108,13 +112,14 @@ for MOD in "${MODULES[@]}"; do
       continue
     fi
 
-    # Helper: map some well-known module-root filenames into XDG / proper destinations
+    # Helper: map target path using only install-mappings.yml values and DEFAULT_ACTION
     map_target(){
       local srcfile="$1" module_name="$2"
       # Use XDG dirs when available, fall back to standard locations
       XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
       XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
       XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+      XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
       # prefer declarative mapping from install-mappings.yml if present
       local base="$(basename "$srcfile")"
       if [[ -n "${_MAPPER_MODULE["$base|$module_name"]+x}" ]]; then
@@ -125,75 +130,46 @@ for MOD in "${MODULES[@]}"; do
         mapping=""
       fi
       if [ -n "$mapping" ]; then
+        # allow special sentinel values in mapping like 'ignore' or 'skip' to indicate
+        # "do not create a mapping / link for this root file"
+        if [[ "$mapping" =~ ^(ignore|skip)$ ]]; then
+          echo "__IGNORE__"
+          return
+        fi
         case "$mapping" in
           xdg:*) echo "${XDG_CONFIG_HOME}/${mapping#xdg:}"; return;;
+          xdg_state:*) echo "${XDG_STATE_HOME}/${mapping#xdg_state:}"; return;;
+          xdg_data:*) echo "${XDG_DATA_HOME}/${mapping#xdg_data:}"; return;;
+          xdg_cache:*) echo "${XDG_CACHE_HOME}/${mapping#xdg_cache:}"; return;;
           home:*) echo "$TARGET/${mapping#home:}"; return;;
           *) echo "$TARGET/$srcfile"; return;;
         esac
       fi
 
-      case "$base" in
-        config.fish)
-          echo "$XDG_CONFIG_HOME/fish/config.fish";;
-        init.vim)
-          # Prefer Neovim user config path
-          echo "$XDG_CONFIG_HOME/nvim/init.vim";;
-        settings.json)
-          # VSCode user settings or micro
-          if [[ "$module_name" == "vscode" ]]; then
-            echo "$XDG_CONFIG_HOME/Code/User/settings.json"
-          elif [[ "$module_name" == "micro" ]]; then
-            echo "$XDG_CONFIG_HOME/micro/settings.json"
+      # No mapping present — obey DEFAULT_ACTION
+      case "$DEFAULT_ACTION" in
+        dotify)
+          # dotify: create a dot-prefixed name in HOME unless it already starts with '.'
+          if [[ "$base" == .* ]]; then
+            echo "$TARGET/$base"
           else
-            # unknown mapping, default to HOME
-            echo "$TARGET/$srcfile"
-          fi;;
-        config.json)
-          # micro: config.json -> ~/.config/micro/config.json
-          if [[ "$module_name" == "micro" ]]; then
-            echo "$XDG_CONFIG_HOME/micro/config.json"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
-        chrome-flags.conf)
-          # Chrome flags (desktop module)
-          echo "$XDG_CONFIG_HOME/chrome/chrome-flags.conf";;
-        init.el)
-          # Emacs: put init.el under ~/.emacs.d/init.el
-          if [[ "$module_name" == "emacs" ]]; then
-            echo "$TARGET/.emacs.d/init.el"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
-        config.toml)
-          # Common toml configs (helix, nushell)
-          if [[ "$module_name" == "helix" ]]; then
-            echo "$XDG_CONFIG_HOME/helix/config.toml"
-          elif [[ "$module_name" == "nushell" ]]; then
-            echo "$XDG_CONFIG_HOME/nushell/config.toml"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
-        kakrc)
-          if [[ "$module_name" == "kakoune" ]]; then
-            echo "$XDG_CONFIG_HOME/kak/kakrc"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
-        kateconfig)
-          if [[ "$module_name" == "kate" ]]; then
-            echo "$XDG_CONFIG_HOME/kate/kateconfig"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
-        gedit-settings.xml)
-          if [[ "$module_name" == "gedit" ]]; then
-            echo "$XDG_CONFIG_HOME/gedit/gedit-settings.xml"
-          else
-            echo "$TARGET/$srcfile"
-          fi;;
+            echo "$TARGET/.${base}"
+          fi
+          ;;
+        home)
+          echo "$TARGET/$base"
+          ;;
+        error)
+          echo "__ERROR__"
+          ;;
         *)
-          echo "$TARGET/$srcfile";;
+          # safe default
+          if [[ "$base" == .* ]]; then
+            echo "$TARGET/$base"
+          else
+            echo "$TARGET/.${base}"
+          fi
+          ;;
       esac
     }
 
@@ -233,16 +209,18 @@ for MOD in "${MODULES[@]}"; do
     TMP_NAME="${BASENAME}.tmp"
     mkdir -p "$TMP_MOD_DIR/$TMP_NAME"
     # Copy module contents but exclude files at root that map to other locations and exclude etc/
+    # Build exclude list for files at module root that are mapped (we'll handle them
+    # with explicit symlinks) — plus exclude etc/
+    EXCLUDE_ARGS=(--exclude 'etc/')
+    for mapped in "${!_MAPPED_NAMES[@]}"; do
+      EXCLUDE_ARGS+=(--exclude "$mapped")
+    done
     if command -v rsync >/dev/null 2>&1; then
-      (cd "$(dirname "$MOD")" && rsync -a --exclude 'etc/' \
-        --exclude 'config.fish' --exclude 'init.vim' --exclude 'init.el' --exclude 'settings.json' \
-        --exclude 'config.json' --exclude 'config.toml' --exclude 'kakrc' --exclude 'kateconfig' \
-        --exclude 'gedit-settings.xml' --exclude 'chrome-flags.conf' --exclude 'README.md' \
-        "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
+      (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
     else
       # fallback: copy everything then remove excluded entries
       (cd "$(dirname "$MOD")" && cp -a "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
-      for ex in etc config.fish init.vim init.el settings.json config.json config.toml kakrc kateconfig gedit-settings.xml chrome-flags.conf README.md; do
+      for ex in "${!_MAPPED_NAMES[@]}" etc; do
         rm -rf "$TMP_MOD_DIR/$TMP_NAME/$ex" || true
       done
     fi
@@ -251,6 +229,11 @@ for MOD in "${MODULES[@]}"; do
     for f in $(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 1 -type f -printf "%f\n" 2>/dev/null || true); do
       DEST=$(map_target "$f" "$BASENAME")
       # If file maps into a subdir of $HOME (XDG), create parent and symlink it
+      # If mapping returned the IGNORE sentinel, skip creating a special mapping
+      if [[ "$DEST" == "__IGNORE__" ]]; then
+        echo "Skipping ignored root file: $f" >&2
+        continue
+      fi
       if [[ "$DEST" != "$TARGET/$f" ]]; then
         if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(readlink -f "$MOD/$f")" ]; then
           echo "Skipping already-present symlink: $DEST"

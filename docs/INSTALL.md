@@ -60,6 +60,14 @@ Nota sobre archivos de sistema:
 Los mapeos respetan las variables XDG (p. ej. `XDG_CONFIG_HOME`). Consulta la especificación/XDG Base Directory para detalles:
 https://wiki.archlinux.org/title/XDG_Base_Directory
 
+Soporte adicional XDG
+----------------------
+Además de `xdg:` (mapea al directorio `XDG_CONFIG_HOME`), el instalador soporta ahora:
+- `xdg_state:` → mapea a `XDG_STATE_HOME` (ej.: historiales y archivos de estado)
+- `xdg_data:`  → mapea a `XDG_DATA_HOME` (ej.: datos específicos de la aplicación)
+
+Por ejemplo: `lesshst: xdg_state:less/lesshst` colocará el archivo en `$XDG_STATE_HOME/less/lesshst`.
+
 El instalador seguirá usando `stow` para el resto de los archivos en cada módulo. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
 
 Nota: archivos de documentación como `README.md` o archivos auxiliares que no estén destinados a ser configuraciones de usuario se excluyen al crear la copia temporal para `stow` y no se instalarán en `~/.` para evitar que el directorio home se contamine con documentación del módulo.
