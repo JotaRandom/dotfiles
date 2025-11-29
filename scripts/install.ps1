@@ -17,6 +17,12 @@ if ($Modules.Count -eq 0) {
     $Modules = @('modules/shell/bash','modules/shell/zsh','modules/apps/tmux','modules/apps/xmms')
 }
 
+# XDG fallback variables (Windows: prefer APPDATA / LOCALAPPDATA but respect XDG vars if set)
+$HOME = $env:USERPROFILE
+$XDG_CONFIG_HOME = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } elseif ($env:APPDATA) { $env:APPDATA } else { Join-Path $HOME '.config' }
+$XDG_DATA_HOME   = if ($env:XDG_DATA_HOME)   { $env:XDG_DATA_HOME }   elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\share' }
+$XDG_STATE_HOME  = if ($env:XDG_STATE_HOME)  { $env:XDG_STATE_HOME }  elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\state' }
+
 if (-not (Test-GitLFS)) {
     Write-Warning "git-lfs no disponible; algunas características (LFS) pueden no funcionar"
 }
@@ -27,12 +33,50 @@ foreach ($module in $Modules) {
         Write-Host "Advertencia: módulo $modulePath no existe" -ForegroundColor Yellow
         continue
     }
+    # Safety: skip modules that contain system-level paths (etc/) — installer doesn't touch /etc
+    if (Get-ChildItem -Path $modulePath -Recurse -File | Where-Object { $_.FullName -like '*\\etc\\*' }) {
+        Write-Host "Skipping module $modulePath because it contains system-level files under 'etc/'." -ForegroundColor Yellow
+        continue
+    }
+
+    # Map target path for a module relative file (respect XDG where applicable)
+    function Map-Target {
+        param($relPath, $moduleName)
+        # nested paths -> keep relative under HOME
+        if ($relPath -match '\\') { return Join-Path $HOME $relPath }
+        # dotfile already? place under HOME directly
+        if ($relPath -match '^\.') { return Join-Path $HOME $relPath }
+        switch -regex ($relPath) {
+            '^config\.fish$' { return Join-Path $XDG_CONFIG_HOME 'fish\\config.fish' }
+            '^init\.vim$'     { return Join-Path $XDG_CONFIG_HOME 'nvim\\init.vim' }
+            '^settings\.json$' {
+                if ($moduleName -match 'vscode') { return Join-Path $XDG_CONFIG_HOME 'Code\\User\\settings.json' }
+                if ($moduleName -match 'micro')  { return Join-Path $XDG_CONFIG_HOME 'micro\\settings.json' }
+                return Join-Path $HOME $relPath
+            }
+            '^config\.json$' { if ($moduleName -match 'micro') { return Join-Path $XDG_CONFIG_HOME 'micro\\config.json' } else { return Join-Path $HOME $relPath } }
+            '^init\.el$'     { if ($moduleName -match 'emacs') { return Join-Path $HOME '.emacs.d\\init.el' } else { return Join-Path $HOME $relPath } }
+            '^config\.toml$' {
+                if ($moduleName -match 'helix') { return Join-Path $XDG_CONFIG_HOME 'helix\\config.toml' }
+                if ($moduleName -match 'nushell') { return Join-Path $XDG_CONFIG_HOME 'nushell\\config.toml' }
+                return Join-Path $HOME $relPath
+            }
+            '^kakrc$' { return Join-Path $XDG_CONFIG_HOME 'kak\\kakrc' }
+            '^kateconfig$' { return Join-Path $XDG_CONFIG_HOME 'kate\\kateconfig' }
+            '^gedit-settings\.xml$' { return Join-Path $XDG_CONFIG_HOME 'gedit\\gedit-settings.xml' }
+            '^chrome-flags\.conf$' { return Join-Path $XDG_CONFIG_HOME 'chrome\\chrome-flags.conf' }
+            default { return Join-Path $HOME ('.' + $relPath) }
+        }
+    }
+
     # Phase 1 - collect all files and detect conflicts
     $allFiles = Get-ChildItem -Path $modulePath -File -Recurse
     $conflicts = @()
     foreach ($f in $allFiles) {
-        $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
-        $dest = Join-Path $env:USERPROFILE $rel
+        # Skip README and module docs — not intended to be linked into $HOME
+        if ($f.Name -ieq 'README.md') { continue }
+        $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
+        $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
         $destDir = Split-Path $dest -Parent
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
         if (Test-Path $dest) {
@@ -66,8 +110,10 @@ foreach ($module in $Modules) {
         }
         # After resolving conflicts, create symlinks for all files
         foreach ($f in $allFiles) {
-            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
-            $dest = Join-Path $env:USERPROFILE $rel
+            # Skip README and module docs — not intended to be linked into $HOME
+            if ($f.Name -ieq 'README.md') { continue }
+            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
+            $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
             $destDir = Split-Path $dest -Parent
             if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
             if (Test-Path $dest) { Remove-Item -Recurse -Force -Path $dest -ErrorAction SilentlyContinue }
