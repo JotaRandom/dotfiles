@@ -102,6 +102,9 @@ for MOD in "${MODULES[@]}"; do
           else
             echo "$TARGET/$srcfile"
           fi;;
+        chrome-flags.conf)
+          # Chrome flags (desktop module)
+          echo "$TARGET/.config/chrome/chrome-flags.conf";;
         *)
           echo "$TARGET/$srcfile";;
       esac
@@ -145,6 +148,7 @@ for MOD in "${MODULES[@]}"; do
     # Copy module contents but exclude files at root that map to other locations and exclude etc/
     (cd "$(dirname "$MOD")" && rsync -a --exclude 'etc/' \
       --exclude 'config.fish' --exclude 'init.vim' --exclude 'settings.json' \
+      --exclude 'config.json' --exclude 'chrome-flags.conf' --exclude 'README.md' \
       "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
 
     # Handle mapped root files (create proper XDG symlinks)
