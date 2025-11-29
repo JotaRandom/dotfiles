@@ -33,9 +33,3 @@ Precauciones:
 ### Opción A: Xorg InputClass (recomendado para X11)
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.
 2. Reinicia la sesión gráfica tras copiar el archivo a /etc/X11/xorg.conf.d/.
-
-### Opción B: hwdb (udev-based, remapeo scancode -> keycode, aplica a X11 y Wayland)
-1. Añadir (o personalizar) el archivo `modules/system/etc/udev/hwdb.d/90-latin-layout.hwdb` con `evdev:` reglas y `KEYBOARD_KEY_*` mapeos para teclas específicas.
-2. Ejecutar manualmente: `sudo systemd-hwdb update && sudo udevadm trigger`.
-
-La opción hwdb es la única manera sólida de lograr una configuración 100% udev-only sin usar scripts ni servicios que dependan de la sesión gráfica. Actúa en la capa del kernel (input map), por lo que se aplica tanto a Wayland como a X11.
