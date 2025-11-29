@@ -29,6 +29,10 @@ Pasos para reinstalar y aplicar tu configuración (Linux, WSL):
 Precauciones:
 - Si tienes archivos existentes en `$HOME`, el instalador no los sobrescribirá y te avisará. Haz backup de configuraciones importantes antes de ejecutar.
 
+Nota sobre archivos de sistema:
+- Este instalador solo aplica dotfiles de usuario en `$HOME`.
+- Módulos que contienen archivos bajo `etc/` (por ejemplo `modules/system/etc/thinkfan.conf`) son considerados archivos a nivel sistema y **no serán aplicados** por `scripts/install.sh` para evitar que se instalen en ubicaciones como `/etc` inadvertidamente. Si deseas aplicar dichos archivos deberás copiarlos manualmente con permisos de root y siguiendo las instrucciones del módulo.
+
 
 ### Opción A: Xorg InputClass (recomendado para X11)
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.

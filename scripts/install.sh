@@ -67,6 +67,15 @@ for MOD in "${MODULES[@]}"; do
     BASENAME=$(basename "$MOD")
     echo "Preparing to stow: $BASENAME -> $TARGET"
 
+    # Safety: skip modules that contain system-level paths (e.g., etc/) because this installer
+    # only operates on user-level files under $HOME. If you intentionally want to apply system
+    # files, handle them manually (or run a separate system installer as root).
+    if (cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read); then
+      echo "Skipping module $BASENAME because it contains system-level files under 'etc/'." >&2
+      echo "This installer will not apply files intended for /etc (e.g., /etc/thinkfan.conf)." >&2
+      continue
+    fi
+
     # dry-run check: list conflicting targets
     CONFLICTS=()
     while IFS= read -r -d $'\0' SRC; do

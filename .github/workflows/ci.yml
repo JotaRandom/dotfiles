@@ -129,6 +129,11 @@ jobs:
           # Iterate modules and try to stow to temporary directory
           for m in */ ; do
             m=$(basename "$m")
+            # Skip modules that include system-level files (e.g. etc/) to avoid attempting to apply them
+            if find "$m" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read; then
+              echo "Skipping module: $m (contains system-level files under etc/)"
+              continue
+            fi
             echo "Testing module: $m"
             # Use explicit target to avoid modifying home
             stow -v -t "$TMP" "$m" || { echo "stow failed for module: $m"; exit 1; }

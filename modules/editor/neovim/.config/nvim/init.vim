@@ -1,4 +1,4 @@
-" init.vim example minimal
+" init.vim example minimal (moved to correct XDG path)
 set nocompatible
 set number
 set tabstop=2
