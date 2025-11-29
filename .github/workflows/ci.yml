@@ -22,18 +22,20 @@ jobs:
       - name: Bash syntax check
         run: |
           for f in ./scripts/*.sh; do bash -n "$f"; done
-      - name: Check executable bit on shebang scripts
+      - name: Check executable bit on shebang files
         run: |
           set -e
           fail=0
-          files=$(git ls-files -- "scripts/*.sh" || true)
+          files=$(git ls-files || true)
           if [ -n "$files" ]; then
             for f in $files; do
-              if head -n1 "$f" | grep -q '^#!'; then
-                mode=$(git ls-files --stage "$f" | awk '{print $1}')
-                if [ "$mode" != "100755" ]; then
-                  echo "$f has shebang but is not executable in index (mode: $mode). Run: git update-index --chmod=+x $f"
-                  fail=1
+              if [ -f "$f" ]; then
+                if head -n1 "$f" | grep -q '^#!'; then
+                  mode=$(git ls-files --stage "$f" | awk '{print $1}')
+                  if [ "$mode" != "100755" ]; then
+                    echo "$f has shebang but is not executable in index (mode: $mode). Run: git update-index --chmod=+x $f"
+                    fail=1
+                  fi
                 fi
               fi
             done
