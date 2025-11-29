@@ -35,3 +35,15 @@ foreach ($module in $Modules) {
 }
 
 Write-Host "Instalación (PowerShell) finalizada. Revisa los enlaces simbólicos." -ForegroundColor Cyan
+
+# Auto-configure Git hooks in this repository (safe and idempotent)
+try {
+    $null = git rev-parse --is-inside-work-tree 2>$null
+    $setupPath = Join-Path $PSScriptRoot 'setup-githooks.ps1'
+    if (Test-Path $setupPath) {
+        Write-Host "Configurando hooks de git localmente (core.hooksPath -> .githooks)" -ForegroundColor Cyan
+        try { & $setupPath } catch { Write-Warning "No se pudo configurar hooks de git: $_" }
+    }
+} catch {
+    # Not a git repository or git not available; ignore
+}

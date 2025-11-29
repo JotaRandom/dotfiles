@@ -34,16 +34,19 @@ Precauciones:
 1. Copiar `modules/system/etc/X11/*.conf` a `/etc/X11/xorg.conf.d/`.
 2. Reinicia la sesión gráfica tras copiar el archivo a /etc/X11/xorg.conf.d/.
 
-## Hooks Git (Opcional)
-Este repositorio incluye un hook pre-commit en `.githooks/pre-commit` que asegura que los archivos dentro
+## Hooks Git (automático)
+Este repositorio incluye un pre-commit hook en `.githooks/pre-commit` que asegura que los archivos dentro
 de `scripts/` con un shebang (`#!`) reciban el bit de ejecución (`+x`) en el índice al hacer commit, para evitar
-problemas en plataformas Unix. Para activar los hooks en tu copia local ejecuta:
+problemas en plataformas Unix.
+
+Los instaladores `scripts/install.sh` y `scripts/install.ps1` ejecutarán automáticamente `scripts/setup-githooks.*`
+si se ejecutan en una copia del repositorio (es idempotente y seguro). Si prefieres configurarlo manualmente, ejecuta:
 
 ```bash
 ./scripts/setup-githooks.sh
 ```
 
-Después de ejecutar el script, el hook correrá localmente antes de cada commit. Si deseas revertir este cambio:
+Para revertir la configuración en tu copia local:
 ```bash
 git config --unset core.hooksPath
 ```

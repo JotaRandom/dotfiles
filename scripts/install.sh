@@ -74,3 +74,14 @@ done
 echo "Instalación finalizada. Este instalador solo aplica dotfiles de usuario en \\${HOME}."
 echo "Si necesitas aplicar cambios a nivel sistema (Xorg, etc.), hazlo manualmente con permisos de root."
 echo "Recuerda revisar los archivos instalados para asegurarte de que todo esté como deseas."
+ 
+# Auto-configure git hooks (if available) — this is safe and idempotent and only affects local git config
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  REPO_ROOT=$(git rev-parse --show-toplevel)
+  SETUP_SCRIPT="$REPO_ROOT/scripts/setup-githooks.sh"
+  if [ -f "$SETUP_SCRIPT" ]; then
+    echo "Configurando hooks de git localmente (core.hooksPath -> .githooks)"
+    # run setup script, ignore errors (non-fatal)
+    "$SETUP_SCRIPT" || true
+  fi
+fi

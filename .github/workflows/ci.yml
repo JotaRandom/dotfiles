@@ -22,6 +22,23 @@ jobs:
       - name: Bash syntax check
         run: |
           for f in ./scripts/*.sh; do bash -n "$f"; done
+      - name: Check executable bit on shebang scripts
+        run: |
+          set -e
+          fail=0
+          files=$(git ls-files -- "scripts/*.sh" || true)
+          if [ -n "$files" ]; then
+            for f in $files; do
+              if head -n1 "$f" | grep -q '^#!'; then
+                mode=$(git ls-files --stage "$f" | awk '{print $1}')
+                if [ "$mode" != "100755" ]; then
+                  echo "$f has shebang but is not executable in index (mode: $mode). Run: git update-index --chmod=+x $f"
+                  fail=1
+                fi
+              fi
+            done
+          fi
+          if [ "$fail" -eq 1 ]; then exit 1; fi
       - name: Run shellcheck
         run: |
           for f in ./scripts/*.sh; do shellcheck "$f" || true; done

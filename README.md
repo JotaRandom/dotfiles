@@ -89,7 +89,9 @@ Para más detalles y alternativas (subtree, CI, etc), revisa `docs/INSTALL.md` y
 	```
 Nota: El instalador `./scripts/install.sh` aplica solo dotfiles de usuario en `$HOME` (stow), y no modifica archivos de sistema como `/etc/*`. Para cambios a nivel sistema aplica los archivos manualmente con permisos root según las instrucciones en `docs/INSTALL.md`.
 
-Desarrolladores: Si quieres que los hooks locales se activen automáticamente en tu clone, ejecuta:
+Desarrolladores: Los instaladores `scripts/install.sh` y `scripts/install.ps1` configuran automáticamente `core.hooksPath` a `.githooks`
+en tu copia local del repositorio cuando se ejecutan (esto es seguro y idempotente). Si prefieres configurarlo manualmente en vez de
+ejecutar el instalador, puedes correr:
 
 ```bash
 ./scripts/setup-githooks.sh
