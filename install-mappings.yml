@@ -22,3 +22,31 @@ kakrc|kakoune: xdg:kak/kakrc
 kateconfig|kate: xdg:kate/kateconfig
 gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml
 chrome-flags.conf: xdg:chrome/chrome-flags.conf
+
+# Dotfiles and other user config files (installed to HOME by default)
+.tmux.conf: home:.tmux.conf
+.tmuxrc: home:.tmuxrc
+.xmms2rc: home:.xmms2rc
+.twmrc: home:.twmrc
+.latexmkrc: home:.latexmkrc
+.nanorc: home:.nanorc
+.vimrc: home:.vimrc
+.profile: home:.profile
+.bashrc: home:.bashrc
+.lesskey: home:.lesskey
+.inputrc: home:.inputrc
+.dmrc: home:.dmrc
+.lesshst: home:.lesshst
+.elvishrc: home:.elvishrc
+.kshrc: home:.kshrc
+.mkshrc: home:.mkshrc
+.tcshrc: home:.tcshrc
+.xonshrc: home:.xonshrc
+.zshrc: home:.zshrc
+.Xdefaults: home:.Xdefaults
+.xserverrc: home:.xserverrc
+.xinitrc: home:.xinitrc
+.Xmodmap: home:.Xmodmap
+.Xresources: home:.Xresources
+.gitconfig: home:.gitconfig
+profile.ps1|pwsh: xdg:powershell/profile.ps1
