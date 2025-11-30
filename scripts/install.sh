@@ -60,7 +60,7 @@ fi
 
 git lfs install || true
 
-TARGET="$HOME"
+TARGET="${TARGET:-$HOME}"
 echo "Usando target: $TARGET"
 
 # Load mapping rules if available (install-mappings.yml)
@@ -116,10 +116,10 @@ for MOD in "${MODULES[@]}"; do
     map_target(){
       local srcfile="$1" module_name="$2"
       # Use XDG dirs when available, fall back to standard locations
-      XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-      XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-      XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-      XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+      XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$TARGET/.config}"
+      XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
+      XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
+      XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
       # prefer declarative mapping from install-mappings.yml if present
       local base="$(basename "$srcfile")"
       if [[ -n "${_MAPPER_MODULE["$base|$module_name"]+x}" ]]; then
@@ -211,18 +211,22 @@ for MOD in "${MODULES[@]}"; do
     # Copy module contents but exclude files at root that map to other locations and exclude etc/
     # Build exclude list for files at module root that are mapped (we'll handle them
     # with explicit symlinks) — plus exclude etc/
-    EXCLUDE_ARGS=(--exclude 'etc/')
+    EXCLUDE_ARGS=(--exclude '/etc/')
+    # Exclude only module-root files named in the mapping, not nested files.
+    # rsync supports anchored exclude patterns starting with '/'
     for mapped in "${!_MAPPED_NAMES[@]}"; do
-      EXCLUDE_ARGS+=(--exclude "$mapped")
+      EXCLUDE_ARGS+=(--exclude "\/$mapped")
     done
     if command -v rsync >/dev/null 2>&1; then
       (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
     else
       # fallback: copy everything then remove excluded entries
       (cd "$(dirname "$MOD")" && cp -a "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
-      for ex in "${!_MAPPED_NAMES[@]}" etc; do
-        rm -rf "$TMP_MOD_DIR/$TMP_NAME/$ex" || true
+      # Remove only root-level mapped files and the etc/ directory from the copied temp
+      for ex in "${!_MAPPED_NAMES[@]}"; do
+        rm -rf "${TMP_MOD_DIR:?}/${TMP_NAME:?}/${ex:?}" || true
       done
+      rm -rf "${TMP_MOD_DIR:?}/${TMP_NAME:?}/etc" || true
     fi
 
     # Handle mapped root files (create proper XDG symlinks)
