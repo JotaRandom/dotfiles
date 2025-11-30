@@ -173,14 +173,15 @@ jobs:
             while IFS= read -r -d $'\0' f; do
               fname=$(basename "$f")
               if [[ ! "$fname" =~ $ALLOWED ]] && [[ ! "$fname" =~ ^\..+ ]]; then
-                echo "WARNING: Module $m contains root-level file that may install to \$HOME (installer will dotify or map it): $fname" >&2
-                # do not fail CI — installer will handle mapping or create a dotfile in $HOME
-                WARN=1
+                echo "ERROR: Module $m contains root-level file that may install to \$HOME and is not declared in install-mappings.yml: $fname" >&2
+                echo "Offending path: $m/$fname" >&2
+                FAIL=1
               fi
             done < <(find "$m" -maxdepth 1 -type f -print0 || true)
           done
-          if [ "$WARN" -eq 1 ]; then
-            echo "Top-level files detected in modules. The installer will dotify or map known files; consider adding a mapping if necessary." >&2
+          if [ "$FAIL" -eq 1 ]; then
+            echo "Top-level files detected in modules that could pollute \$HOME. Please add a mapping in install-mappings.yml or rename/change the root file to a dotfile." >&2
+            exit 1
           fi
           fi
       - name: Enforce mapping coverage for module root files
