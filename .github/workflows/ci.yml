@@ -183,7 +183,6 @@ jobs:
             echo "Top-level files detected in modules that could pollute \$HOME. Please add a mapping in install-mappings.yml or rename/change the root file to a dotfile." >&2
             exit 1
           fi
-          fi
       - name: Enforce mapping coverage for module root files
         run: |
           set -e
