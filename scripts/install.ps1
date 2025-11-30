@@ -1,5 +1,6 @@
 Param(
-    [string[]]$Modules = @()
+    [string[]]$Modules = @(),
+    [string]$Target = $env:USERPROFILE
 )
 
 function Test-GitLFS {
@@ -18,10 +19,41 @@ if ($Modules.Count -eq 0) {
 }
 
 # XDG fallback variables (Windows: prefer APPDATA / LOCALAPPDATA but respect XDG vars if set)
-$HOME = $env:USERPROFILE
+$HOME = $Target
 $XDG_CONFIG_HOME = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } elseif ($env:APPDATA) { $env:APPDATA } else { Join-Path $HOME '.config' }
 $XDG_DATA_HOME   = if ($env:XDG_DATA_HOME)   { $env:XDG_DATA_HOME }   elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\share' }
 $XDG_STATE_HOME  = if ($env:XDG_STATE_HOME)  { $env:XDG_STATE_HOME }  elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\state' }
+    
+# Files that should be sanitized (convert CRLF -> LF) when present
+$SanitizeBasenames = @('.bashrc', '.profile', '.bash_profile', '.zshrc', '.bash_logout')
+
+function Get-SanitizedPath {
+    param(
+        [string]$SourcePath,
+        [string]$ModuleName
+    )
+    $base = Split-Path $SourcePath -Leaf
+    if ($SanitizeBasenames -contains $base) {
+        # Detect CRLF (Carriage Return) in file bytes
+        try {
+            $bytes = Get-Content -Raw -Encoding Byte -Path $SourcePath -ErrorAction Stop
+            if ($bytes -contains 13) {
+                $relDir = (Split-Path $SourcePath -Parent).Substring((Join-Path $PSScriptRoot $ModuleName).Length).TrimStart('\')
+                $sanDir = Join-Path $Target (Join-Path '.dotfiles_sanitized' (Join-Path $ModuleName $relDir))
+                New-Item -ItemType Directory -Force -Path $sanDir | Out-Null
+                $sanFile = Join-Path $sanDir $base
+                # read as text, remove CR, write as UTF8
+                $txt = [IO.File]::ReadAllText($SourcePath)
+                $txt = $txt -replace "`r", ''
+                [IO.File]::WriteAllText($sanFile, $txt, [System.Text.Encoding]::UTF8)
+                return $sanFile
+            }
+        } catch {
+            # fallback: not critical
+        }
+    }
+    return $SourcePath
+}
 
 if (-not (Test-GitLFS)) {
     Write-Warning "git-lfs no disponible; algunas características (LFS) pueden no funcionar"
@@ -69,18 +101,26 @@ foreach ($module in $Modules) {
     $MAPPED_NAMES = @{}
     foreach ($k in $MAPPER_GLOBAL.Keys) { $MAPPED_NAMES[$k] = $true }
     foreach ($k in $MAPPER_MODULE.Keys) { $name = $k -split '\|',2 | Select-Object -First 1; $MAPPED_NAMES[$name] = $true }
+    # Also track module-specific relative mappings for exclusion
+    $MAPPED_RELS = @{}
+    foreach ($k in $MAPPER_MODULE.Keys) {
+        $parts = $k -split '\|',2
+        $name = $parts[0]
+        $mod = $parts[1]
+        if ($name -match '[\\/]') { $MAPPED_RELS["$name|$mod"] = $true }
+    }
 
     function Map-Target {
         param($relPath, $moduleName)
-        # if this is a nested path (contains backslash), default to HOME/<relPath>
-        if ($relPath -match '\\') { return Join-Path $HOME $relPath }
-
+        # reset flag
+        $script:MAPPING_EXPLICIT = $false
         $base = Split-Path $relPath -Leaf
-
-        # check module-specific mapping first
-        if ($MAPPER_MODULE.ContainsKey("$base|$moduleName")) { $mapping = $MAPPER_MODULE["$base|$moduleName"] }
-        elseif ($MAPPER_GLOBAL.ContainsKey($base)) { $mapping = $MAPPER_GLOBAL[$base] }
-        else { $mapping = $null }
+        # If this is an explicit relative path mapping in the yaml (contains '\'), prefer it
+        if ($MAPPER_MODULE.ContainsKey("$relPath|$moduleName")) { $mapping = $MAPPER_MODULE["$relPath|$moduleName"]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "rel:$relPath" }
+        elseif ($MAPPER_MODULE.ContainsKey("$base|$moduleName")) { $mapping = $MAPPER_MODULE["$base|$moduleName"]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "base:$base" }
+        elseif ($MAPPER_GLOBAL.ContainsKey($relPath)) { $mapping = $MAPPER_GLOBAL[$relPath]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "rel:$relPath" }
+        elseif ($MAPPER_GLOBAL.ContainsKey($base)) { $mapping = $MAPPER_GLOBAL[$base]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "base:$base" }
+        else { $mapping = $null; $script:MAPPING_KEY = $null }
 
         if ($mapping) {
             if ($mapping -in @('ignore','skip')) { return '__IGNORE__' }
@@ -116,7 +156,7 @@ foreach ($module in $Modules) {
                 else { return Join-Path $HOME ('.' + $base) }
             }
             'home' { return Join-Path $HOME $base }
-            'error' { return '__ERROR__' }
+            'error' { $script:MAPPING_EXPLICIT = $false; return '__ERROR__' }
             default {
                 if ($base -match '^\.') { return Join-Path $HOME $base }
                 else { return Join-Path $HOME ('.' + $base) }
@@ -131,7 +171,9 @@ foreach ($module in $Modules) {
         # Determine mapping for this file and skip if install-mappings.yml marks it as ignore
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
         $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
+        Write-Host "Mapping: $rel => $dest (explicit=$($script:MAPPING_EXPLICIT -eq $true), key=$($script:MAPPING_KEY))" -ForegroundColor Cyan
         if ($dest -eq '__IGNORE__') { continue }
+        if ($script:MAPPING_EXPLICIT -ne $true) { continue }
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
         $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
         $destDir = Split-Path $dest -Parent
@@ -148,7 +190,8 @@ foreach ($module in $Modules) {
             } catch { }
             if (-not $isSame) { $conflicts += $dest }
         } else {
-            New-Item -ItemType SymbolicLink -Path $dest -Target $f.FullName -Force | Out-Null
+            $sanTarget = Get-SanitizedPath -SourcePath $f.FullName -ModuleName (Split-Path $module -Leaf)
+            New-Item -ItemType SymbolicLink -Path $dest -Target $sanTarget -Force | Out-Null
             Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
     }
@@ -165,19 +208,93 @@ foreach ($module in $Modules) {
                 Move-Item -Path $c -Destination $destPath -Force -ErrorAction SilentlyContinue
             }
         }
-        # After resolving conflicts, create symlinks for all files
+        # After resolving conflicts, create symlinks for explicit mapping files
+        $mapCreated = @()
         foreach ($f in $allFiles) {
             # Determine mapping for this file and skip if marked ignore
             $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
             $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
             if ($dest -eq '__IGNORE__') { continue }
+            if ($script:MAPPING_EXPLICIT -ne $true) { continue }
+            # Always create symlink for explicit mappings (even if path equals default)
+            # Ensure the target directory exists
+            if ($script:MAPPING_KEY -and ($script:MAPPING_KEY -like 'base:*')) {
+                # if multiple files in this module share the same base name, skip ambiguous mapping
+                $baseName = $script:MAPPING_KEY -replace '^base:'
+                $matches = Get-ChildItem -Path $modulePath -File -Recurse | Where-Object { $_.Name -eq $baseName }
+                if ($matches.Count -gt 1) {
+                    Write-Warning "Ambiguous mapping: multiple files named $baseName exist in module $module; please use a relative path mapping in install-mappings.yml to disambiguate."
+                    continue
+                }
+            }
             $destDir = Split-Path $dest -Parent
             if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
             if (Test-Path $dest) { Remove-Item -Recurse -Force -Path $dest -ErrorAction SilentlyContinue }
-            New-Item -ItemType SymbolicLink -Path $dest -Target $f.FullName -Force | Out-Null
+            $sanTarget = Get-SanitizedPath -SourcePath $f.FullName -ModuleName (Split-Path $module -Leaf)
+            New-Item -ItemType SymbolicLink -Path $dest -Target $sanTarget -Force | Out-Null
+            $mapCreated += $dest
             Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
-    }
+        # Phase 2 - create symlinks for non-explicit files according to DEFAULT_ACTION
+        $remaining = @()
+        foreach ($f in $allFiles) {
+            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
+            $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
+            if ($dest -eq '__IGNORE__') { continue }
+            if ($script:MAPPING_EXPLICIT -eq $true) { continue }
+            $remaining += $f
+        }
+        foreach ($f in $remaining) {
+            $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
+            $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
+            if ($dest -eq '__IGNORE__') { continue }
+            $destDir = Split-Path $dest -Parent
+            if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
+            # If it is a symlink pointing to same target, ignore; else if exists and not same - backup
+            $skip = $false
+            if (Test-Path $dest) {
+                $it = Get-Item -Path $dest -Force -ErrorAction SilentlyContinue
+                if ($it -and $it.PSIsContainer -eq $false -and $it.LinkType -ne $null) {
+                    $lt = $it.Target
+                    if ($lt -and (Resolve-Path $lt -ErrorAction SilentlyContinue).ProviderPath -eq $f.FullName) {
+                        $skip = $true
+                    }
+                }
+            }
+            if ($skip) { continue }
+            if (Test-Path $dest) {
+                $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
+                $relPath = $dest.Substring($env:USERPROFILE.Length).TrimStart('\')
+                $destPath = Join-Path $backupDir $relPath
+                New-Item -ItemType Directory -Force -Path (Split-Path $destPath -Parent) | Out-Null
+                Move-Item -Path $dest -Destination $destPath -Force -ErrorAction SilentlyContinue
+            }
+            $sanTarget = Get-SanitizedPath -SourcePath $f.FullName -ModuleName (Split-Path $module -Leaf)
+            New-Item -ItemType SymbolicLink -Path $dest -Target $sanTarget -Force | Out-Null
+            $mapCreated += $dest
+            Write-Host "Creado symlink (default): $dest -> $($f.FullName)" -ForegroundColor Green
+        }
+        }
+        # After creating mappings, validate
+        foreach ($d in $mapCreated) {
+            if (-not (Test-Path $d)) { continue }
+            $item = Get-Item -Path $d -Force -ErrorAction SilentlyContinue
+            if ($item -and $item.LinkType -ne $null) { continue }
+            # Not a symlink: backup & recreate
+            $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
+            $rel = $d.Substring($env:USERPROFILE.Length).TrimStart('\')
+            $destPath = Join-Path $backupDir $rel
+            New-Item -ItemType Directory -Force -Path (Split-Path $destPath -Parent) | Out-Null
+            Move-Item -Path $d -Destination $destPath -Force -ErrorAction SilentlyContinue
+            # Try to recreate symlink
+            $fname = Split-Path $d -Leaf
+            $found = Get-ChildItem -Path $modulePath -File -Recurse | Where-Object { $_.Name -eq $fname } | Select-Object -First 1
+            if ($found) {
+                $sanTarget = Get-SanitizedPath -SourcePath $found.FullName -ModuleName (Split-Path $module -Leaf)
+                New-Item -ItemType SymbolicLink -Path $d -Target $sanTarget -Force | Out-Null
+                Write-Host "Post-stow: Recreated symlink $d -> $($found.FullName)" -ForegroundColor Green
+            }
+        }
 
 Write-Host "Instalación (PowerShell) finalizada. Revisa los enlaces simbólicos." -ForegroundColor Cyan
 

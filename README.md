@@ -22,6 +22,18 @@ git submodule update --init --recursive
 .\scripts\install.ps1
 ```
 
+### Notas sobre `install.ps1` y paridad con `install.sh`
+
+El instalador de PowerShell (`scripts/install.ps1`) está alineado con `scripts/install.sh` en comportamiento:
+
+- Respeta las entradas de `install-mappings.yml` (globales y por módulo) y crea enlaces simbólicos en XDG/HOME.
+- Crea backups de archivos conflictivos en `$HOME/.dotfiles_backup/<timestamp>/` antes de reemplazar.
+- Soporta el parámetro `-Target` para sandbox (`-Target $env:TEMP\dotfiles_test`) y `-Modules` para seleccionar módulos.
+- Implementa saneamiento CRLF → LF para archivos interactivos (ver sección "Saneamiento de finales de línea").
+
+> Nota: En Windows, la creación de enlaces simbólicos puede requerir privilegios administrativos o activar Developer Mode. Si te faltan permisos, ejecuta PowerShell como administrador o habilita Developer Mode.
+
+
 Para instrucciones más detalladas revisa `docs/INSTALL.md`.
 
 ## Estructura
@@ -56,6 +68,22 @@ En Windows (PowerShell):
 ### Nota sobre cambios a nivel sistema y conflictos
 Los instaladores incluidos solo aplican dotfiles de usuario en `$HOME`. No se modifican archivos de sistema (`/etc/*`) automáticamente. Si al aplicar los módulos hay archivos conflictivos en `$HOME` (por ejemplo un `~/.bashrc` ya existente), el instalador preferirá los dotfiles del repositorio y respaldará los archivos anteriores en `$HOME/.dotfiles_backup/<timestamp>/` antes de reemplazarlos.
 Para aplicar archivos de sistema (por ejemplo `X11`), sigue las instrucciones manuales en `docs/INSTALL.md`.
+
+### Saneamiento de finales de línea (CRLF → LF)
+
+Algunos archivos de shell interactivo (p. ej. `.bashrc`, `.zshrc`, `.profile`) tienen finales de línea en formato Windows (CRLF) en ciertos editores o repositorios. Esto puede causar errores en shells Unix/WSL al interpretar `$'\r'` o producir `syntax error` por `
+` en scripts.
+
+Los instaladores `scripts/install.sh` y `scripts/install.ps1` detectan los archivos interactivos con CRLF y, en lugar de modificar el repositorio, crean una copia saneada con LF en:
+
+```
+$TARGET/.dotfiles_sanitized/<module>/<path>
+```
+
+Los enlaces simbólicos apuntan a esa copia saneada. Esto asegura que los entornos de usuario no se rompan por finales de línea CRLF y evita cambiar archivos en el repo por defecto.
+
+Si prefieres normalizar el repo en origen a LF de manera permanente, puedes hacerlo manualmente o solicitar la característica `--normalize` para convertir archivos en repo (no habilitado por defecto).
+
 
 #### Restaurar archivos respaldados
 Si necesitas restaurar archivos desde un backup creado por el instalador, copia los archivos de vuelta desde `$HOME/.dotfiles_backup/<timestamp>/` a tu home. Por ejemplo:
@@ -116,3 +144,9 @@ Consejo: Mantén los módulos pequeños y con un propósito único (p. ej. `modu
 ## CI y submódulos
 
 Detalles sobre el tratamiento de submódulos SSH por el CI se encuentran en `docs/CI.md`. El flujo de CI **no intentará** actualizar o clonar submódulos privados: solo comprobará que `.gitmodules` contiene entradas válidas y seguirá sin error en runners públicos.
+
+Además, el pipeline de CI incluye pruebas de instalación y verificación automatizadas:
+
+- `stow-test`: aplica cada módulo con `stow` a un `TARGET` temporal para verificar que se creen symlinks sin tocar `$HOME`.
+- `test-install-mappings.sh`: ejecuta `install.sh` en un `TARGET` temporal y valida que todas las entradas declaradas en `install-mappings.yml` se hayan instalado como symlinks apuntando al origen, o que hayan producido copias saneadas en `$TARGET/.dotfiles_sanitized` si el origen contenía CRLF.
+

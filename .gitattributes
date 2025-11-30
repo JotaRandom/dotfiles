@@ -25,3 +25,4 @@ assets/** filter=lfs diff=lfs merge=lfs -text
 *.txt text eol=lf
 *.ps1 text eol=crlf
 *.bat text eol=crlf
+.* text eol=lf

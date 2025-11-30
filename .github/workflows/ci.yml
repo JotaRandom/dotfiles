@@ -188,6 +188,11 @@ jobs:
           set -e
           chmod +x ./.github/scripts/check-mappings.sh
           ./.github/scripts/check-mappings.sh
+      - name: Run install.sh against TARGET and verify declared mappings create symlinks
+        run: |
+          set -euo pipefail
+          chmod +x ./.github/scripts/test-install-mappings.sh
+          ./.github/scripts/test-install-mappings.sh
       - name: Cleanup
         run: |
           echo "Removing temp"; rm -rf "$TMP" || true
