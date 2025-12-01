@@ -250,7 +250,7 @@ foreach ($module in $Modules) {
             if ($dest -eq '__IGNORE__') { continue }
             $destDir = Split-Path $dest -Parent
             if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
-            # If it is a symlink pointing to same target, ignore; else if exists and not same - backup
+            # Si es un enlace simbólico que apunta al mismo destino, omitir; si existe y no es el mismo, respaldar
             $skip = $false
             if (Test-Path $dest) {
                 $it = Get-Item -Path $dest -Force -ErrorAction SilentlyContinue
@@ -280,7 +280,7 @@ foreach ($module in $Modules) {
             if (-not (Test-Path $d)) { continue }
             $item = Get-Item -Path $d -Force -ErrorAction SilentlyContinue
             if ($item -and $item.LinkType -ne $null) { continue }
-            # Not a symlink: backup & recreate
+            # No es un enlace simbólico: respaldar y recrear
             $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
             $rel = $d.Substring($env:USERPROFILE.Length).TrimStart('\')
             $destPath = Join-Path $backupDir $rel
