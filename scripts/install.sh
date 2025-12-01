@@ -22,7 +22,7 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   exit 0
 fi
 
-# Default modules: only user-level dotfiles (home directory)
+# Módulos predeterminados: solo dotfiles a nivel de usuario (directorio home)
 MODULES=(
   "modules/shell/bash"
   "modules/shell/zsh"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# restore-backup.sh: restore files backed up by the dotfiles installer
-# Usage:
+# restore-backup.sh: restaura archivos respaldados por el instalador de dotfiles
+# Uso:
 #   scripts/restore-backup.sh               # list available backups
 #   scripts/restore-backup.sh <timestamp>   # show modules inside a backup
 #   scripts/restore-backup.sh <timestamp> <module>  # restore one module

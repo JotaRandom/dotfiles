@@ -1,11 +1,11 @@
 <#
-SYNOPSIS
-  Restore files backed up by the dotfiles installer (PowerShell).
+SINOPSIS
+  Restaurar archivos respaldados por el instalador de dotfiles (PowerShell).
 
-USAGE
-  .\scripts\restore-backup.ps1                # list available backups
-  .\scripts\restore-backup.ps1 -Timestamp <timestamp>    # list modules in the backup
-  .\scripts\restore-backup.ps1 -Timestamp <timestamp> -Module <module>  # restore module
+USO
+  .\scripts\restore-backup.ps1                # lista los respaldos disponibles
+  .\scripts\restore-backup.ps1 -Timestamp <timestamp>    # lista los módulos dentro del backup
+  .\scripts\restore-backup.ps1 -Timestamp <timestamp> -Module <module>  # restaurar módulo
 #>
 
 param(
