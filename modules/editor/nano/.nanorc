@@ -1,9 +1,9 @@
-## nano minimal .nanorc
+## nano - .nanorc mínimo
 set linenumbers
 set tabstospaces
 set tabsize 2
 set multibuffer
 set smooth
 
-## Enable some syntax files if present
+## Habilita algunos archivos de sintaxis si están presentes
 include "/usr/share/nano/*.nanorc"

@@ -1,5 +1,5 @@
 # Configuración de Xonsh (ejemplo)
-# Minimal xonsh configuration
+# Configuración mínima de xonsh
 
 aliases['ll'] = 'ls -al'
 env['EDITOR'] = 'nvim'

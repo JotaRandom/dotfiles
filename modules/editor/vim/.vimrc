@@ -1,4 +1,4 @@
-" Vim minimal .vimrc
+" Vim - .vimrc mínimo
 set nocompatible
 syntax on
 set number
@@ -7,7 +7,7 @@ set shiftwidth=2
 set expandtab
 set clipboard=unnamedplus
 
-" Basic plugin manager placeholder (vim-plug)
+" Marcador para gestor de plugins básico (vim-plug)
 if empty(glob('~/.vim/autoload/plug.vim'))
-  " plug.vim not installed; install manually or ignore
+  " plug.vim no está instalado; instalar manualmente o ignorar
 endif

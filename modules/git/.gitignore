@@ -1,5 +1,5 @@
 # Global gitignore for local files
-# Keep in repo under modules/git and install as ~/.gitignore_global
+# Mantener en el repo bajo modules/git e instalar como ~/.gitignore_global
 
 # Backup and package leftover files
 *.bak
