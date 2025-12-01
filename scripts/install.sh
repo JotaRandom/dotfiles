@@ -70,7 +70,7 @@ git lfs install || true
 TARGET="${TARGET:-$HOME}"
 echo "Usando target: $TARGET"
 
-# Load mapping rules if available (install-mappings.yml)
+# Cargar reglas de mapeo si están disponibles (install-mappings.yml)
 declare -A _MAPPER_GLOBAL _MAPPER_MODULE
 DEFAULT_ACTION="dotify"
 MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
@@ -101,7 +101,7 @@ if [ -f "$MAPPINGS_FILE" ]; then
     fi
   done < "$MAPPINGS_FILE"
 fi
-# Build quick sets of mapped keys
+# Generar conjuntos rápidos de claves mapeadas
 declare -A _MAPPED_NAMES _MAPPED_RELS
 for k in "${!_MAPPER_GLOBAL[@]}"; do
   _MAPPED_NAMES["$(basename "$k")"]=1
@@ -121,7 +121,7 @@ for MOD in "${MODULES[@]}"; do
     BASENAME=$(basename "$MOD")
     echo "Preparando instalación: $BASENAME -> $TARGET"
 
-    # Safety: skip modules that contain system-level paths (e.g., etc/) because this installer
+    # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) porque este instalador
     # only operates on user-level files under $HOME. If you intentionally want to apply system
     # files, handle them manually (or run a separate system installer as root).
     if (cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read); then
@@ -130,7 +130,7 @@ for MOD in "${MODULES[@]}"; do
       continue
     fi
 
-    # Helper: map target path using only install-mappings.yml values and DEFAULT_ACTION
+    # Auxiliar: mapear ruta destino usando solo valores de install-mappings.yml y DEFAULT_ACTION
     map_target(){
       local srcfile module_name base mapping
       srcfile="$1"; module_name="$2"
@@ -163,7 +163,7 @@ for MOD in "${MODULES[@]}"; do
         MAP_TARGET_EXPLICIT=0
         MAP_TARGET_KEY=""
       fi
-      # Reset output helpers
+      # Restablecer auxiliares/variables de salida
       MAP_TARGET_OUT=""
       MAP_TARGET_EXPLICIT=0
       MAP_TARGET_KEY=""
@@ -184,10 +184,10 @@ for MOD in "${MODULES[@]}"; do
         esac
       fi
 
-      # No mapping present — obey DEFAULT_ACTION
+      # No hay mapeo presente — respetar DEFAULT_ACTION
       case "$DEFAULT_ACTION" in
         dotify)
-          # dotify: create a dot-prefixed name in HOME unless it already starts with '.'
+          # dotify: crear un nombre con prefijo '.' en HOME a menos que ya comience con '.'
           if [[ "$base" == .* ]]; then
             MAP_TARGET_OUT="$TARGET/$base"
           else
@@ -214,7 +214,7 @@ for MOD in "${MODULES[@]}"; do
       # ensure MAP_TARGET_OUT is set at exit
     }
 
-    # dry-run check: list conflicting targets (consider XDG mappings)
+    # Verificación en seco: listar destinos en conflicto (considerar mapeos XDG)
     CONFLICTS=()
     while IFS= read -r -d $'\0' SRC; do
       # compute REL relative to the module root (strip the module folder prefix)
@@ -431,7 +431,7 @@ for MOD in "${MODULES[@]}"; do
         # trim leading './' produced by find and skip './' root
         rel=${tmpf#./}
         [ "$rel" = "." ] && continue
-        # map to target using existing helper
+        # mapear al destino usando el auxiliar/función existente
         map_target "$rel" "$BASENAME"
         DEST="$MAP_TARGET_OUT"
         if [[ "$DEST" == "__IGNORE__" ]]; then
