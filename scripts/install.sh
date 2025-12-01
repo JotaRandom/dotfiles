@@ -60,6 +60,7 @@ elif command -v pacman >/dev/null 2>&1; then
   sudo pacman -Syu --noconfirm git-lfs || true
 elif command -v dnf >/dev/null 2>&1; then
   sudo dnf install -y git-lfs || true
+  # TODO: Add dnf for slackware and other package managers
 else
   echo "No se detectó gestor de paquetes compatible. Asegúrate de instalar 'git-lfs' manualmente."
 fi
@@ -462,7 +463,7 @@ for MOD in "${MODULES[@]}"; do
         if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(readlink -f "$SRC_ABS")" ]; then
           continue
         fi
-        # Backup existing non-symlink dests
+        # Respaldar destinos existentes que no sean enlaces simbólicos
         if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
           BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
           mkdir -p "$(dirname "$BACKUP_DIR/$rel")" || true
@@ -505,7 +506,7 @@ for MOD in "${MODULES[@]}"; do
         if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$SRC_ABS" ]; then
           continue
         fi
-        # Backup if exists and not a symlink
+        # Respaldar si existe y no es un enlace simbólico
         if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
           BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
           mkdir -p "$(dirname "$BACKUP_DIR/$base")" || true

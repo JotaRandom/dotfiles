@@ -307,5 +307,5 @@ try {
         try { & $setupPath } catch { Write-Warning "No se pudo configurar hooks de git: $_" }
     }
 } catch {
-    # Not a git repository or git not available; ignore
+    # No es un repositorio git o git no está disponible; ignorar
 }

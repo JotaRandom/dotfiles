@@ -4,7 +4,7 @@ SINOPSIS
 
 USO
   .\scripts\restore-backup.ps1                # lista los respaldos disponibles
-  .\scripts\restore-backup.ps1 -Timestamp <timestamp>    # lista los módulos dentro del backup
+  .\scripts\restore-backup.ps1 -Timestamp <timestamp>    # lista los módulos dentro del respaldo
   .\scripts\restore-backup.ps1 -Timestamp <timestamp> -Module <module>  # restaurar módulo
 #>
 
@@ -22,7 +22,7 @@ function Show-Help {
 
 if (-not $Timestamp) {
   if (Test-Path $BackupDir) {
-    "Backups disponibles:"; Get-ChildItem -Path $BackupDir -Directory | ForEach-Object { $_.Name }
+    "Respaldos disponibles:"; Get-ChildItem -Path $BackupDir -Directory | ForEach-Object { $_.Name }
   } else {
     Write-Warning "No se encontraron respaldos en: $BackupDir"
   }
@@ -31,26 +31,26 @@ if (-not $Timestamp) {
 
 $TimestampDir = Join-Path $BackupDir $Timestamp
 if (-not (Test-Path $TimestampDir -PathType Container)) {
-  Write-Error "Marca de tiempo del backup no encontrada: $Timestamp"; exit 2
+  Write-Error "Marca de tiempo del respaldo no encontrada: $Timestamp"; exit 2
 }
 
 if (-not $Module) {
-  Write-Host "Módulos en el backup $($Timestamp):"; Get-ChildItem -Path $TimestampDir -Directory | ForEach-Object { $_.Name }
+  Write-Host "Módulos en el respaldo $($Timestamp):"; Get-ChildItem -Path $TimestampDir -Directory | ForEach-Object { $_.Name }
   exit 0
 }
 
 $Src = Join-Path $TimestampDir $Module
 if (-not (Test-Path $Src -PathType Container)) {
-  Write-Error "Módulo no encontrado en el backup: $Module"; exit 3
+  Write-Error "Módulo no encontrado en el respaldo: $Module"; exit 3
 }
 
-Write-Host "A punto de restaurar el módulo '$Module' del backup '$Timestamp' a $HOME"
+Write-Host "A punto de restaurar el módulo '$Module' del respaldo '$Timestamp' a $HOME"
 $confirm = Read-Host "¿Proceder y sobrescribir archivos en $HOME? [s/N]"
 if ($confirm -ne 'y' -and $confirm -ne 'Y' -and $confirm -ne 'yes' -and $confirm -ne 's' -and $confirm -ne 'S' -and $confirm -ne 'si' -and $confirm -ne 'SI') {
   Write-Host "Abortado. No se realizaron cambios."; exit 0
 }
 
-# Prefer robocopy or Copy-Item depending on availability
+# Preferir robocopy o Copy-Item según disponibilidad
 if (Get-Command robocopy -ErrorAction SilentlyContinue) {
   $cmd = "robocopy `"$Src`" `"$HOME`" /E /COPY:DAT /MT:4"
   if ($WhatIf) { Write-Host "Simulación: $cmd"; exit 0 }
