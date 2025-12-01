@@ -65,7 +65,7 @@ foreach ($module in $Modules) {
         Write-Host "Advertencia: módulo $modulePath no existe" -ForegroundColor Yellow
         continue
     }
-    # Safety: skip modules that contain system-level paths (etc/) — installer doesn't touch /etc
+    # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) — el instalador no toca /etc
     if (Get-ChildItem -Path $modulePath -Recurse -File | Where-Object { $_.FullName -like '*\\etc\\*' }) {
         Write-Host "Omitiendo módulo $modulePath porque contiene archivos a nivel de sistema bajo 'etc/'." -ForegroundColor Yellow
         continue
@@ -78,7 +78,7 @@ foreach ($module in $Modules) {
     $DEFAULT_ACTION = 'dotify'
     if (Test-Path $MAPPINGS_FILE) {
         Get-Content $MAPPINGS_FILE | ForEach-Object {
-            $line = $_ -replace '#.*',''    # strip comments
+            $line = $_ -replace '#.*',''    # eliminar comentarios
             $line = $line.Trim()
             if ([string]::IsNullOrWhiteSpace($line)) { return }
             if ($line -match '^default_action:\s*(\w+)') { $DEFAULT_ACTION = $matches[1]; return }
@@ -97,7 +97,7 @@ foreach ($module in $Modules) {
         }
     }
 
-    # Build set of root-level mapped filenames for this repo (used to influence behavior)
+    # Construir conjunto de nombres de ficheros mapeados a nivel raíz en este repo (usado para influir en el comportamiento)
     $MAPPED_NAMES = @{}
     foreach ($k in $MAPPER_GLOBAL.Keys) { $MAPPED_NAMES[$k] = $true }
     foreach ($k in $MAPPER_MODULE.Keys) { $name = $k -split '\|',2 | Select-Object -First 1; $MAPPED_NAMES[$name] = $true }
@@ -149,7 +149,7 @@ foreach ($module in $Modules) {
             return Join-Path $HOME $sub
         }
 
-        # No mapping: follow DEFAULT_ACTION
+        # Sin mapeo: seguir DEFAULT_ACTION
         switch ($DEFAULT_ACTION) {
             'dotify' {
                 if ($base -match '^\.') { return Join-Path $HOME $base }
@@ -235,7 +235,7 @@ foreach ($module in $Modules) {
             $mapCreated += $dest
             Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
-        # Phase 2 - create symlinks for non-explicit files according to DEFAULT_ACTION
+        # Fase 2 - crear enlaces simbólicos para archivos no explícitos según DEFAULT_ACTION
         $remaining = @()
         foreach ($f in $allFiles) {
             $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
@@ -298,7 +298,7 @@ foreach ($module in $Modules) {
 
 Write-Host "Instalación (PowerShell) finalizada. Revisa los enlaces simbólicos." -ForegroundColor Cyan
 
-# Auto-configure Git hooks in this repository (safe and idempotent)
+# Configurar hooks de Git automáticamente en este repositorio (seguro e idempotente)
 try {
     $null = git rev-parse --is-inside-work-tree 2>$null
     $setupPath = Join-Path $PSScriptRoot 'setup-githooks.ps1'
