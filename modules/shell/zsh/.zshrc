@@ -1,4 +1,4 @@
-# Zsh configuration — opciones principales y aliases
+# Configuración de Zsh — opciones principales y alias
 # Este archivo configura prompt, color, historial y completado.
 # Usa colores type "Tango" y respeta variables de entorno globales (*.Xresources).
 
@@ -17,7 +17,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias grep='grep --color=auto'
 fi
 
-# Common aliases for productivity
+# Alias comunes para mejorar la productividad
 alias ll='ls -l --human-readable'
 alias la='ls -la --human-readable'
 alias nano='nano --rcfile ~/.nanorc'

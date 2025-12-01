@@ -1,4 +1,4 @@
-## latexmk configuration for LaTeX projects
+## Configuración de latexmk para proyectos LaTeX
 latexmk -pdf -interaction=nonstopmode -synctex=1
 
 ## Objetivo por defecto

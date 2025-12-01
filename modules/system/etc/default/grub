@@ -1,5 +1,5 @@
 ﻿#!/bin/sh
-# GRUB boot loader configuration
+# Configuración del cargador de arranque GRUB
 
 GRUB_DEFAULT="Arch Linux, with Linux linux"
 GRUB_TIMEOUT="5"
