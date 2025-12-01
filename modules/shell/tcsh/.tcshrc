@@ -1,1 +1,5 @@
-﻿# ConfiguraciÃ³n de C shell (tcsh) â€” ejemplo\nsetenv EDITOR vi\nalias ll 'ls -l'\n
+﻿#!/bin/tcsh
+# Configuración de C shell (tcsh)  ejemplo
+setenv EDITOR vi
+alias ll 'ls -l'
+
