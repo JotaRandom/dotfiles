@@ -3,6 +3,10 @@
 # Este archivo establece alias, colores, prompt y opciones de historial.
 # Conservamos un estilo "retro" (estética DOS) y soporte UTF-8/latino.
 
+# Si la shell no se está ejecutando de forma interactiva, no hacer nada
+[[ $- != *i* ]] && return
+
+
 # --------------------------------------------------------------
 # 1. COLORES PERMANENTES (ls, grep, etc.)
 # --------------------------------------------------------------

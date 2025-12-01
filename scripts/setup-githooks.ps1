@@ -1,4 +1,4 @@
-# PowerShell setup to configure Git hooks path
+# Script PowerShell para configurar la ruta de hooks de Git
 param()
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
@@ -9,8 +9,8 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 git config core.hooksPath .githooks
 Write-Host "core.hooksPath configurado a .githooks"
 
-# Make sure the Windows scripts are executable in index (call the PS pre-commit logic)
-# Only set execute bit for scripts with a shebang
+# Asegurarse que los scripts de Windows tengan el bit ejecutable en el índice (llamar a la lógica PS pre-commit)
+# Solo establecer el bit de ejecución para scripts que tienen shebang
 $files = git ls-files 2>$null
 foreach ($f in $files) {
     if (Test-Path $f) {

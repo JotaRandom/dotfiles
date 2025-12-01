@@ -8,24 +8,24 @@ on:
 
 jobs:
   shell-lint:
-    name: Bash lint & syntax check
+    name: Bash lint y comprobación de sintaxis
     runs-on: ubuntu-latest
     steps:
-      # Do NOT automatically fail the checkout step if submodules use SSH and are not accessible
-      # Instead we'll attempt to fetch submodules later and continue if they cannot be fetched.
+      # NO fallar automáticamente el paso de checkout si los submódulos usan SSH y no son accesibles
+      # En su lugar intentaremos obtener submódulos más tarde y continuar si no pueden obtenerse.
       - uses: actions/checkout@v4
         with:
           lfs: true
           # avoid automatic failure from actions/checkout when submodule fetch needs SSH
           submodules: false
-      - name: Install shellcheck
+      - name: Instalar shellcheck
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
-      - name: Bash syntax check
+      - name: Comprobación de sintaxis Bash
         run: |
           for f in ./scripts/*.sh; do bash -n "$f"; done
-      - name: Check executable bit on shebang files
+      - name: Comprobar bit ejecutable en archivos con shebang
         run: |
           set -e
           fail=0
@@ -36,7 +36,7 @@ jobs:
                 if head -n1 "$f" | grep -q '^#!'; then
                   mode=$(git ls-files --stage "$f" | awk '{print $1}')
                   if [ "$mode" != "100755" ]; then
-                    echo "$f has shebang but is not executable in index (mode: $mode). Run: git update-index --chmod=+x $f"
+                    echo "$f tiene shebang pero no es ejecutable en el índice (modo: $mode). Ejecuta: git update-index --chmod=+x $f"
                     fail=1
                   fi
                 fi
@@ -44,40 +44,44 @@ jobs:
             done
           fi
           if [ "$fail" -eq 1 ]; then exit 1; fi
-      - name: Run shellcheck
+      - name: Ejecutar shellcheck
         run: |
           for f in ./scripts/*.sh; do shellcheck "$f" || true; done
+      - name: Verificar no reintroducción de texto en inglés (i18n)
+        run: |
+          chmod +x ./.github/scripts/check-english.sh
+          ./.github/scripts/check-english.sh
 
   powershell-lint:
-    name: PowerShell lint
+    name: Análisis de PowerShell
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
           submodules: false
-      - name: Install PSScriptAnalyzer
+      - name: Instalar PSScriptAnalyzer
         shell: pwsh
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
-      - name: Analyze PowerShell scripts
+      - name: Analizar scripts PowerShell
         shell: pwsh
         run: |
           Invoke-ScriptAnalyzer -Path scripts\*.ps1 -Recurse
 
   lfs-and-submodule-check:
-    name: LFS & submodules
+    name: LFS y submódulos
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
           submodules: false
-      - name: Detect submodules defined in .gitmodules (no network access)
+      - name: Detectar submódulos en .gitmodules (sin acceso de red)
         run: |
-          # We intentionally DO NOT try to fetch or update submodules from CI.
-          # Some submodules are private and accessible only via the maintainer's SSH key.
-          # Instead we check that the .gitmodules file exists and contains submodule entries.
+          # Intencionalmente NO intentamos obtener o actualizar submódulos desde CI.
+          # Algunos submódulos son privados y accesibles solo con la clave SSH del mantenedor.
+          # En su lugar comprobamos que .gitmodules exista y contenga entradas de submódulos.
           if [ -f .gitmodules ]; then
             echo ".gitmodules found:"; cat .gitmodules
             # List submodule paths and urls
@@ -93,34 +97,34 @@ jobs:
             echo ".gitmodules not present"
             echo "SUBMODULES_PRESENT=false" >> $GITHUB_ENV
           fi
-      - name: Validate submodules
+      - name: Validar submódulos
         if: env.SUBMODULES_PRESENT == 'true'
         run: |
           git submodule status --recursive
-      - name: Skip submodule validation (not available)
+      - name: Omitir validación de submódulos (no disponible)
         if: env.SUBMODULES_PRESENT == 'false'
         run: |
-          echo "Submodules not available in this runner (probably SSH-only URLs). Skipping validation."
-      - name: Check LFS tracked assets
+          echo "Submódulos no disponibles en este runner (probablemente URLs SSH-only). Omitiendo validación."
+      - name: Comprobar assets rastreados por LFS
         run: |
           git lfs ls-files || true
-      - name: Check .gitattributes includes assets/**
+      - name: Comprobar que .gitattributes incluya assets/**
         run: |
           grep -E '^assets/\*\* filter=lfs' .gitattributes
 
   install-test:
-    name: Verify modules with install.sh
+    name: Verificar módulos con install.sh
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
           submodules: false
-      - name: Install tools (git-lfs)
+      - name: Instalar herramientas (git-lfs)
         run: |
           sudo apt-get update
           sudo apt-get install -y git-lfs || true
-      - name: Verify installers & mappings
+      - name: Verificar instalador y mapeos
         run: |
           set -e
           TMP=$(mktemp -d)
@@ -128,12 +132,12 @@ jobs:
           chmod +x ./.github/scripts/test-install-mappings.sh
           ./.github/scripts/test-install-mappings.sh
 
-      - name: Check for top-level files in modules that could pollute $HOME
+      - name: Comprobar archivos top-level en módulos que podrían contaminar $HOME
         run: |
           set -e
           cd modules
           FAIL=0
-          # Build ALLOWED regex from install-mappings.yml if present (keys before ':'), otherwise fallback
+          # Construir expresión regular ALLOWED a partir de install-mappings.yml si existe (claves antes de ':'), en caso contrario usar fallback
           ALLOWED=''
           if [ -f ../install-mappings.yml ]; then
             keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' ../install-mappings.yml | tr '\n' '|' | sed 's/|$//') || true
@@ -145,12 +149,12 @@ jobs:
             fi
           fi
           if [ -z "$ALLOWED" ]; then
-            # default to only allowing dotfiles in absence of explicit mappings
+            # por defecto solo permitir dotfiles en ausencia de mapeos explícitos
             ALLOWED='^\..+'
           fi
           for m in */ ; do
             m=$(basename "$m")
-            # find files in module root (not dotfiles) that are not in our allowed list
+            # buscar archivos en la raíz del módulo (no dotfiles) que no estén en la lista permitida
             while IFS= read -r -d $'\0' f; do
               fname=$(basename "$f")
               if [[ ! "$fname" =~ $ALLOWED ]] && [[ ! "$fname" =~ ^\..+ ]]; then
@@ -164,16 +168,16 @@ jobs:
             echo "Se detectaron archivos en la raíz de módulos que podrían contaminar \$HOME. Agrega un mapeo en install-mappings.yml o renombra/cambia el archivo raíz a un dotfile." >&2
             exit 1
           fi
-      - name: Enforce mapping coverage for module root files
+      - name: Forzar cobertura de mapeo para archivos raíz de módulos
         run: |
           set -e
           chmod +x ./.github/scripts/check-mappings.sh
           ./.github/scripts/check-mappings.sh
-      - name: Run install.sh against TARGET and verify declared mappings create symlinks
+      - name: Ejecutar install.sh contra TARGET y verificar que los mapeos crean symlinks
         run: |
           set -euo pipefail
           chmod +x ./.github/scripts/test-install-mappings.sh
           ./.github/scripts/test-install-mappings.sh
-      - name: Cleanup
+      - name: Limpieza
         run: |
-          echo "Removing temp"; rm -rf "$TMP" || true
+          echo "Eliminando temp"; rm -rf "$TMP" || true

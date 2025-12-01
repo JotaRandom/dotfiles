@@ -49,7 +49,7 @@ function Get-SanitizedPath {
                 return $sanFile
             }
         } catch {
-            # fallback: not critical
+                # fallback: no crítico
         }
     }
     return $SourcePath
@@ -71,7 +71,7 @@ foreach ($module in $Modules) {
         continue
     }
 
-    # Parse install-mappings.yml (YAML-lite) so this installer is mapping-driven
+    # Analizar install-mappings.yml (YAML-lite) para que este instalador sea guiado por mapeos
     $MAPPINGS_FILE = Join-Path $PSScriptRoot '..\install-mappings.yml'
     $MAPPER_GLOBAL = @{}
     $MAPPER_MODULE = @{}
@@ -101,7 +101,7 @@ foreach ($module in $Modules) {
     $MAPPED_NAMES = @{}
     foreach ($k in $MAPPER_GLOBAL.Keys) { $MAPPED_NAMES[$k] = $true }
     foreach ($k in $MAPPER_MODULE.Keys) { $name = $k -split '\|',2 | Select-Object -First 1; $MAPPED_NAMES[$name] = $true }
-    # Also track module-specific relative mappings for exclusion
+    # También registrar mapeos relativos específicos por módulo para exclusión
     $MAPPED_RELS = @{}
     foreach ($k in $MAPPER_MODULE.Keys) {
         $parts = $k -split '\|',2
@@ -112,10 +112,10 @@ foreach ($module in $Modules) {
 
     function Map-Target {
         param($relPath, $moduleName)
-        # reset flag
+        # restablecer bandera
         $script:MAPPING_EXPLICIT = $false
         $base = Split-Path $relPath -Leaf
-        # If this is an explicit relative path mapping in the yaml (contains '\'), prefer it
+        # Si este es un mapeo por ruta relativa explícita en el YAML (contiene '\'), preferirlo
         if ($MAPPER_MODULE.ContainsKey("$relPath|$moduleName")) { $mapping = $MAPPER_MODULE["$relPath|$moduleName"]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "rel:$relPath" }
         elseif ($MAPPER_MODULE.ContainsKey("$base|$moduleName")) { $mapping = $MAPPER_MODULE["$base|$moduleName"]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "base:$base" }
         elseif ($MAPPER_GLOBAL.ContainsKey($relPath)) { $mapping = $MAPPER_GLOBAL[$relPath]; $script:MAPPING_EXPLICIT = $true; $script:MAPPING_KEY = "rel:$relPath" }
@@ -144,7 +144,7 @@ foreach ($module in $Modules) {
                 $sub = $mapping.Substring(5) -replace '/','\\'
                 return Join-Path $HOME $sub
             }
-            # no prefix — treat mapping as path relative to HOME
+            # sin prefijo — tratar el mapeo como ruta relativa a HOME
             $sub = $mapping -replace '/','\\'
             return Join-Path $HOME $sub
         }
@@ -164,11 +164,11 @@ foreach ($module in $Modules) {
         }
     }
 
-    # Phase 1 - collect all files and detect conflicts
+    # Fase 1 - coleccionar todos los archivos y detectar conflictos
     $allFiles = Get-ChildItem -Path $modulePath -File -Recurse
     $conflicts = @()
     foreach ($f in $allFiles) {
-        # Determine mapping for this file and skip if install-mappings.yml marks it as ignore
+        # Determinar el mapeo para este archivo y omitir si install-mappings.yml lo marca como 'ignore'
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
         $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
         Write-Host "Mapeo: $rel => $dest (explícito=$($script:MAPPING_EXPLICIT -eq $true), clave=$($script:MAPPING_KEY))" -ForegroundColor Cyan
@@ -179,7 +179,7 @@ foreach ($module in $Modules) {
         $destDir = Split-Path $dest -Parent
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
         if (Test-Path $dest) {
-            # if it is a symlink pointing to same target, ignore; else record conflict
+            # si es un enlace simbólico que apunta al mismo destino, omitir; de lo contrario, registrar conflicto
             $isSame = $false
             try {
                 $item = Get-Item -Path $dest -Force -ErrorAction SilentlyContinue
@@ -208,18 +208,18 @@ foreach ($module in $Modules) {
                 Move-Item -Path $c -Destination $destPath -Force -ErrorAction SilentlyContinue
             }
         }
-        # After resolving conflicts, create symlinks for explicit mapping files
+        # Tras resolver conflictos, crear enlaces simbólicos para archivos con mapeos explícitos
         $mapCreated = @()
         foreach ($f in $allFiles) {
-            # Determine mapping for this file and skip if marked ignore
+            # Determinar mapeo para este archivo y omitir si está marcado como 'ignore'
             $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
             $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
             if ($dest -eq '__IGNORE__') { continue }
             if ($script:MAPPING_EXPLICIT -ne $true) { continue }
-            # Always create symlink for explicit mappings (even if path equals default)
-            # Ensure the target directory exists
+            # Siempre crear enlace simbólico para mapeos explícitos (incluso si la ruta coincide con la predeterminada)
+            # Asegurar que el directorio destino exista (crearlo si es necesario)
             if ($script:MAPPING_KEY -and ($script:MAPPING_KEY -like 'base:*')) {
-                # if multiple files in this module share the same base name, skip ambiguous mapping
+                # si varios archivos en este módulo comparten el mismo nombre base, omitir el mapeo ambiguo
                 $baseName = $script:MAPPING_KEY -replace '^base:'
                 $matches = Get-ChildItem -Path $modulePath -File -Recurse | Where-Object { $_.Name -eq $baseName }
                 if ($matches.Count -gt 1) {
@@ -236,6 +236,7 @@ foreach ($module in $Modules) {
             Write-Host "Creado symlink: $dest -> $($f.FullName)" -ForegroundColor Green
         }
         # Fase 2 - crear enlaces simbólicos para archivos no explícitos según DEFAULT_ACTION
+        # y asegurar que los directorios de destino existan (crearlos cuando sea necesario)
         $remaining = @()
         foreach ($f in $allFiles) {
             $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
@@ -275,7 +276,7 @@ foreach ($module in $Modules) {
             Write-Host "Creado symlink (default): $dest -> $($f.FullName)" -ForegroundColor Green
         }
         }
-        # After creating mappings, validate
+        # Tras crear mapeos, validar
         foreach ($d in $mapCreated) {
             if (-not (Test-Path $d)) { continue }
             $item = Get-Item -Path $d -Force -ErrorAction SilentlyContinue
@@ -286,7 +287,7 @@ foreach ($module in $Modules) {
             $destPath = Join-Path $backupDir $rel
             New-Item -ItemType Directory -Force -Path (Split-Path $destPath -Parent) | Out-Null
             Move-Item -Path $d -Destination $destPath -Force -ErrorAction SilentlyContinue
-            # Try to recreate symlink
+            # Intentar recrear el enlace simbólico
             $fname = Split-Path $d -Leaf
             $found = Get-ChildItem -Path $modulePath -File -Recurse | Where-Object { $_.Name -eq $fname } | Select-Object -First 1
             if ($found) {

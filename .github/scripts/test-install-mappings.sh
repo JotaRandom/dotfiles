@@ -31,23 +31,23 @@ MOD_LIST=(modules/*)
 # Devuelve 0 (verdadero) si el archivo está vacío o parece una plantilla (solo líneas en blanco/comentario o JSON trivial "{}"/"[]").
 is_template() {
   f="$1"
-  # empty files are templates
+  # Los archivos vacíos se consideran plantillas
   if [ ! -s "$f" ]; then
     return 0
   fi
-  # For JSON files, treat {} or [] as template
+  # Para archivos JSON, tratar {} o [] como plantilla
   if [[ "${f,,}" == *.json ]]; then
     trimmed=$(tr -d '[:space:]' < "$f") || trimmed=""
     if [ "$trimmed" = "{}" ] || [ "$trimmed" = "[]" ]; then
       return 0
     fi
   fi
-  # Private keys are secrets if non-empty
+  # Las claves privadas se consideran secretos si no están vacías
   bn=$(basename "$f")
   if [[ "$bn" =~ ^id_(rsa|ed25519)$ ]] || [[ "$bn" =~ ^id_.*_priv$ ]]; then
     return 1
   fi
-  # If every non-empty line begins with a comment marker (#, //, ;) treat as template
+  # Si cada línea no vacía comienza con un marcador de comentario (#, //, ;), tratar como plantilla
   non_comment_count=$(grep -E -v '^[[:space:]]*($|#|//|;)' "$f" | wc -l | tr -d '[:space:]') || non_comment_count=0
   if [ "$non_comment_count" -eq 0 ]; then
     return 0
@@ -55,7 +55,7 @@ is_template() {
   return 1
 }
 
-# Patterns to scan for: files that often contain credentials or secrets.
+# Patrones a analizar: ficheros que con frecuencia contienen credenciales o secretos.
 declare -a SECRET_PATTERNS=(".git-credentials" ".netrc" ".npmrc" ".docker/config.json" ".aws/credentials" ".ssh/id_rsa" ".ssh/id_ed25519")
 secret_errors=0
 for pat in "${SECRET_PATTERNS[@]}"; do
@@ -78,48 +78,48 @@ for pat in "${SECRET_PATTERNS[@]}"; do
   done
 done
 if [ $secret_errors -gt 0 ]; then
-  echo "Refusing to run mapping tests: found $secret_errors likely-secret file(s) under modules." >&2
+  echo "Rechazando ejecutar pruebas de mapeo: se encontraron $secret_errors archivo(s) que parecen secretos en modules." >&2
   exit 4
 fi
 
 if [ -e "${MOD_LIST[0]}" ]; then
   ./scripts/install.sh "${MOD_LIST[@]}" || true
 else
-  echo "No modules found in modules/ - nothing to install" >&2
+  echo "No se encontraron módulos en modules/ - nada que instalar" >&2
 fi
 
 # Give installer a second to settle and produce symlinks if it forks background processes
 sleep 1
 
-# compute xdg base paths as the installer does
+# calcular rutas base XDG tal como lo hace el instalador
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$TARGET/.config}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
 XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
 XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 
 errors=0
-# Read mappings: keys are the LHS before ':' (strip whitespace and comments)
+# Leer mapeos: las claves son la parte izquierda (LHS) antes de ':' (eliminar espacios en blanco y comentarios)
 while IFS= read -r mapping_key; do
   [ -z "$mapping_key" ] && continue
   # ignore comment lines / blank
   # split key|module if present
   key="$mapping_key"
-  # resolution of the mapping value (dest prefix)
+  # resolución del valor del mapeo (prefijo del destino)
   # handle keys containing '|' or other meta-chars (escape) in grep
   safe_key=$(printf '%s' "$key" | sed -E 's/([][\\.*^$(){}+?|])/\\\1/g')
   val=$(grep -E "^[[:space:]]*${safe_key}:" -m1 "$MAP_FILE" | sed -E "s/^[[:space:]]*${safe_key}:[[:space:]]*//" | sed -E "s/#.*$//" | xargs || true)
   if [ -z "$val" ]; then
-    # find module-specific or complex keys that include |module or contains path with / or |
+    # buscar claves específicas por módulo o claves complejas que incluyan |module o que contengan rutas con / o |
     safe_key2=$(printf '%s' "$key" | sed -E 's/([][\\.*^$(){}+?||])/\\\1/g')
     val=$(grep -E "^[[:space:]]*${safe_key2}\|.*:" -m1 "$MAP_FILE" | sed -E "s/^[[:space:]]*${safe_key2}\|.*:[[:space:]]*//" | sed -E "s/#.*$//" | xargs || true)
   fi
   [ -z "$val" ] && continue
-  # If mapping is ignore or skip, skip
+  # Si el mapeo es 'ignore' o 'skip', omitir
   if echo "$val" | grep -qE '^(ignore|skip)$'; then
     continue
   fi
-  # find candidate files in modules for this mapping key
-  # If the key contains |module suffix, that will be included in the key string
+  # buscar archivos candidatos en los módulos para esta clave de mapeo
+  # Si la clave contiene el sufijo '|module', eso se incluye en la cadena de clave
   cmap="$key"
   module_override=""
   if echo "$cmap" | grep -q "\|"; then
@@ -128,7 +128,7 @@ while IFS= read -r mapping_key; do
   fi
   # if key has a slash, treat as relative path
   if echo "$cmap" | grep -q '/' ; then
-    # search per module for the relative path
+    # buscar por módulo la ruta relativa
     if [ -n "$module_override" ]; then
       src="$MODULES_DIR/$module_override/$cmap"
       if [ -f "$src" ]; then
@@ -150,13 +150,13 @@ while IFS= read -r mapping_key; do
   fi
 
   if [ ${#found_paths[@]} -eq 0 ]; then
-    # No source file exists for this mapping; warn but don't fail
+    # No existe un archivo fuente para este mapeo; advertir pero no fallar
     echo "NOTA: el mapeo '$key' apunta a '$val' pero no se encontró archivo fuente en modules; omitiendo." >&2
     continue
   fi
 
   for src in "${found_paths[@]}"; do
-    # compute expected destination path from mapping val
+    # calcular la ruta de destino esperada desde el valor del mapeo
     case "$val" in
       xdg:*) expected="$XDG_CONFIG_HOME/${val#xdg:}" ;;
       xdg_state:*) expected="$XDG_STATE_HOME/${val#xdg_state:}" ;;
@@ -176,15 +176,15 @@ while IFS= read -r mapping_key; do
       errors=$((errors+1))
       continue
     fi
-    # Verify symlink target points to the module source
+    # Verificar que el objetivo del enlace simbólico apunta al archivo fuente en el módulo
     targ=$(readlink -f "$expected")
     srcf=$(readlink -f "$src")
     if [ "$targ" = "$srcf" ]; then
       echo "OK: $expected -> $src"
       continue
     fi
-    # If not a direct symlink into the repo, the installer may have created a sanitized
-    # LF-only copy under $TARGET/.dotfiles_sanitized — accept that too, but validate.
+    # Si no es un enlace simbólico directo al repositorio, el instalador pudo haber creado una copia
+    # solo-LF saneada en $TARGET/.dotfiles_sanitized — aceptarla también, pero validarla.
     SAN_PREFIX="$TARGET/.dotfiles_sanitized"
     if [[ "$targ" == "$SAN_PREFIX"* ]]; then
       if [ ! -f "$targ" ]; then
@@ -210,13 +210,13 @@ while IFS= read -r mapping_key; do
 done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
 
 if [ $errors -gt 0 ]; then
-  echo "Se encontraron $errors errores de verificación de mappings" >&2
+  echo "Se encontraron $errors errores de verificación de mapeos" >&2
   exit 2
 fi
 
-echo "All declared mappings that had a source file were installed correctly as symlinks." 
+echo "Todos los mapeos declarados que tenían un archivo de origen se instalaron correctamente como enlaces simbólicos." 
 
-# Additional sanity check: ensure no top-level directories matching mapping basenames were created
+# Verificación de coherencia adicional: asegurar que no se crearon directorios top-level que coincidan con nombres base de mappings
 bad_dirs=0
 while IFS= read -r k; do
   [ -z "$k" ] && continue
@@ -240,7 +240,7 @@ while IFS= read -r k; do
 done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
 
 if [ $bad_dirs -gt 0 ]; then
-  echo "Se encontraron $bad_dirs directorios no deseados que coinciden con nombres base de mappings — limpia el layout del módulo o ajusta los mappings." >&2
+  echo "Se encontraron $bad_dirs directorios no deseados que coinciden con nombres base de mapeos — limpia el layout del módulo o ajusta los mapeos." >&2
   exit 3
 fi
 

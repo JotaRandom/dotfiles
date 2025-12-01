@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Setup script to configure Git to use our .githooks directory for hooks
+# Script de configuración para indicarle a Git que use el directorio .githooks para hooks
 set -euo pipefail
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then

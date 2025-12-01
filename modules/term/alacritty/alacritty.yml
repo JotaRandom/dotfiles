@@ -1,4 +1,4 @@
-# Config de Alacritty (ejemplo, mínimo)
+# Configuración de Alacritty (ejemplo mínimo)
 window:
   padding:
     x: 2

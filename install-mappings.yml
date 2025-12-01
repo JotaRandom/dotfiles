@@ -5,7 +5,7 @@ default_action: dotify
 ## Docs (ignored)
 README.md: ignore
 
-## Apps (XDG-config)
+## Apps (configuración XDG)
 chrome-flags.conf: xdg:chrome/chrome-flags.conf
 config.fish: xdg:fish/config.fish
 config.json|micro: xdg:micro/config.json

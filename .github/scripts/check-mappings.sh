@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Verify every module root file is declared in install-mappings.yml (or is explicitly ignored)
+# Verificar que cada archivo en la raíz de un módulo esté declarado en install-mappings.yml (o esté explícitamente ignorado)
 MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
 if [ ! -f "$MAPPINGS_FILE" ]; then
   echo "No se encontró el archivo de mapeos en $MAPPINGS_FILE — abortando la verificación" >&2
   exit 1
 fi
 
-# Collect mapping keys (strip module suffix after '|')
+# Recopilar claves de mapeo (eliminar el sufijo de módulo después de '|')
 map_keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' "$MAPPINGS_FILE" | sort -u)
 declare -A MAP_SET
 while IFS= read -r k; do
@@ -19,21 +19,21 @@ done <<<"$map_keys"
 errors=0
 while IFS= read -r -d $'\0' file; do
   fname=$(basename "$file")
-  # skip files that are dotfiles (installer dotifies by default unless mapping exists)
+  # omitir archivos que son dotfiles (el instalador 'dotifica' por defecto, salvo en presencia de un mapeo)
   if [[ "$fname" == .* ]]; then
-    # still allow explicit mapping, but skip default dotfiles
+    # permitir mapeo explícito, pero omitir dotfiles predeterminados
     continue
   fi
-  # if not present in mapping keys, it's an error (the mapping file should list every root-level file)
-  if [ -z "${MAP_SET[$fname]:-}" ]; then
-    echo "ERROR: root-level file in modules not mapped: $fname (found in $file)" >&2
+  # si no está presente en las claves de mapeo, es un error (el archivo de mapeo debería enumerar cada archivo raíz)
+    if [ -z "${MAP_SET[$fname]:-}" ]; then
+    echo "ERROR: archivo a nivel raíz en módulos sin mapeo: $fname (encontrado en $file)" >&2
     errors=$((errors+1))
   fi
 done < <(find modules -maxdepth 2 -mindepth 2 -type f -print0 || true)
 
 if [ $errors -gt 0 ]; then
-  echo "Found $errors unmapped module root files — add entries to install-mappings.yml (use 'ignore:' for README.md etc)." >&2
+  echo "Se detectaron $errors archivos en la raíz de módulos sin mapeo — añade entradas en install-mappings.yml (usa 'ignore:' para README.md, etc.)." >&2
   exit 2
 fi
 
-echo "All module root files are covered by install-mappings.yml (or are dotfiles)."
+echo "Todos los archivos raíz de módulos están cubiertos por install-mappings.yml (o son dotfiles)."

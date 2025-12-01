@@ -1,4 +1,4 @@
-# Set default behaviour, normalize line endings
+# Establecer comportamiento predeterminado: normalizar finales de línea
 * text=auto
 
 # Git LFS: todos los assets pesados están en assets/ (ej. assets/poni)
@@ -7,7 +7,7 @@ assets/** filter=lfs diff=lfs merge=lfs -text
 # Normalizar finales de línea por tipo de archivo:
 # - Scripts POSIX: LF
 # - Configs, dotfiles y markdown: LF
-# - Windows scripts: CRLF
+# - Scripts de Windows: CRLF
 *.sh text eol=lf
 *.bash text eol=lf
 *.zsh text eol=lf
@@ -27,7 +27,7 @@ assets/** filter=lfs diff=lfs merge=lfs -text
 *.bat text eol=crlf
 .* text eol=lf
 
-# Binary files (images, fonts/audio/archives)
+# Archivos binarios (imágenes, fuentes/audio/archivos)
 *.png binary
 *.jpg binary
 *.jpeg binary

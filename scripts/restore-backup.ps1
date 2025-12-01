@@ -50,7 +50,7 @@ if ($confirm -ne 'y' -and $confirm -ne 'Y' -and $confirm -ne 'yes' -and $confirm
   Write-Host "Abortado. No se realizaron cambios."; exit 0
 }
 
-# Preferir robocopy o Copy-Item según disponibilidad
+# Preferir 'robocopy' o 'Copy-Item' según disponibilidad
 if (Get-Command robocopy -ErrorAction SilentlyContinue) {
   $cmd = "robocopy `"$Src`" `"$HOME`" /E /COPY:DAT /MT:4"
   if ($WhatIf) { Write-Host "Simulación: $cmd"; exit 0 }

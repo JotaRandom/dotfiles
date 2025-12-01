@@ -17,8 +17,6 @@ Uso:
   $0 <timestamp> <module>  # restaura un módulo
 EOF
 }
-EOF
-}
 
 if [ "$#" -eq 0 ]; then
   if [ -d "$BACKUP_DIR" ]; then

@@ -1,4 +1,4 @@
-# PowerShell pre-commit hook: ensure scripts/*.sh are executable in the index
+# Hook pre-commit para PowerShell: asegurar que scripts/*.sh sean ejecutables en el índice
 param()
 
 # Get staged files
@@ -16,6 +16,6 @@ foreach ($f in $staged) {
     }
 }
 if ($changed) {
-    Write-Host "Marked staged files with shebang as executable in index"
+    Write-Host "Se marcaron archivos con shebang como ejecutables en el índice"
 }
 exit 0

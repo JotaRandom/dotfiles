@@ -3,7 +3,7 @@ export EDITOR=vi
 
 # Alias ejemplos
 alias ll = 'ls -al'
-# Elvish configuration: plantilla mínima
+# Configuración de Elvish: plantilla mínima
 # Añade tus alias y funciones aquí
 
 # Variables de entorno
