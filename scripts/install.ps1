@@ -18,13 +18,13 @@ if ($Modules.Count -eq 0) {
     $Modules = @('modules/shell/bash','modules/shell/zsh','modules/apps/tmux','modules/apps/xmms')
 }
 
-# XDG fallback variables (Windows: prefer APPDATA / LOCALAPPDATA but respect XDG vars if set)
+# Variables XDG por defecto (Windows: preferir APPDATA / LOCALAPPDATA, respetar variables XDG si están definidas)
 $HOME = $Target
 $XDG_CONFIG_HOME = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } elseif ($env:APPDATA) { $env:APPDATA } else { Join-Path $HOME '.config' }
 $XDG_DATA_HOME   = if ($env:XDG_DATA_HOME)   { $env:XDG_DATA_HOME }   elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\share' }
 $XDG_STATE_HOME  = if ($env:XDG_STATE_HOME)  { $env:XDG_STATE_HOME }  elseif ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME '.local\state' }
     
-# Files that should be sanitized (convert CRLF -> LF) when present
+# Archivos que deben ser saneados (convertir CRLF -> LF) cuando estén presentes
 $SanitizeBasenames = @('.bashrc', '.profile', '.bash_profile', '.zshrc', '.bash_logout')
 
 function Get-SanitizedPath {
@@ -34,7 +34,7 @@ function Get-SanitizedPath {
     )
     $base = Split-Path $SourcePath -Leaf
     if ($SanitizeBasenames -contains $base) {
-        # Detect CRLF (Carriage Return) in file bytes
+        # Detectar CRLF (Carriage Return) en los bytes del archivo
         try {
             $bytes = Get-Content -Raw -Encoding Byte -Path $SourcePath -ErrorAction Stop
             if ($bytes -contains 13) {
@@ -42,7 +42,7 @@ function Get-SanitizedPath {
                 $sanDir = Join-Path $Target (Join-Path '.dotfiles_sanitized' (Join-Path $ModuleName $relDir))
                 New-Item -ItemType Directory -Force -Path $sanDir | Out-Null
                 $sanFile = Join-Path $sanDir $base
-                # read as text, remove CR, write as UTF8
+                # leer como texto, eliminar CR y escribir como UTF-8
                 $txt = [IO.File]::ReadAllText($SourcePath)
                 $txt = $txt -replace "`r", ''
                 [IO.File]::WriteAllText($sanFile, $txt, [System.Text.Encoding]::UTF8)

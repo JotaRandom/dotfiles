@@ -139,9 +139,9 @@ for MOD in "${MODULES[@]}"; do
       XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
       XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
       XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
-      # prefer declarative mapping from install-mappings.yml if present
+      # preferir el mapeo declarativo desde install-mappings.yml si está presente
       base="$(basename "$srcfile")"
-      # Prefer exact relative-path match in per-module mappings
+      # Preferir coincidencia exacta por ruta relativa en mapeos por módulo
       if [[ -n "${_MAPPER_MODULE["$srcfile|$module_name"]+x}" ]]; then
         mapping="${_MAPPER_MODULE["$srcfile|$module_name"]}"
         MAP_TARGET_EXPLICIT=1
@@ -254,7 +254,7 @@ for MOD in "${MODULES[@]}"; do
     # Build exclude list for files at module root that are mapped (we'll handle them
     # with explicit symlinks) — plus exclude etc/
     EXCLUDE_ARGS=(--exclude '/etc/')
-    # Exclude only matching mapped files; support both exact relative paths and basenames.
+    # Excluir solo ficheros mapeados coincidentes; soportar rutas relativas exactas y nombres base.
     for rel in "${!_MAPPED_RELS[@]}"; do
       # if this is module-specific mapping (format 'rel|module'), split it out and ensure matches module
       if [[ "$rel" == *"|"* ]]; then
