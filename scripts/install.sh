@@ -60,7 +60,13 @@ elif command -v pacman >/dev/null 2>&1; then
   sudo pacman -Syu --noconfirm git-lfs || true
 elif command -v dnf >/dev/null 2>&1; then
   sudo dnf install -y git-lfs || true
-  # POR HACER: Agregar soporte para Slackware y otros gestores de paquetes
+elif command -v slackpkg >/dev/null 2>&1; then
+  # Slackware-style systems: intentamos usar slackpkg si está disponible
+  sudo slackpkg update && sudo slackpkg install -y git-lfs || true
+elif command -v sbopkg >/dev/null 2>&1; then
+  # sbopkg (SlackBuilds) puede usarse para construir paquetes de fuente; intentamos instalar git-lfs si hay un sbopkg instalable
+  sudo sbopkg -i git-lfs || true
+  # Si no funciona, el usuario puede instalar git-lfs manualmente (installpkg / pkgtool)
 else
   echo "No se detectó gestor de paquetes compatible. Asegúrate de instalar 'git-lfs' manualmente."
 fi
