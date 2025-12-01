@@ -60,7 +60,7 @@ elif command -v pacman >/dev/null 2>&1; then
   sudo pacman -Syu --noconfirm git-lfs || true
 elif command -v dnf >/dev/null 2>&1; then
   sudo dnf install -y git-lfs || true
-  # TODO: Add dnf for slackware and other package managers
+  # TODO: Agregar soporte dnf para Slackware y otros gestores de paquetes
 else
   echo "No se detectó gestor de paquetes compatible. Asegúrate de instalar 'git-lfs' manualmente."
 fi
@@ -76,9 +76,9 @@ DEFAULT_ACTION="dotify"
 MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
 if [ -f "$MAPPINGS_FILE" ]; then
   while IFS= read -r line || [ -n "$line" ]; do
-    # strip comments
+    # eliminar comentarios
     line="${line%%#*}"
-    # trim
+    # recortar
     line="${line#${line%%[![:space:]]*}}"
     line="${line%${line##*[![:space:]]}}"
     [ -z "$line" ] && continue
@@ -88,7 +88,7 @@ if [ -f "$MAPPINGS_FILE" ]; then
     fi
     if [[ "$line" =~ ^([^:]+):[[:space:]]*(.+)$ ]]; then
       key="${BASH_REMATCH[1]}"; val="${BASH_REMATCH[2]}"
-      # trim spaces
+      # recortar espacios
       key="${key#${key%%[![:space:]]*}}"; key="${key%${key##*[![:space:]]}}"
       val="${val#${val%%[![:space:]]*}}"; val="${val%${val##*[![:space:]]}}"
       # module-specific mapping: name|module
@@ -134,7 +134,7 @@ for MOD in "${MODULES[@]}"; do
     map_target(){
       local srcfile module_name base mapping
       srcfile="$1"; module_name="$2"
-      # Use XDG dirs when available, fall back to standard locations
+      # Usar directorios XDG cuando estén disponibles; en caso contrario, usar ubicaciones estándar
       XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$TARGET/.config}"
       XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
       XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
@@ -428,7 +428,7 @@ for MOD in "${MODULES[@]}"; do
       # Manual symlink creation to avoid leaving dotless files in $HOME
       echo "Creando enlaces simbólicos para archivos en $TMP_NAME"
       while IFS= read -r -d $'\0' tmpf; do
-        # trim leading './' produced by find and skip './' root
+        # eliminar el prefijo './' producido por find y omitir la raíz './'
         rel=${tmpf#./}
         [ "$rel" = "." ] && continue
         # mapear al destino usando el auxiliar/función existente
@@ -568,7 +568,7 @@ echo "Instalación finalizada. Este instalador solo aplica dotfiles de usuario e
 echo "Si necesitas aplicar cambios a nivel sistema (Xorg, etc.), hazlo manualmente con permisos de root."
 echo "Recuerda revisar los archivos instalados para asegurarte de que todo esté como deseas."
 
-# Auto-configure git hooks (if available) — this is safe and idempotent and only affects local git config
+# Configurar automáticamente los hooks de git (si están disponibles) — es seguro, idempotente y solo afecta la configuración local de git
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   REPO_ROOT=$(git rev-parse --show-toplevel)
   SETUP_SCRIPT="$REPO_ROOT/scripts/setup-githooks.sh"
