@@ -1,0 +1,6 @@
+[build]
+target-dir = "target"
+[term]
+quiet = false
+
+# Ejemplo de configuración de cargo — plantilla segura

@@ -1,4 +1,4 @@
-# Xonsh config sample
+# Configuración de Xonsh (ejemplo)
 # Minimal xonsh configuration
 
 aliases['ll'] = 'ls -al'

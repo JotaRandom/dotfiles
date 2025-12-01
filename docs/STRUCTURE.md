@@ -1,7 +1,7 @@
 Estructura del repositorio (propuesta híbrida)
 
 Top-level:
-- modules/: módulos stowables y compartidos (dotfiles por función)
+- modules/: módulos instalables y compartidos (dotfiles por función)
   - shell/: bash, zsh, fish, etc.
     - shells incluidos: `bash`, `zsh`, `fish`, `ksh`, `tcsh`, `mksh`, `elvish`, `xonsh`, `pwsh`.
   - desktop/: xfce, x11, etc.
@@ -20,10 +20,10 @@ Top-level:
 - .gitattributes, .editorconfig, .gitignore
 
 Guía rápida:
-- Si quieres desplegar dotfiles en tu máquina, usa `modules/` con `stow`.
+- Si quieres desplegar dotfiles en tu máquina, usa `modules/` con el instalador `./scripts/install.sh`.
 - Mantén en `machines/` solo los archivos específicos de hardware que no son modulares.
 - Usa `assets/` para binarios y recursos (imágenes, íconos) — estos están trackeados con Git LFS cuando corresponda.
 
 Notas:
 - Esta estructura ofrece un balance entre modularidad (módulos reusables) y preservación del historial por máquina.
-- Recomendamos revisar los módulos y mantenerlos minimalistas y stow-friendly.
+Recomendamos revisar los módulos y mantenerlos minimalistas y compatibles con el instalador.

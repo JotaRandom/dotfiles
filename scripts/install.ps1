@@ -67,7 +67,7 @@ foreach ($module in $Modules) {
     }
     # Safety: skip modules that contain system-level paths (etc/) — installer doesn't touch /etc
     if (Get-ChildItem -Path $modulePath -Recurse -File | Where-Object { $_.FullName -like '*\\etc\\*' }) {
-        Write-Host "Skipping module $modulePath because it contains system-level files under 'etc/'." -ForegroundColor Yellow
+        Write-Host "Omitiendo módulo $modulePath porque contiene archivos a nivel de sistema bajo 'etc/'." -ForegroundColor Yellow
         continue
     }
 
@@ -171,7 +171,7 @@ foreach ($module in $Modules) {
         # Determine mapping for this file and skip if install-mappings.yml marks it as ignore
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\')
         $dest = Map-Target -relPath $rel -moduleName (Split-Path $module -Leaf)
-        Write-Host "Mapping: $rel => $dest (explicit=$($script:MAPPING_EXPLICIT -eq $true), key=$($script:MAPPING_KEY))" -ForegroundColor Cyan
+        Write-Host "Mapeo: $rel => $dest (explícito=$($script:MAPPING_EXPLICIT -eq $true), clave=$($script:MAPPING_KEY))" -ForegroundColor Cyan
         if ($dest -eq '__IGNORE__') { continue }
         if ($script:MAPPING_EXPLICIT -ne $true) { continue }
         $rel = $f.FullName.Substring($modulePath.Length).TrimStart('\\')
@@ -223,7 +223,7 @@ foreach ($module in $Modules) {
                 $baseName = $script:MAPPING_KEY -replace '^base:'
                 $matches = Get-ChildItem -Path $modulePath -File -Recurse | Where-Object { $_.Name -eq $baseName }
                 if ($matches.Count -gt 1) {
-                    Write-Warning "Ambiguous mapping: multiple files named $baseName exist in module $module; please use a relative path mapping in install-mappings.yml to disambiguate."
+                    Write-Warning "Mapeo ambiguo: existen varios archivos llamados $baseName en el módulo $module; usa un mapeo por ruta relativa en install-mappings.yml para desambiguar."
                     continue
                 }
             }
@@ -292,7 +292,7 @@ foreach ($module in $Modules) {
             if ($found) {
                 $sanTarget = Get-SanitizedPath -SourcePath $found.FullName -ModuleName (Split-Path $module -Leaf)
                 New-Item -ItemType SymbolicLink -Path $d -Target $sanTarget -Force | Out-Null
-                Write-Host "Post-stow: Recreated symlink $d -> $($found.FullName)" -ForegroundColor Green
+                Write-Host "Post-instalación: recreado enlace simbólico $d -> $($found.FullName)" -ForegroundColor Green
             }
         }
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Integration test to run scripts/install.sh in a temp TARGET and verify that any
-# file declared in install-mappings.yml and present under modules is created at the
-# mapped destination as a symlink pointing back to the module source.
+# Prueba de integración: ejecutar `scripts/install.sh` con un TARGET temporal y verificar
+# que cualquier archivo declarado en `install-mappings.yml` y presente en `modules/` se crea
+# en la ruta mapeada como un enlace simbólico apuntando de vuelta al archivo fuente en el módulo.
 
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo .)
 MAP_FILE="$ROOT/install-mappings.yml"
@@ -11,11 +11,11 @@ INSTALL_SCRIPT="$ROOT/scripts/install.sh"
 MODULES_DIR="$ROOT/modules"
 
 if [ ! -x "$INSTALL_SCRIPT" ]; then
-  echo "Installer not found or not executable: $INSTALL_SCRIPT" >&2
+  echo "Instalador no encontrado o no ejecutable: $INSTALL_SCRIPT" >&2
   exit 1
 fi
 if [ ! -f "$MAP_FILE" ]; then
-  echo "No mapping file found at $MAP_FILE" >&2
+  echo "No se encontró el archivo de mapeos en: $MAP_FILE" >&2
   exit 1
 fi
 
@@ -23,10 +23,65 @@ TMP=$(mktemp -d)
 export TARGET="$TMP"
 mkdir -p "$TARGET"
 
-echo "Running installer against TARGET: $TARGET"
-echo "Running installer against TARGET: $TARGET"
+echo "Ejecutando instalador contra TARGET: $TARGET"
 cd "$ROOT"
 MOD_LIST=(modules/*)
+
+# Función auxiliar: is_template(file)
+# Devuelve 0 (verdadero) si el archivo está vacío o parece una plantilla (solo líneas en blanco/comentario o JSON trivial "{}"/"[]").
+is_template() {
+  f="$1"
+  # empty files are templates
+  if [ ! -s "$f" ]; then
+    return 0
+  fi
+  # For JSON files, treat {} or [] as template
+  if [[ "${f,,}" == *.json ]]; then
+    trimmed=$(tr -d '[:space:]' < "$f") || trimmed=""
+    if [ "$trimmed" = "{}" ] || [ "$trimmed" = "[]" ]; then
+      return 0
+    fi
+  fi
+  # Private keys are secrets if non-empty
+  bn=$(basename "$f")
+  if [[ "$bn" =~ ^id_(rsa|ed25519)$ ]] || [[ "$bn" =~ ^id_.*_priv$ ]]; then
+    return 1
+  fi
+  # If every non-empty line begins with a comment marker (#, //, ;) treat as template
+  non_comment_count=$(grep -E -v '^[[:space:]]*($|#|//|;)' "$f" | wc -l | tr -d '[:space:]') || non_comment_count=0
+  if [ "$non_comment_count" -eq 0 ]; then
+    return 0
+  fi
+  return 1
+}
+
+# Patterns to scan for: files that often contain credentials or secrets.
+declare -a SECRET_PATTERNS=(".git-credentials" ".netrc" ".npmrc" ".docker/config.json" ".aws/credentials" ".ssh/id_rsa" ".ssh/id_ed25519")
+secret_errors=0
+for pat in "${SECRET_PATTERNS[@]}"; do
+  if [[ "$pat" == */* ]]; then
+    mapfile -t found < <(find "$MODULES_DIR" -type f -path "*/${pat}" -print || true)
+  else
+    mapfile -t found < <(find "$MODULES_DIR" -type f -name "$pat" -print || true)
+  fi
+  for f in "${found[@]:-}"; do
+    # skip example/sample files
+    if [[ "$f" == *.example ]] || [[ "$f" == *.sample ]]; then
+      continue
+    fi
+    if is_template "$f"; then
+      echo "OK: archivo de plantilla/ejemplo encontrado (permitido): $f"
+      continue
+    fi
+    echo "ERROR: encontrado probable secreto en módulos del repositorio: $f" >&2
+    secret_errors=$((secret_errors+1))
+  done
+done
+if [ $secret_errors -gt 0 ]; then
+  echo "Refusing to run mapping tests: found $secret_errors likely-secret file(s) under modules." >&2
+  exit 4
+fi
+
 if [ -e "${MOD_LIST[0]}" ]; then
   ./scripts/install.sh "${MOD_LIST[@]}" || true
 else
@@ -96,7 +151,7 @@ while IFS= read -r mapping_key; do
 
   if [ ${#found_paths[@]} -eq 0 ]; then
     # No source file exists for this mapping; warn but don't fail
-    echo "NOTE: mapping '$key' maps to '$val' but no source file found under modules; skipping." >&2
+    echo "NOTA: el mapeo '$key' apunta a '$val' pero no se encontró archivo fuente en modules; omitiendo." >&2
     continue
   fi
 
@@ -112,12 +167,12 @@ while IFS= read -r mapping_key; do
     esac
     # check existence
     if [ ! -e "$expected" ]; then
-      echo "ERROR: expected dest does not exist for mapping '$key': $expected (source: $src)" >&2
+      echo "ERROR: el destino esperado no existe para el mapeo '$key': $expected (origen: $src)" >&2
       errors=$((errors+1))
       continue
     fi
     if [ ! -L "$expected" ]; then
-      echo "ERROR: expected dest is not a symlink for mapping '$key': $expected (source: $src)" >&2
+      echo "ERROR: el destino esperado no es un enlace simbólico para el mapeo '$key': $expected (origen: $src)" >&2
       errors=$((errors+1))
       continue
     fi
@@ -133,20 +188,20 @@ while IFS= read -r mapping_key; do
     SAN_PREFIX="$TARGET/.dotfiles_sanitized"
     if [[ "$targ" == "$SAN_PREFIX"* ]]; then
       if [ ! -f "$targ" ]; then
-        echo "ERROR: expected sanitized file to exist: $targ (source: $src)" >&2
+        echo "ERROR: no existe el archivo saneado esperado: $targ (origen: $src)" >&2
         errors=$((errors+1))
         continue
       fi
       # Verify sanitized file contains no CRLF
       if grep -q $'\r' "$targ" 2>/dev/null || head -c 1 -q "$targ" | od -An -t x1 | grep -q '0d'; then
-        echo "ERROR: sanitized file still contains CRLF: $targ" >&2
+        echo "ERROR: el archivo saneado aún contiene CRLF: $targ" >&2
         errors=$((errors+1))
         continue
       fi
-      echo "OK: $expected -> $targ (sanitized copy of $src)"
+      echo "OK: $expected -> $targ (copia saneada de $src)"
       continue
     fi
-    echo "ERROR: symlink target mismatch for mapping '$key'. Expected <$srcf>, but found <$targ>. (dest: $expected)" >&2
+    echo "ERROR: discrepancia en el objetivo del enlace para el mapeo '$key'. Se esperaba <$srcf>, pero se encontró <$targ>. (dest: $expected)" >&2
     errors=$((errors+1))
     continue
     echo "OK: $expected -> $src" 
@@ -155,7 +210,7 @@ while IFS= read -r mapping_key; do
 done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
 
 if [ $errors -gt 0 ]; then
-  echo "Found $errors mapping verification errors" >&2
+  echo "Se encontraron $errors errores de verificación de mappings" >&2
   exit 2
 fi
 
@@ -173,19 +228,19 @@ while IFS= read -r k; do
   if [[ "$base" == .* ]]; then
     bare="${base#.}"
     if [ -d "$TARGET/$bare" ]; then
-      echo "ERROR: found undesired directory $TARGET/$bare corresponding to mapping '$k' (expect a file symlink)" >&2
+      echo "ERROR: encontrado directorio no deseado $TARGET/$bare correspondiente al mapeo '$k' (se esperaba un symlink a archivo)" >&2
       bad_dirs=$((bad_dirs+1))
     fi
   else
     if [ -d "$TARGET/$base" ]; then
-      echo "ERROR: found undesired directory $TARGET/$base corresponding to mapping '$k' (expect a file symlink)" >&2
+      echo "ERROR: encontrado directorio no deseado $TARGET/$base correspondiente al mapeo '$k' (se esperaba un symlink a archivo)" >&2
       bad_dirs=$((bad_dirs+1))
     fi
   fi
 done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
 
 if [ $bad_dirs -gt 0 ]; then
-  echo "Found $bad_dirs undesired directories matching mapping basenames — sanitize module layout or adjust mappings." >&2
+  echo "Se encontraron $bad_dirs directorios no deseados que coinciden con nombres base de mappings — limpia el layout del módulo o ajusta los mappings." >&2
   exit 3
 fi
 

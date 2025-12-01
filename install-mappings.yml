@@ -2,6 +2,9 @@
 # Simple, human-friendly layout. Destinations: xdg:, xdg_state:, xdg_data:, home:, ignore
 default_action: dotify
 
+## Docs (ignored)
+README.md: ignore
+
 ## Apps (XDG-config)
 chrome-flags.conf: xdg:chrome/chrome-flags.conf
 config.fish: xdg:fish/config.fish
@@ -16,8 +19,13 @@ kateconfig|kate: xdg:kate/kateconfig
 settings.json|micro: xdg:micro/settings.json
 settings.json|vscode: xdg:Code/User/settings.json
 
-## Docs (ignored)
-README.md: ignore
+# Starship prompt
+starship.toml: xdg:starship/starship.toml
+
+# Terminal emulators
+alacritty.yml|alacritty: xdg:alacritty/alacritty.yml
+kitty.conf|kitty: xdg:kitty/kitty.conf
+
 
 ## Dotfiles (home by default; alphabetical)
 .bashrc: home:.bashrc
@@ -31,6 +39,7 @@ README.md: ignore
 .mkshrc: home:.mkshrc
 .nanorc: xdg:nano/nanorc
 .profile: home:.profile
+.tcshrc: home:.tcshrc
 .tmux.conf: xdg:tmux/tmux.conf
 .tmuxrc: xdg:tmux/tmux.conf
 .twmrc: home:.twmrc
@@ -42,18 +51,32 @@ README.md: ignore
 .Xmodmap: xdg:X11/Xmodmap
 .Xresources: home:.Xresources
 .zshrc: xdg:zsh/.zshrc
-.tcshrc: home:.tcshrc
 
-## Session / system
+## Pacman configs (Makepkg, Fortran, and Rust)
 makepkg.conf: xdg:pacman/makepkg.conf
+fortran.conf: xdg:pacman/fortran.conf
+rust.conf: xdg:pacman/rust.conf
+
+## Session / system (X11-specific)
 .xsession: home:.xsession
 .xsessionrc: home:.xsessionrc
 .Xsession: home:.Xsession
 .xsession-errors: home:.xsession-errors
-
-## Misc / other
-.gitconfig: xdg:git/config
-profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1
-thinkfan.conf: ignore
 .Xdefaults: ignore
 
+## Misc / other
+profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1
+thinkfan.conf: ignore
+ssh/config.example: home:.ssh/config.example
+ssh/config: ignore
+lazygit/config.yml: xdg:lazygit/config.yml
+cargo/config: xdg:cargo/config
+.npmrc.example: home:.npmrc.example
+.npmrc: ignore
+
+## Git files
+.gitconfig: xdg:git/config
+.gitignore: xdg:git/ignore
+.gitattributes: xdg:git/attributes
+.git-credentials: xdg:git/credentials
+.gitk: xdg:git/gitk

@@ -1,0 +1,33 @@
+# Global gitignore for local files
+# Keep in repo under modules/git and install as ~/.gitignore_global
+
+# Backup and package leftover files
+*.bak
+*.orig
+*.rej
+*.~
+*.pacsave
+*.pacnew
+
+# Editor temp files
+*~
+*.swp
+*.swo
+*.tmp
+*.temp
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
+
+# node/npm
+node_modules/
+npm-debug.log*
+
+# python
+__pycache__/
+*.pyc
+
+# vim/joe/emacs backups
+.#*
+*.un~

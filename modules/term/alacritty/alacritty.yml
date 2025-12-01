@@ -1,0 +1,24 @@
+# Config de Alacritty (ejemplo, mínimo)
+window:
+  padding:
+    x: 2
+    y: 2
+  decorations: full
+
+font:
+  normal:
+    family: monospace
+    style: Regular
+  size: 11.0
+
+colors:
+  primary:
+    background: '#0f0f0f'
+    foreground: '#e6e1dc'
+
+# Basic keybindings
+key_bindings:
+  - { key: V, mods: Control|Shift, action: Paste }
+  - { key: C, mods: Control|Shift, action: Copy }
+
+# Este es un ejemplo; adáptalo a tu gusto.

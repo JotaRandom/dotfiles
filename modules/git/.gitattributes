@@ -1,0 +1,30 @@
+# Atributos globales de git (nivel usuario)
+# Usar con: git config --global core.attributesfile ~/.gitattributes_global
+
+# Por defecto: normalizar la detección de texto
+* text=auto
+
+# Valores por defecto de final de línea
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.ps1 text eol=crlf
+
+# Binary file detection
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+*.tgz binary
+*.tar.gz binary

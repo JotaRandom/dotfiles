@@ -4,15 +4,14 @@
 	name = 
 	email = 
 	signingkey = 
-	autocrlf = input
 [commit]
 	# Firma GPG por defecto para commits (recomendado si firmas tus commits)
-	gpgsign = true
+	# gpgsign = true  # comentado para respetar el comportamiento por defecto de Git (ver docs)
 [core]
-	# Editor por defecto para mensajes de commit
-	editor = nano
-	# Archivo global .gitignore
-	excludesfile = ~/.gitignore
+	# Dejar las opciones por defecto de Git (Git 3.0) para minimizar deltas en migración.
+	# Editor, excludesfile, autocrlf no están configurados aquí intencionalmente.
+[push]
+	# push.default seguirá los valores por defecto de Git (evitar sobrescribir para minimizar diferencias)
 [color]
 	# Activar colores en la salida por defecto
 	ui = auto

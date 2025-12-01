@@ -1,4 +1,4 @@
-" Neovim sample init.vim (moved to correct XDG path)
+" Neovim: init.vim de ejemplo (movido a la ruta XDG correcta)
 set number
 set relativenumber
 set tabstop=2

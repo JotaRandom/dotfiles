@@ -4,7 +4,7 @@ set -euo pipefail
 # Verify every module root file is declared in install-mappings.yml (or is explicitly ignored)
 MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
 if [ ! -f "$MAPPINGS_FILE" ]; then
-  echo "No mapping file found at $MAPPINGS_FILE — aborting check" >&2
+  echo "No se encontró el archivo de mapeos en $MAPPINGS_FILE — abortando la verificación" >&2
   exit 1
 fi
 

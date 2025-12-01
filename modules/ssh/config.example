@@ -1,0 +1,8 @@
+Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+  StrictHostKeyChecking no
+
+# Este es un archivo de ejemplo `config` para SSH. Es seguro incluirlo en el repositorio como plantilla.
+# Las configuraciones reales deben copiarse localmente en ~/.ssh/config y no deben subirse al repositorio.

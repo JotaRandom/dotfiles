@@ -3,7 +3,7 @@ Guía rápida de instalación y despliegue (reinstalación de sistema)
 Requisitos:
 - Git
 - Git LFS (si clonarás los assets)
-- GNU Stow (Linux/Unix)
+ 
 
 Pasos para reinstalar y aplicar tu configuración (Linux, WSL):
 1. Clona el repo y habilita LFS:
@@ -15,9 +15,9 @@ Pasos para reinstalar y aplicar tu configuración (Linux, WSL):
    # Clonar también los submodules (PKGBUILD):
    git submodule update --init --recursive
    ```
-2. Instalar dependencias (ej. stow):
-   - Debian/Ubuntu: `sudo apt install stow git-lfs`
-   - Arch: `sudo pacman -S stow git-lfs`
+2. Instalar dependencias:
+   - Debian/Ubuntu: `sudo apt install git-lfs`
+   - Arch: `sudo pacman -S git-lfs`
 3. Usar `scripts/install.sh` para aplicar los módulos por defecto o elige módulos concretos:
    ```bash
    cd ~/dotfiles
@@ -68,9 +68,9 @@ Además de `xdg:` (mapea al directorio `XDG_CONFIG_HOME`), el instalador soporta
 
 Por ejemplo: `lesshst: xdg_state:less/lesshst` colocará el archivo en `$XDG_STATE_HOME/less/lesshst`.
 
-El instalador seguirá usando `stow` para el resto de los archivos en cada módulo. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
+El instalador no depende de herramientas externas para crear symlinks; `./scripts/install.sh` aplica los symlinks de forma explícita usando `install-mappings.yml`. Si tu módulo contiene archivos a nivel sistema (`etc/`), el instalador los ignorará — debes aplicarlos manualmente con privilegios elevados si así lo deseas.
 
-Nota: archivos de documentación como `README.md` o archivos auxiliares que no estén destinados a ser configuraciones de usuario se excluyen al crear la copia temporal para `stow` y no se instalarán en `~/.` para evitar que el directorio home se contamine con documentación del módulo.
+Nota: archivos de documentación como `README.md` o archivos auxiliares que no estén destinados a ser configuraciones de usuario se excluyen al crear la copia temporal y no se instalarán en `~/.` para evitar que el directorio home se contamine con documentación del módulo.
 
 
 ### Opción A: Xorg InputClass (recomendado para X11)

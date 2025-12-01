@@ -2,12 +2,12 @@
 param()
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Error "git not found"
+    Write-Error "git no encontrado"
     exit 1
 }
 
 git config core.hooksPath .githooks
-Write-Host "core.hooksPath set to .githooks"
+Write-Host "core.hooksPath configurado a .githooks"
 
 # Make sure the Windows scripts are executable in index (call the PS pre-commit logic)
 # Only set execute bit for scripts with a shebang
@@ -21,4 +21,4 @@ foreach ($f in $files) {
     }
 }
 
-Write-Host "Updated git index for scripts/*.sh to be executable (if present)."
+Write-Host "Índice de Git actualizado: scripts/*.sh marcados como ejecutables (si existen)."

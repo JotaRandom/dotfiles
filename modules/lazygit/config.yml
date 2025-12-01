@@ -1,0 +1,7 @@
+theme: "dark"
+gui:
+  confirm: false
+  showFullCommand: true
+
+# Ejemplo de archivo de configuración de lazygit — seguro y apto como plantilla
+# Para más opciones, consulta la documentación de lazygit: https://github.com/jesseduffield/lazygit

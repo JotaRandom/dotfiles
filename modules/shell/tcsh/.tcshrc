@@ -1,3 +1,3 @@
-# C shell (tcsh) sample configuration
+# Configuración de C shell (tcsh) — ejemplo
 setenv EDITOR vi
 alias ll 'ls -l'

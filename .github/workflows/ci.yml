@@ -108,44 +108,25 @@ jobs:
         run: |
           grep -E '^assets/\*\* filter=lfs' .gitattributes
 
-  stow-test:
-    name: Verify modules with stow
+  install-test:
+    name: Verify modules with install.sh
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
           submodules: false
-      - name: Install stow and tools
+      - name: Install tools (git-lfs)
         run: |
           sudo apt-get update
-          sudo apt-get install -y stow
-      - name: Stow-test (create temp target and apply all modules)
+          sudo apt-get install -y git-lfs || true
+      - name: Verify installers & mappings
         run: |
           set -e
           TMP=$(mktemp -d)
-          echo "Testing stow modules with target: $TMP"
-          cd modules
-          # Iterate modules and try to stow to temporary directory
-          for m in */ ; do
-            m=$(basename "$m")
-            # Skip modules that include system-level files (e.g. etc/) to avoid attempting to apply them
-            if find "$m" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read; then
-              echo "Skipping module: $m (contains system-level files under etc/)"
-              continue
-            fi
-            echo "Testing module: $m"
-            # Use explicit target to avoid modifying home
-            stow -v -t "$TMP" "$m" || { echo "stow failed for module: $m"; exit 1; }
-          done
-          # Check at least one symlink was created
-          SYMLINKS_COUNT=$(find "$TMP" -type l | wc -l || true)
-          echo "Symlinks created: $SYMLINKS_COUNT"
-          if [ "$SYMLINKS_COUNT" -lt 1 ]; then
-            echo "No symlinks created by stow; verify module structure"
-            ls -R "$TMP" || true
-            exit 1
-          fi
+          echo "Testing installer against temp target: $TMP"
+          chmod +x ./.github/scripts/test-install-mappings.sh
+          ./.github/scripts/test-install-mappings.sh
 
       - name: Check for top-level files in modules that could pollute $HOME
         run: |
@@ -173,14 +154,14 @@ jobs:
             while IFS= read -r -d $'\0' f; do
               fname=$(basename "$f")
               if [[ ! "$fname" =~ $ALLOWED ]] && [[ ! "$fname" =~ ^\..+ ]]; then
-                echo "ERROR: Module $m contains root-level file that may install to \$HOME and is not declared in install-mappings.yml: $fname" >&2
-                echo "Offending path: $m/$fname" >&2
+                echo "ERROR: El módulo $m contiene un archivo en la raíz que puede instalarse en \$HOME y no está declarado en install-mappings.yml: $fname" >&2
+                echo "Ruta conflictiva: $m/$fname" >&2
                 FAIL=1
               fi
             done < <(find "$m" -maxdepth 1 -type f -print0 || true)
           done
           if [ "$FAIL" -eq 1 ]; then
-            echo "Top-level files detected in modules that could pollute \$HOME. Please add a mapping in install-mappings.yml or rename/change the root file to a dotfile." >&2
+            echo "Se detectaron archivos en la raíz de módulos que podrían contaminar \$HOME. Agrega un mapeo en install-mappings.yml o renombra/cambia el archivo raíz a un dotfile." >&2
             exit 1
           fi
       - name: Enforce mapping coverage for module root files

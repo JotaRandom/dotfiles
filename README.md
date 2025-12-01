@@ -1,53 +1,12 @@
-# dotfiles
+﻿
+# dotfiles — Inicio rápido
 
-Colección de configuraciones (dotfiles) que uso en varias máquinas y entornos. Este repositorio agrupa módulos organizados para facilitar su despliegue mediante `stow` (Unix) y scripts de ayuda (Windows).
+Este repositorio contiene configuraciones (dotfiles) organizadas en módulos (`modules/`) y administradas mediante un instalador mapeado (`./scripts/install.sh`).
 
-## Inicio rápido — Linux / WSL
-```bash
-git clone --recurse-submodules https://github.com/JotaRandom/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-git lfs install
-git lfs pull
-git submodule update --init --recursive
-./scripts/install.sh
-```
+Guía rápida — pasos esenciales:
 
-## Inicio rápido — PowerShell / Windows
-```powershell
-git clone https://github.com/JotaRandom/dotfiles.git $HOME\dotfiles
-cd $HOME\dotfiles
-git lfs install
-git lfs pull
-git submodule update --init --recursive
-.\scripts\install.ps1
-```
+1) Clona el repo y prepara LFS/submódulos:
 
-### Notas sobre `install.ps1` y paridad con `install.sh`
-
-El instalador de PowerShell (`scripts/install.ps1`) está alineado con `scripts/install.sh` en comportamiento:
-
-- Respeta las entradas de `install-mappings.yml` (globales y por módulo) y crea enlaces simbólicos en XDG/HOME.
-- Crea backups de archivos conflictivos en `$HOME/.dotfiles_backup/<timestamp>/` antes de reemplazar.
-- Soporta el parámetro `-Target` para sandbox (`-Target $env:TEMP\dotfiles_test`) y `-Modules` para seleccionar módulos.
-- Implementa saneamiento CRLF → LF para archivos interactivos (ver sección "Saneamiento de finales de línea").
-
-> Nota: En Windows, la creación de enlaces simbólicos puede requerir privilegios administrativos o activar Developer Mode. Si te faltan permisos, ejecuta PowerShell como administrador o habilita Developer Mode.
-
-
-Para instrucciones más detalladas revisa `docs/INSTALL.md`.
-
-## Estructura
-- `modules/`: módulos por función (e.g. `modules/shell/bash`).
-- `machines/`: configuraciones históricas específicas de hardware.
-- `assets/`: binarios y recursos multimedia (Git LFS).
-- `distros/`: configuraciones por distribución y submodules (PKGBUILD).
-- `scripts/`: scripts de utilidad (instalador, githooks, actualización de submodules).
-
-## Propósito
-Guardar y versionar configuraciones, dotfiles y snippets que faciliten el despliegue y la configuración de entornos.
-
-## Instalación y uso
-1. Prepara el repositorio (submodules + LFS):
 ```bash
 git clone --recurse-submodules https://github.com/JotaRandom/dotfiles.git ~/dotfiles
 cd ~/dotfiles
@@ -55,98 +14,117 @@ git lfs install
 git lfs pull
 git submodule update --init --recursive
 ```
-2. Instala dependencias (ej. `stow` en Linux): Debian/Ubuntu: `sudo apt install stow git-lfs` — Arch: `sudo pacman -S stow git-lfs`.
-3. Aplica módulos con `stow` o usa el instalador:
+
+2) Ejecuta el instalador (Linux / WSL):
+
 ```bash
-./scripts/install.sh modules/shell/bash modules/editor/nvim
+./scripts/install.sh modules/editor/nvim modules/shell/zsh
 ```
-En Windows (PowerShell):
+
+3) En Windows (PowerShell):
+
 ```powershell
-.\scripts\install.ps1 modules/shell/bash
+./scripts/install.ps1 modules/editor/nvim modules/shell/zsh
 ```
 
-### Nota sobre cambios a nivel sistema y conflictos
-Los instaladores incluidos solo aplican dotfiles de usuario en `$HOME`. No se modifican archivos de sistema (`/etc/*`) automáticamente. Si al aplicar los módulos hay archivos conflictivos en `$HOME` (por ejemplo un `~/.bashrc` ya existente), el instalador preferirá los dotfiles del repositorio y respaldará los archivos anteriores en `$HOME/.dotfiles_backup/<timestamp>/` antes de reemplazarlos.
-Para aplicar archivos de sistema (por ejemplo `X11`), sigue las instrucciones manuales en `docs/INSTALL.md`.
+Estructura breve del repo:
 
-### Saneamiento de finales de línea (CRLF → LF)
+ - `modules/*`: Cada carpeta contiene un módulo con la estructura de archivos de destino (por ejemplo `modules/nvim/.config/nvim/init.vim`). Este instalador aplica symlinks directamente usando `install-mappings.yml` y sanea CRLFs y conflictos, lo que evita la creación accidental de archivos visibles en `$HOME`.
+- `install-mappings.yml`: Reglas declarativas (XDG/HOME) que el instalador usa para colocar archivos en las rutas correctas.
 
-Algunos archivos de shell interactivo (p. ej. `.bashrc`, `.zshrc`, `.profile`) tienen finales de línea en formato Windows (CRLF) en ciertos editores o repositorios. Esto puede causar errores en shells Unix/WSL al interpretar `$'\r'` o producir `syntax error` por `
-` en scripts.
+Cómo funciona `install.sh` (explicado de forma muy simple):
 
-Los instaladores `scripts/install.sh` y `scripts/install.ps1` detectan los archivos interactivos con CRLF y, en lugar de modificar el repositorio, crean una copia saneada con LF en:
+- Piensa en cada módulo como una caja con la estructura relativa de destino para los archivos. `./scripts/install.sh` lee `install-mappings.yml` y crea symlinks deterministas en `$TARGET` (por defecto `~`).
+- Si un archivo no tiene un mapeo explícito y no comienza con `.` en su nombre, `install.sh` aplica la acción `dotify` por defecto y lo instala como `~/.<nombre>` para evitar crear archivos visibles en el HOME.
+- `install.sh` además:
+	- respeta mapeos XDG (`xdg:` / `xdg_data:` / `xdg_state:` / `xdg_cache:` / `home:`),
+	- crea copias sanitizadas para archivos con CRLF en `$TARGET/.dotfiles_sanitized`,
+	- realiza backups en `$HOME/.dotfiles_backup/<timestamp>` antes de sobrescribir archivos no enlazados.
 
-```
-$TARGET/.dotfiles_sanitized/<module>/<path>
-```
+Ejemplos concretos (muy simples):
 
-Los enlaces simbólicos apuntan a esa copia saneada. Esto asegura que los entornos de usuario no se rompan por finales de línea CRLF y evita cambiar archivos en el repo por defecto.
+-- Si en `modules/miapp/` existe un archivo `myapp` (en la raíz del módulo):
 
-Si prefieres normalizar el repo en origen a LF de manera permanente, puedes hacerlo manualmente o solicitar la característica `--normalize` para convertir archivos en repo (no habilitado por defecto).
+	```bash
+	./scripts/install.sh modules/miapp
+	```
 
+	Resultado: se crea `$HOME/myapp` (sin punto). Aquí `miapp` es el nombre del módulo y `myapp` es el archivo que estaba en el módulo.
 
-#### Restaurar archivos respaldados
-Si necesitas restaurar archivos desde un backup creado por el instalador, copia los archivos de vuelta desde `$HOME/.dotfiles_backup/<timestamp>/` a tu home. Por ejemplo:
+-- Si en `modules/miapp/` existe `.config/cargo/config`:
+
+	```bash
+	./scripts/install.sh modules/miapp
+	```
+
+	Resultado: se crea `~/.config/cargo/config`.
+
+-- Si en `modules/miapp/` existe `cargo/config` (sin punto al inicio):
+
+	```bash
+	./scripts/install.sh modules/miapp
+	```
+
+	Resultado: se crea `$HOME/cargo/config`.
+
+Diferencia clave con enfoques históricos:
+
+- Algunas aproximaciones tradicionales respetaban exactamente la estructura que hubiera en el módulo y no aplicaban reglas ni transformaciones por defecto. En contraste, `./scripts/install.sh` usa `install-mappings.yml` para aplicar reglas declarativas (ej.: mover `cargo/config` a `~/.config/cargo/config`, o marcar un archivo como `ignore`).
+
+Por eso:
+- Si quieres que algo siempre termine en `~/.config/…`, lo puedes colocar en el módulo en esa carpeta (`.config/...`) o declarar un mapeo en `install-mappings.yml` si el repo tiene una estructura distinta.
+-- Nota: el instalador `install.sh` usa por defecto la acción `dotify`. Si algo no tiene mapeo y no empieza por un `.` en su nombre, `install.sh` aplicará un prefijo `.` y terminará en `~/.<nombre>`. Los enfoques previos no implicaban esta transformación por defecto.
+- Implementación actual: cuando ejecutas `./scripts/install.sh`, los elementos en la raíz de cada módulo que no tienen un mapeo y no empiezan con `.` se instalarán como `~/.<nombre>` automáticamente (dotify). Esto evita que el instalador cree archivos no ocultos en `$HOME` por defecto cuando no hay un mapeo explícito.
+-- Para evitar dotify (por ejemplo si prefieres que el archivo termine en `~/miapp`), añade un `.` al nombre en el módulo (`.miapp`) o añade una entrada en `install-mappings.yml` para ese archivo/directorio con la ruta deseada.
+-- Si quieres ver qué hará `install.sh` sin aplicarlo, ejecuta en un `TARGET` temporal (simulando `HOME`) y revisa los enlaces creados:
+
 ```bash
-cp -a "$HOME/.dotfiles_backup/<timestamp>/." "$HOME/"
+TMP=$(mktemp -d)
+TARGET="$TMP" ./scripts/install.sh modules/miapp
+find "$TMP" -maxdepth 3 -ls
 ```
-Ten cuidado: esto sobrescribirá los archivos actuales. Verifica el contenido del backup antes de restaurar.
+esto te permitirá revisar los symlinks resultantes sin afectar a tu verdadero HOME.
 
-### Opcional: script de restauración
-Para facilitar la restauración, puedes usar los scripts de ayuda incluidos:
- - Bash: `scripts/restore-backup.sh <timestamp> <module>`
- - PowerShell: `scripts/restore-backup.ps1 -Timestamp <timestamp> -Module <module>`
-Sin argumentos, estos scripts listan los backups y módulos disponibles. Solicitan confirmación antes de restaurar y tratan de preservar los archivos existentes cuando es posible.
-## Hooks Git
-El repositorio incluye hooks en `.githooks` que, por ejemplo, marcan archivos con shebang como ejecutables en el índice.
-- Activación automática: los instaladores configuran `core.hooksPath` a `.githooks` en tu clon local (idempotente).
-- Activación manual: `./scripts/setup-githooks.sh` (o `setup-githooks.ps1`).
-- Revertir: `git config --unset core.hooksPath`.
+Agregar un módulo — ejemplo práctico:
 
-## Contribuir
-- Pull requests y Issues bienvenidos. Prevén PRs pequeños y fáciles de revisar.
+1. Crea un nuevo módulo: `modules/miapp/`.
+2. Añade la estructura de destino dentro del módulo. Ejemplo: `modules/miapp/.config/miapp/config.yml`.
+3. Prueba el módulo con `install.sh` (destino temporal para revisión):
 
-## Licencia
-Revisa `CC-SA-4.0` y `GPL-2.0` en la raíz del repo para detalles.
-
-## Notas sobre Git LFS
-Instala `git-lfs` antes de trabajar con los assets (ej.: `assets/poni`) si clonas el repo.
-
-## Contacto
-Abre un issue o contacta al mantenedor (perfil `JotaRandom` en GitHub).
-
-## ¿Cómo agregar un nuevo dotfile (módulo stow)?
-Si quieres añadir un nuevo dotfile al repositorio usando `stow`, sigue estos pasos:
-
-1) Crea un nuevo módulo bajo `modules/` con el nombre que prefieras (por ejemplo `modules/myapp`).
-	- Los archivos deben replicar la estructura destino a partir del home del usuario; por ejemplo, si quieres añadir `~/.config/myapp/config.yml`, crea `modules/myapp/.config/myapp/config.yml`.
-	- Para dotfiles que están directamente en el home (p. ej. `.bashrc`), coloca el fichero bajo `modules/mybash/.bashrc`.
-
-2) Prueba localmente con `stow` antes de commitear:
 ```bash
 cd modules
-# Probar sin aplicar directamente (no-ops): stow -n -t $HOME myapp
-# Para aplicar a un directorio temporal y verificar symlink real (reversible):
-TMP=$(mktemp -d)
-stow -v -t "$TMP" myapp
-ls -l "$TMP"  # verifica symlinks/tablas creadas
-rm -rf "$TMP"
+TMP=$HOME/tmp_install_test
+mkdir -p "$TMP"
+TARGET="$TMP" ../scripts/install.sh miapp
+ls -l "$TMP"                 # verifica lo que el instalador aplicaría
 ```
 
-3) Añade un `README` dentro de tu módulo si necesitas documentar opciones o dependencias especiales.
+4. Para aplicar el módulo a tu HOME con el instalador:
 
-4) Asegúrate de que cualquier script que añadas tenga la shebang y el permiso de ejecución. Nuestro pre-commit hook y CI intentarán marcar archivos con `#!` como ejecutables en el índice.
+```bash
+../scripts/install.sh modules/miapp
+```
 
-5) Crea un PR explicando qué hace el módulo y cómo probarlo. En CI, hemos añadido una verificación (`stow-test`) que aplica todos los módulos en `modules/` a un target temporal y verifica que se creen symlinks; esto ayudará a detectar problemas en la estructura de módulos.
+5. Para revertir/desinstalar el módulo (quitar enlaces creados por el instalador):
 
-Consejo: Mantén los módulos pequeños y con un propósito único (p. ej. `modules/nvim` sólo para configuración de neovim), así es más fácil revisarlos y probarlos.
+```bash
+# Revertir manualmente: eliminar symlink y restaurar backup si existen
+rm -f "$HOME/.miapp"
+# o elimina los symlinks devueltos por el instalador de forma manual
+```
 
-## CI y submódulos
+6. Si necesitas una ruta XDG específica o marcar un archivo para `ignore`, actualiza `install-mappings.yml` con la entrada adecuada (p. ej. `myfile: xdg:myapp/config.yml` o `secret.file: ignore`).
 
-Detalles sobre el tratamiento de submódulos SSH por el CI se encuentran en `docs/CI.md`. El flujo de CI **no intentará** actualizar o clonar submódulos privados: solo comprobará que `.gitmodules` contiene entradas válidas y seguirá sin error en runners públicos.
+Seguridad — secretos y plantillas (resumen):
 
-Además, el pipeline de CI incluye pruebas de instalación y verificación automatizadas:
+- Nunca subas credenciales o claves privadas. Mantén `*.example` como plantillas (p. ej. `.git-credentials.example`).
+- El instalador respeta `install-mappings.yml`. El pipeline de CI analiza `modules/` y falla si detecta archivos que parezcan contener secretos; se permiten archivos de plantilla o archivos que solo contienen comentarios.
 
-- `stow-test`: aplica cada módulo con `stow` a un `TARGET` temporal para verificar que se creen symlinks sin tocar `$HOME`.
-- `test-install-mappings.sh`: ejecuta `install.sh` en un `TARGET` temporal y valida que todas las entradas declaradas en `install-mappings.yml` se hayan instalado como symlinks apuntando al origen, o que hayan producido copias saneadas en `$TARGET/.dotfiles_sanitized` si el origen contenía CRLF.
+Contribuciones y pruebas:
 
+- Añade un módulo pequeño con su README y pruebas básicas. El CI ejecuta pruebas para comprobar que `./scripts/install.sh` aplica correctamente los symlinks y que `install-mappings.yml` cubre los archivos raíz de cada módulo.
+- Si agregas un módulo que incluye archivos sensibles, proporciona primero un `*.example` y marca la ruta real como `ignore` en `install-mappings.yml`.
+
+Si quieres más ejemplos o que agregue un módulo por defecto al instalador, dime cuáles y lo hago.
+
+--------------------------------------------------------------

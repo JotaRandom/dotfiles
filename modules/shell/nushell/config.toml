@@ -1,4 +1,4 @@
-; Nushell minimal sample configuration.
+; Configuración mínima de Nushell (ejemplo).
 [settings]
 prompt = 'nu'
 set -g editor 'nvim'

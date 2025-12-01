@@ -10,29 +10,29 @@ set -euo pipefail
 BACKUP_DIR="$HOME/.dotfiles_backup"
 
 usage() {
-  cat <<EOF
-Usage:
-  $0               # list available backups
-  $0 <timestamp>   # list modules inside timestamp
-  $0 <timestamp> <module>  # restore the module contents
-
-By default the script prompts for confirmation before overwriting files in your home.
+  cat <<'EOF'
+Uso:
+  $0               # lista los respaldos disponibles
+  $0 <timestamp>   # muestra los módulos dentro del respaldo
+  $0 <timestamp> <module>  # restaura un módulo
+EOF
+}
 EOF
 }
 
 if [ "$#" -eq 0 ]; then
   if [ -d "$BACKUP_DIR" ]; then
-    echo "Available backups:";
+    echo "Backups disponibles:";
     ls -1 "$BACKUP_DIR";
   else
-    echo "No backups found at: $BACKUP_DIR";
+    echo "No se encontraron respaldos en: $BACKUP_DIR";
   fi
   exit 0
 fi
 
 TIMESTAMP="$1"
 if [ ! -d "$BACKUP_DIR/$TIMESTAMP" ]; then
-  echo "Backup timestamp not found: $TIMESTAMP" >&2
+  echo "Marca de tiempo del backup no encontrada: $TIMESTAMP" >&2
   exit 2
 fi
 
@@ -43,7 +43,7 @@ if [ "$TIMESTAMP" = "-h" ] || [ "$TIMESTAMP" = "--help" ]; then
 fi
 
 if [ "$#" -eq 1 ]; then
-  echo "Modules in backup $TIMESTAMP:";
+  echo "Módulos en el backup $TIMESTAMP:";
   ls -1 "$BACKUP_DIR/$TIMESTAMP";
   exit 0
 fi
@@ -51,14 +51,14 @@ fi
 MODULE="$2"
 SRC="$BACKUP_DIR/$TIMESTAMP/$MODULE"
 if [ ! -d "$SRC" ]; then
-  echo "Module not found in backup: $MODULE" >&2
+  echo "Módulo no encontrado en el backup: $MODULE" >&2
   exit 3
 fi
 
-echo "About to restore module '$MODULE' from backup '$TIMESTAMP' to $HOME"
-read -r -p "Proceed and overwrite files in $HOME? [y/N]: " confirm
-if [[ "${confirm,,}" != "y" && "${confirm,,}" != "yes" ]]; then
-  echo "Aborted. No files changed.";
+echo "A punto de restaurar el módulo '$MODULE' del backup '$TIMESTAMP' a $HOME"
+read -r -p "¿Proceder y sobrescribir archivos en $HOME? [s/N]: " confirm
+if [[ "${confirm,,}" != "y" && "${confirm,,}" != "yes" && "${confirm,,}" != "s" && "${confirm,,}" != "si" ]]; then
+  echo "Abortado. No se realizaron cambios.";
   exit 0
 fi
 
@@ -67,9 +67,9 @@ if command -v rsync >/dev/null 2>&1; then
   rsync -a --backup --suffix=".restore-bak" "$SRC/" "$HOME/"
 else
   # cp -a may not support backups; warn user
-  echo "rsync not found; using cp -a and overwriting files (no automatic backup)."
+  echo "rsync no encontrado; usando cp -a y sobrescribiendo archivos (sin backup automático)."
   cp -a "$SRC/" "$HOME/"
 fi
 
-echo "Restore complete. If you used rsync, existing files were backed up to <filename>.restore-bak"
+echo "Restauración completada. Si usaste rsync, los archivos existentes se guardaron con sufijo '.restore-bak'"
 exit 0

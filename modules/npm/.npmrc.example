@@ -1,0 +1,4 @@
+# Plantilla `.npmrc` de ejemplo — NO subas tokens ni datos de autenticación privados.
+# Las líneas que comienzan con '//' o '_authToken=' contienen credenciales en algunas configuraciones; no las subas al repositorio.
+save-exact=true
+registry=https://registry.npmjs.org/

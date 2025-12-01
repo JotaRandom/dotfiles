@@ -7,8 +7,8 @@ if [ $# -gt 0 ]; then
   TARGET_DIR="$TARGET_DIR/$1"
 fi
 
-if [ ! -d "$TARGET_DIR" ]; then
-  echo "Target dir $TARGET_DIR no existe"
+  if [ ! -d "$TARGET_DIR" ]; then
+  echo "Directorio destino $TARGET_DIR no existe"
   exit 1
 fi
 
@@ -16,7 +16,7 @@ echo "Actualizando submodules en $TARGET_DIR..."
 for d in "$TARGET_DIR"/*; do
   if [ -d "$d" ]; then
     if [ -f "$d/.git" ] || git -C "$d" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      echo "Updating $(basename "$d")..."
+      echo "Actualizando $(basename "$d")..."
       git -C "$d" fetch --all
       git -C "$d" pull --ff-only || git -C "$d" pull --no-edit
       git add "$d"
@@ -24,6 +24,6 @@ for d in "$TARGET_DIR"/*; do
   fi
 done
 
-echo "Committing updates de submodules (si los hay)"
-git commit -m "chore: update PKGBUILD submodules" --no-verify || echo "No changes to commit"
-echo "Listo. Revisa con 'git status' y push a tu rama de trabajo." 
+echo "Confirmando actualizaciones de submódulos (si hay)"
+git commit -m "chore: update PKGBUILD submodules" --no-verify || echo "No hay cambios para commitear"
+echo "Listo. Revisa con 'git status' y sube tu rama de trabajo." 

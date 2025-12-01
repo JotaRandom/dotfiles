@@ -1,0 +1,12 @@
+[prompt]
+add_newline = true
+format = "${username}@${hostname} ${directory} ${git_branch} ${git_state}"
+
+[git_branch]
+symbol = ""
+
+[character]
+success_symbol = ">"
+error_symbol = "x"
+
+# Ejemplo de configuración de starship — edítalo para tu entorno.
