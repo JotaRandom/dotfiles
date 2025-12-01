@@ -1,1 +1,5 @@
-﻿# ConfiguraciÃ³n de Korn shell (ksh) â€” ejemplo\nexport EDITOR=vi\nalias ll='ls -l'\n
+﻿#!/bin/ksh
+# Configuración de Korn shell (ksh)  ejemplo
+export EDITOR=vi
+alias ll='ls -l'
+

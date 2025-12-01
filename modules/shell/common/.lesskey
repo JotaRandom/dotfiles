@@ -1,4 +1,4 @@
-# Nano-like key bindings for less, with optional arrow keys
+# Atajos estilo Nano para less, con teclas de flecha opcionales
 
 # Navegación básica (estilo Nano)
 ^P          forw-line
