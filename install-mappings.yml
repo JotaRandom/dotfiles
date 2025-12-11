@@ -6,9 +6,11 @@ default_action: dotify
 README.md: ignore
 
 ## Apps (configuración XDG)
-flags.conf: xdg:chrome/flags.conf,xdg:chromium/flags.conf
-config.fish: xdg:fish/config.fish
-config.json|micro: xdg:micro/config.json
+flags.conf:
+  - xdg:chrome/chrome-flags.conf
+  - xdg:chromium/chromium-flags.conf
+  - home:.config/chrome-flags.conf
+  - home:.config/chromium-flags.conf
 config.toml|helix: xdg:helix/config.toml
 config.toml|nushell: xdg:nushell/config.toml
 gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml

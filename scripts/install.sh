@@ -99,31 +99,70 @@ declare -A _MAPPER_GLOBAL _MAPPER_MODULE
 DEFAULT_ACTION="dotify"
 MAPPINGS_FILE="$REPO_ROOT/install-mappings.yml"
 if [ -f "$MAPPINGS_FILE" ]; then
-  while IFS= read -r line || [ -n "$line" ]; do
+  # Leer todo el fichero en memoria para soportar listas YAML (clave: \n  - item)
+  mapfile -t _map_lines < "$MAPPINGS_FILE"
+  i=0
+  while [ $i -lt ${#_map_lines[@]} ]; do
+    line="${_map_lines[$i]}"
     # eliminar comentarios
     line="${line%%#*}"
     # recortar
     line="${line#${line%%[![:space:]]*}}"
     line="${line%${line##*[![:space:]]}}"
-    [ -z "$line" ] && continue
+    [ -z "$line" ] && { i=$((i+1)); continue; }
     if [[ "$line" =~ ^default_action:[[:space:]]*([a-zA-Z_]+) ]]; then
       DEFAULT_ACTION="${BASH_REMATCH[1]}"
-      continue
+      i=$((i+1)); continue
     fi
+
     if [[ "$line" =~ ^([^:]+):[[:space:]]*(.+)$ ]]; then
       key="${BASH_REMATCH[1]}"; val="${BASH_REMATCH[2]}"
       # recortar espacios
       key="${key#${key%%[![:space:]]*}}"; key="${key%${key##*[![:space:]]}}"
       val="${val#${val%%[![:space:]]*}}"; val="${val%${val##*[![:space:]]}}"
-      # mapeo específico por módulo: nombre|módulo
-      if [[ "$key" == *"|"* ]]; then
-        name="${key%%|*}"; mod="${key##*|}"
-        _MAPPER_MODULE["$name|$mod"]="$val"
+    elif [[ "$line" =~ ^([^:]+):[[:space:]]*$ ]]; then
+      # clave seguida de una lista YAML indentada
+      key="${BASH_REMATCH[1]}"
+      vals=""
+      j=$((i+1))
+      while [ $j -lt ${#_map_lines[@]} ]; do
+        nxt="${_map_lines[$j]}"
+        nxt="${nxt%%#*}"
+        nxt="${nxt#${nxt%%[![:space:]]*}}"
+        nxt="${nxt%${nxt##*[![:space:]]}}"
+        if [[ "$nxt" =~ ^-[[:space:]]*(.+)$ ]]; then
+          item="${BASH_REMATCH[1]}"
+          item="${item#${item%%[![:space:]]*}}"; item="${item%${item##*[![:space:]]}}"
+          if [ -z "$vals" ]; then vals="$item"; else vals+=",$item"; fi
+          j=$((j+1)); continue
+        fi
+        break
+      done
+      val="$vals"
+      # avanzar el índice principal hasta la última línea procesada
+      i=$((j-1))
+    else
+      i=$((i+1)); continue
+    fi
+
+    # mapeo específico por módulo: nombre|módulo
+    if [[ "$key" == *"|"* ]]; then
+      name="${key%%|*}"; mod="${key##*|}"
+      k="$name|$mod"
+      if [[ -n "${_MAPPER_MODULE[$k]+x}" ]]; then
+        _MAPPER_MODULE["$k"]="${_MAPPER_MODULE[$k]},${val}"
+      else
+        _MAPPER_MODULE["$k"]="$val"
+      fi
+    else
+      if [[ -n "${_MAPPER_GLOBAL[$key]+x}" ]]; then
+        _MAPPER_GLOBAL["$key"]="${_MAPPER_GLOBAL[$key]},${val}"
       else
         _MAPPER_GLOBAL["$key"]="$val"
       fi
     fi
-  done < "$MAPPINGS_FILE"
+    i=$((i+1))
+  done
 fi
 # Generar conjuntos rápidos de claves mapeadas
 declare -A _MAPPED_NAMES _MAPPED_RELS
