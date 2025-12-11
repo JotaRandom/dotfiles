@@ -20,15 +20,6 @@ export GRUB_TIMEOUT_STYLE="menu"
 # Descomenta para usar la consola básica
 export GRUB_TERMINAL_INPUT="console"
 
-# Nota: la compresión y espacio de intercambio puede configurarse de dos maneras:
-# - `zswap` es un caché comprimido en RAM para páginas de intercambio. Se activa
-#   con parámetros del kernel (ejemplo añadido arriba). Esto se pasa por GRUB.
-# - `zram` crea dispositivos de bloque comprimidos en RAM que se usan como swap.
-#   `zram` se inicializa en tiempo de usuario (ej. con una unidad systemd o
-#   con `systemd-zram-generator`). No se configura desde GRUB; por eso este
-#   repositorio añade un servicio y un script para inicializar `zram` al arranque
-#   (ver `modules/system/etc/systemd/README-zram.md`).
-
 # Descomenta para deshabilitar la terminal gráfica
 #export GRUB_TERMINAL_OUTPUT="console"
 
