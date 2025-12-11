@@ -1,24 +1,24 @@
 ﻿#!/bin/sh
 # Configuración del cargador de arranque GRUB
 
-GRUB_DEFAULT="Arch Linux, with Linux linux"
-GRUB_TIMEOUT="5"
-GRUB_DISTRIBUTOR="Arch"
-GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"
-GRUB_CMDLINE_LINUX="resume=UUID=$UUID --hint-bios=hd0 --hint-efi=hd0 --hint-baremetal=ahci0 i915.fastboot=1 acpi_backlight=vendor net.ifnames=0 biosdevname=0"
+export GRUB_DEFAULT="Arch Linux, with Linux linux"
+export GRUB_TIMEOUT="5"
+export GRUB_DISTRIBUTOR="Arch"
+export GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"
+export GRUB_CMDLINE_LINUX="resume=UUID=$UUID --hint-bios=hd0 --hint-efi=hd0 --hint-baremetal=ahci0 i915.fastboot=1 acpi_backlight=vendor net.ifnames=0 biosdevname=0"
 
 # Precargar módulos GPT y MBR para evitar que se omitan
-GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+export GRUB_PRELOAD_MODULES="part_gpt part_msdos"
 
 # Descomenta para permitir el arranque desde dispositivos cifrados LUKS
 #GRUB_ENABLE_CRYPTODISK="y"
 
 # Set to 'countdown' or 'hidden' to change timeout behavior,
 # press ESC key to display menu.
-GRUB_TIMEOUT_STYLE="menu"
+export GRUB_TIMEOUT_STYLE="menu"
 
 # Descomenta para usar la consola básica
-GRUB_TERMINAL_INPUT="console"
+export GRUB_TERMINAL_INPUT="console"
 
 # Descomenta para deshabilitar la terminal gráfica
 #GRUB_TERMINAL_OUTPUT="console"
@@ -26,17 +26,17 @@ GRUB_TERMINAL_INPUT="console"
 # Resolución usada en la terminal gráfica
 # Nota: solo puedes usar los modos que tu tarjeta gráfica soporta mediante VBE
 # Puedes verlos en GRUB real con el comando `videoinfo'
-#GRUB_GFXMODE="640x480x32"
+#export GRUB_GFXMODE="640x480x32"
 
 # Descomenta para permitir que el kernel use la misma resolución que GRUB
-GRUB_GFXPAYLOAD_LINUX="keep"
+export GRUB_GFXPAYLOAD_LINUX="keep"
 
 # Descomenta si quieres que GRUB pase al kernel Linux el formato antiguo
 # de parámetros "root=/dev/xxx" en lugar de "root=/dev/disk/by-uuid/xxx"
-#GRUB_DISABLE_LINUX_UUID="true"
+#export GRUB_DISABLE_LINUX_UUID="true"
 
 # Descomenta para deshabilitar la generación de entradas de modo recuperación
-GRUB_DISABLE_RECOVERY="true"
+export GRUB_DISABLE_RECOVERY="true"
 
 # Descomenta y configura los colores del menú deseados. Solo usado por los
 # modos normal y wallpaper. Las entradas se especifican como primer plano/fondo.
@@ -45,20 +45,20 @@ export GRUB_COLOR_HIGHLIGHT="light-cyan/blue"
 
 # Descomenta una de ellas para el gfx deseado, un fondo de imagen o un gfxtheme
 #GRUB_BACKGROUND="/path/to/wallpaper"
-# GRUB_THEME="/boot/grub/themes/Thinkpad/theme.txt"
+#export GRUB_THEME="/boot/grub/themes/Thinkpad/theme.txt"
 
 # Descomenta para activar un pitido al iniciar GRUB
-#GRUB_INIT_TUNE="480 440 1"
+#export GRUB_INIT_TUNE="480 440 1"
 
 # Descomenta para que GRUB recuerde la última selección. Esto requiere
 # configurar 'GRUB_DEFAULT=saved' más arriba.
-#GRUB_SAVEDEFAULT="false"
+#export GRUB_SAVEDEFAULT="false"
 
 # Descomenta para deshabilitar submenús en el menú de arranque
-GRUB_DISABLE_SUBMENU="y"
+export GRUB_DISABLE_SUBMENU="y"
 
 # La detección de otros sistemas operativos está deshabilitada por razones de
 # seguridad. Consulta la documentación de GRUB_DISABLE_OS_PROBER; si aún
 # deseas habilitar esta funcionalidad, instala 'os-prober' y descomenta las
 # líneas necesarias para detectar e incluir otros sistemas operativos.
-#GRUB_DISABLE_OS_PROBER="false"
+#export GRUB_DISABLE_OS_PROBER="false"
