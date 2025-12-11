@@ -39,7 +39,7 @@ kitty.conf|kitty: xdg:kitty/kitty.conf
 .lesshst: xdg_state:less/lesshst
 .lesskey: xdg:less/lesskey
 .mkshrc: home:.mkshrc
-.nanorc: xdg:nano/nanorc
+nanorc: xdg:nano/nanorc
 .profile: home:.profile
 .tcshrc: home:.tcshrc
 .tmux.conf: xdg:tmux/tmux.conf

@@ -1,7 +1,35 @@
-theme: "dark"
-gui:
-  confirm: false
-  showFullCommand: true
 
-# Ejemplo de archivo de configuración de lazygit — seguro y apto como plantilla
-# Para más opciones, consulta la documentación de lazygit: https://github.com/jesseduffield/lazygit
+# Ejemplo de archivo de configuración de lazygit — plantilla comentada
+# Este fichero está pensado como referencia: las opciones están documentadas
+# y muchas están comentadas por defecto para evitar cambios inesperados.
+# Consulta la documentación upstream para más detalles:
+# https://github.com/jesseduffield/lazygit/blob/main/docs/Config.md
+
+# Cómo usar:
+# - Descomenta la sección/clave que quieras activar.
+# - Las claves y estructura deben respetar YAML (espacios y sangría).
+
+# Ejemplo (descomentar para activar):
+# theme:
+#   default: "dark"        # opciones: "dark", "light"
+
+# Ejemplo de keybindings (plantilla comentada):
+# keybindings:
+#   universal:
+#     quit: "q"
+#   files:
+#     open_file: "o"
+
+# Paneles y comportamiento (ejemplos comentados):
+# gui:
+#   show_recent_commits: true
+#   confirm_on_stage: true
+
+# Integración avanzada (hooks, comandos personalizados):
+# custom_commands:
+#   - name: "Open in editor"
+#     cmd: ["${EDITOR:-vim}", "{{.Path}}"]
+
+# Nota: conserva este archivo como plantilla si no necesitas opciones
+# activas. Si quieres que aplique opciones por defecto, descomenta
+# las secciones que desees y ajusta valores.
