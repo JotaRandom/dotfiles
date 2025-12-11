@@ -53,6 +53,24 @@ if [[ $# -gt 0 ]]; then
   MODULES=("$@")
 fi
 
+# Resolver la raíz del repositorio y normalizar rutas para que el script funcione
+# aunque se ejecute desde un CWD distinto al root del repo. Preferimos usar git
+# para descubrir la raíz; si no hay git, usar la ubicación del script.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || (cd "$SCRIPT_DIR/.." && pwd -P))"
+
+# Normalizar entradas de MODULES a rutas absolutas dentro del repo para evitar
+# depender del directorio de trabajo actual.
+for i in "${!MODULES[@]}"; do
+  entry="${MODULES[$i]}"
+  # si la entrada ya es absoluta, dejarla como está
+  if [[ "$entry" = /* ]]; then
+    MODULES[$i]="$entry"
+  else
+    MODULES[$i]="$REPO_ROOT/$entry"
+  fi
+done
+
 echo "Instalando dependencias necesarias (git-lfs) si lo permiten el sistema (apt/pacman/dnf)..."
 if command -v apt >/dev/null 2>&1; then
   sudo apt update && sudo apt install -y git-lfs || true
@@ -79,7 +97,7 @@ echo "Usando target: $TARGET"
 # Cargar reglas de mapeo si están disponibles (install-mappings.yml)
 declare -A _MAPPER_GLOBAL _MAPPER_MODULE
 DEFAULT_ACTION="dotify"
-MAPPINGS_FILE="$(git rev-parse --show-toplevel 2>/dev/null || echo .)/install-mappings.yml"
+MAPPINGS_FILE="$REPO_ROOT/install-mappings.yml"
 if [ -f "$MAPPINGS_FILE" ]; then
   while IFS= read -r line || [ -n "$line" ]; do
     # eliminar comentarios
@@ -123,6 +141,7 @@ for k in "${!_MAPPER_MODULE[@]}"; do
   fi
 done
 for MOD in "${MODULES[@]}"; do
+  declare -A _ALREADY_MAPPED=()
   if [ -d "$MOD" ]; then
     BASENAME=$(basename "$MOD")
     echo "Preparando instalación: $BASENAME -> $TARGET"
@@ -396,9 +415,14 @@ for MOD in "${MODULES[@]}"; do
               break
             fi
           done
+          if [ -n "${_ALREADY_MAPPED[$DEST]:-}" ]; then
+            echo "Omitiendo mapeo explícito (duplicado): $DEST ya fue mapeado"
+            continue
+          fi
           echo "Creando enlace simbólico: $DEST -> $sanitized_src"
           ln -sf "$sanitized_src" "$DEST"
           map_created+=("$DEST")
+          _ALREADY_MAPPED[$DEST]=1
         fi
       fi
     done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -type f -print0 2>/dev/null || true)
@@ -500,8 +524,13 @@ for MOD in "${MODULES[@]}"; do
             break
           fi
         done
+        if [ -n "${_ALREADY_MAPPED[$DEST]:-}" ]; then
+          echo "Omitiendo mapeo (duplicado): $DEST ya fue mapeado"
+          continue
+        fi
         echo "Creando enlace simbólico: $DEST -> $sanitized_src"
         ln -sfn "$sanitized_src" "$DEST" || true
+        _ALREADY_MAPPED[$DEST]=1
       done < <(cd "$TMP_MOD_DIR/$TMP_NAME" && find . -mindepth 1 -print0)
     else
       echo "Omitiendo módulo (nada que instalar tras las exclusiones): $BASENAME"

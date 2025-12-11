@@ -19,7 +19,6 @@ set stateflags                          # Mostrar [Modified]
 set minibar                             # Barra inferior compacta
 set indicator                           # Indicador de scroll
 set nonewlines                          # No añadir línea final
-set nowrap                              # No ajustar líneas largas
 set tabsize 8                           # Tabulaciones de 8 espacios
 set tabstospaces                        # Tabs → espacios
 set autoindent                          # Indentación automática

@@ -1,9 +1,26 @@
-## nano - .nanorc mínimo
-set linenumbers
-set tabstospaces
-set tabsize 2
-set multibuffer
-set smooth
+# ~/.nanorc – Para nano 8.6
 
-## Habilita algunos archivos de sintaxis si están presentes
 include "/usr/share/nano/*.nanorc"
+
+set titlecolor      bold,white,blue     # Barra superior: blanco negrita sobre azul
+set statuscolor     bold,white,blue     # Barra inferior: blanco negrita sobre azul
+set promptcolor     bold,cyan,blue      # Prompt: cian negrita sobre azul
+set keycolor        cyan                # Teclas de atajos: cian
+set functioncolor   white               # Nombres de funciones: blanco
+set numbercolor     yellow              # Números de línea: amarillo
+set selectedcolor   black,cyan          # Selección: negro sobre cian
+set scrollercolor   cyan                # Barra de scroll: cian
+set errorcolor      bold,red,black      # Errores: rojo negrita
+set spotlightcolor  black,yellow        # Búsqueda: negro sobre amarillo
+
+set linenumbers                         # Números de línea con padding automático
+set constantshow                        # Mostrar Line X/Y Column Z siempre
+set stateflags                          # Mostrar [Modified]
+set minibar                             # Barra inferior compacta
+set indicator                           # Indicador de scroll
+set nonewlines                          # No añadir línea final
+set tabsize 8                           # Tabulaciones de 8 espacios
+set tabstospaces                        # Tabs → espacios
+set autoindent                          # Indentación automática
+set cutfromcursor                       # ^K corta desde cursor
+set mouse    

@@ -7,6 +7,7 @@ README.md: ignore
 
 ## Apps (configuración XDG)
 chrome-flags.conf: xdg:chrome/chrome-flags.conf
+chromium-flags.conf: xdg:chromium/chromium-flags.conf
 config.fish: xdg:fish/config.fish
 config.json|micro: xdg:micro/config.json
 config.toml|helix: xdg:helix/config.toml
