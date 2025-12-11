@@ -4,7 +4,7 @@
 export GRUB_DEFAULT="Arch Linux, with Linux linux"
 export GRUB_TIMEOUT="5"
 export GRUB_DISTRIBUTOR="Arch"
-export GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"
+export GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet zswap.enabled=1 zswap.compressor=lz4"
 export GRUB_CMDLINE_LINUX="resume=UUID=$UUID --hint-bios=hd0 --hint-efi=hd0 --hint-baremetal=ahci0 i915.fastboot=1 acpi_backlight=vendor net.ifnames=0 biosdevname=0"
 
 # Precargar módulos GPT y MBR para evitar que se omitan
@@ -20,8 +20,17 @@ export GRUB_TIMEOUT_STYLE="menu"
 # Descomenta para usar la consola básica
 export GRUB_TERMINAL_INPUT="console"
 
+# Nota: la compresión y espacio de intercambio puede configurarse de dos maneras:
+# - `zswap` es un caché comprimido en RAM para páginas de intercambio. Se activa
+#   con parámetros del kernel (ejemplo añadido arriba). Esto se pasa por GRUB.
+# - `zram` crea dispositivos de bloque comprimidos en RAM que se usan como swap.
+#   `zram` se inicializa en tiempo de usuario (ej. con una unidad systemd o
+#   con `systemd-zram-generator`). No se configura desde GRUB; por eso este
+#   repositorio añade un servicio y un script para inicializar `zram` al arranque
+#   (ver `modules/system/etc/systemd/README-zram.md`).
+
 # Descomenta para deshabilitar la terminal gráfica
-#GRUB_TERMINAL_OUTPUT="console"
+#export GRUB_TERMINAL_OUTPUT="console"
 
 # Resolución usada en la terminal gráfica
 # Nota: solo puedes usar los modos que tu tarjeta gráfica soporta mediante VBE

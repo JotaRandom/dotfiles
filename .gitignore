@@ -8,3 +8,6 @@ PKGBUILD/*/*.*
 scripts/inspect_assets.sh
 scripts/remove_nonascii.sh
 scripts/cleanup_temp_scripts.sh
+
+# Local REISUB config (contains hardware-specific key combo settings)
+.reisub.local
