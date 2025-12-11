@@ -1,4 +1,4 @@
-# ~/.nanorc – Para nano 8.6
+## ~/.nanorc – Para nano 8.6
 
 include "/usr/share/nano/*.nanorc"
 
@@ -7,7 +7,6 @@ set statuscolor     bold,white,blue     # Barra inferior: blanco negrita sobre a
 set promptcolor     bold,cyan,blue      # Prompt: cian negrita sobre azul
 set keycolor        cyan                # Teclas de atajos: cian
 set functioncolor   white               # Nombres de funciones: blanco
-set numbercolor     yellow              # Números de línea: amarillo
 set selectedcolor   black,cyan          # Selección: negro sobre cian
 set scrollercolor   cyan                # Barra de scroll: cian
 set errorcolor      bold,red,black      # Errores: rojo negrita
