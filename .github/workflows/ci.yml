@@ -143,12 +143,22 @@ jobs:
           # Construir expresión regular ALLOWED a partir de install-mappings.yml si existe (claves antes de ':'), en caso contrario usar fallback
           ALLOWED=''
           if [ -f ../install-mappings.yml ]; then
-            keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' ../install-mappings.yml | tr '\n' '|' | sed 's/|$//') || true
-            if [ -n "$keys" ]; then
-              # create regex like ^key1$|^key2$|^\.dotfiles
-              # escape keys safely (basic)
-              esc=$(echo "$keys" | sed -E 's/([^a-zA-Z0-9_\-\.])/\\\\\\1/g') || true
-              ALLOWED="^$(echo "$esc" | sed 's/|/\$|^/g')$|^\\..+"
+            # Extraer claves y generar patrones que acepten tanto la clave completa
+            # (p. ej. "cargo/config") como su basename (p. ej. "config").
+            raw_keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' ../install-mappings.yml | sed '/^$/d' || true)
+            if [ -n "$raw_keys" ]; then
+              # Build a list of patterns: for each key produce both the full key and its basename,
+              # then join with '|' to become a regex alternation.
+              pats=$(awk -F: '
+                /^[[:space:]]*#/ { next }
+                /^[[:space:]]*$/ { next }
+                { line=$1; sub(/^[[:space:]]*/, "", line); sub(/[[:space:]]*$/, "", line); sub(/\|.*$/, "", line);
+                  n=split(line, parts, "/"); base=parts[n];
+                  printf "%s|%s\n", line, base
+                }
+              ' ../install-mappings.yml | tr '\n' '|' | sed 's/|$//' || true)
+              esc=$(printf '%s' "$pats" | sed -E 's/([^a-zA-Z0-9_\-\.\/|])/\\\\\1/g' || true)
+              ALLOWED="^$(printf '%s' "$esc" | sed 's/|/\$|^/g')$|^\\..+"
             fi
           fi
           if [ -z "$ALLOWED" ]; then
