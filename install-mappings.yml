@@ -39,6 +39,8 @@ kitty.conf|kitty: xdg:kitty/kitty.conf
 .lesskey: xdg:less/lesskey
 .mkshrc: home:.mkshrc
 .nanorc: xdg:nano/nanorc
+# Evitar instalación duplicada: usar la copia canonica en modules/editor/nano
+.nanorc|common: ignore
 .profile: home:.profile
 .tcshrc: home:.tcshrc
 .tmux.conf: xdg:tmux/tmux.conf
