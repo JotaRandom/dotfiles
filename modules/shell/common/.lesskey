@@ -1,3 +1,6 @@
+#!/bin/bash
+#shell: lesskey
+
 # Atajos estilo Nano para less, con teclas de flecha opcionales
 
 # Navegación básica (estilo Nano)
@@ -11,8 +14,8 @@
 \ku         back-line   # Flecha abajo (down)
 
 # Búsqueda
-/           forw-search
-?           back-search
+slash       forw-search
+"?"         back-search
 n           repeat-search
 N           repeat-search-all
 

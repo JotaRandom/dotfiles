@@ -1,10 +1,12 @@
+#!/bin/bash
 # ~/.profile
 # Archivo para shells de login (ej. ssh).
 # Normalmente se usa para cargar la configuración interactiva desde .bashrc
 
 # Cargar .bashrc si existe, para mantener una sola fuente de verdad
-if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
+# shellcheck source=$HOME/.bashrc
+if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
 fi
 
 ## LOCAL – configuraciones de idioma

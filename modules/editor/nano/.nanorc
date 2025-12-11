@@ -1,25 +1,27 @@
-## ~/.nanorc – Para nano 8.6
+## ~/.nanorc — configuración compacta y comentada (español)
 
-include "/usr/share/nano/*.nanorc"
+include "/usr/share/nano/*.nanorc"    # cargar sintaxis y reglas del sistema
 
-set titlecolor      bold,white,blue     # Barra superior: blanco negrita sobre azul
-set statuscolor     bold,white,blue     # Barra inferior: blanco negrita sobre azul
-set promptcolor     bold,cyan,blue      # Prompt: cian negrita sobre azul
-set keycolor        cyan                # Teclas de atajos: cian
-set functioncolor   white               # Nombres de funciones: blanco
-set selectedcolor   black,cyan          # Selección: negro sobre cian
-set scrollercolor   cyan                # Barra de scroll: cian
-set errorcolor      bold,red,black      # Errores: rojo negrita
-set spotlightcolor  black,yellow        # Búsqueda: negro sobre amarillo
+# Colores: formato <atributos>,<fg>,<bg>
+set titlecolor    bold,white,blue     # barra superior
+set statuscolor   bold,white,blue     # barra inferior
+set promptcolor   bold,cyan,blue      # prompt
+set keycolor      cyan                # atajos
+set functioncolor white               # nombres de funciones
+set selectedcolor black,cyan          # selección
+set errorcolor    bold,red,black      # errores
 
-set linenumbers                         # Números de línea con padding automático
-set constantshow                        # Mostrar Line X/Y Column Z siempre
-set stateflags                          # Mostrar [Modified]
-set minibar                             # Barra inferior compacta
-set indicator                           # Indicador de scroll
-set nonewlines                          # No añadir línea final
-set tabsize 8                           # Tabulaciones de 8 espacios
-set tabstospaces                        # Tabs → espacios
-set autoindent                          # Indentación automática
+# Comportamiento de edición
+set linenumbers                         # mostrar números de línea
+set constantshow                        # mostrar Line/Col siempre
+set stateflags                          # mostrar [Modified]
+set minibar                             # minibarra compacta
+set indicator                           # indicador de posición
+set nonewlines                          # no añadir línea final automáticamente
+set tabsize 8                           # ancho de tabulación (8)
+set tabstospaces                        # convertir tabs a espacios
+set autoindent                          # autoindentación en nuevas líneas
 set cutfromcursor                       # ^K corta desde cursor
-set mouse    
+set mouse                               # soporte de ratón (terminal)
+
+# Nota: conservar este fichero compacto; ajustes finos en /usr/share/nano/*.nanorc

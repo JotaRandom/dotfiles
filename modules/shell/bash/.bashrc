@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # ~/.bashrc
 # Bash — configuración principal para sesiones interactivas
 # Este archivo establece alias, colores, prompt y opciones de historial.
