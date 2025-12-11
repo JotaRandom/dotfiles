@@ -61,13 +61,13 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || (cd "$SCRIPT_DIR/.." &
 
 # Normalizar entradas de MODULES a rutas absolutas dentro del repo para evitar
 # depender del directorio de trabajo actual.
-for i in "${!MODULES[@]}"; do
-  entry="${MODULES[$i]}"
+  for i in "${!MODULES[@]}"; do
+  entry="${MODULES[i]}"
   # si la entrada ya es absoluta, dejarla como está
   if [[ "$entry" = /* ]]; then
-    MODULES[$i]="$entry"
+    MODULES[i]="$entry"
   else
-    MODULES[$i]="$REPO_ROOT/$entry"
+    MODULES[i]="$REPO_ROOT/$entry"
   fi
 done
 
@@ -107,8 +107,8 @@ if [ -f "$MAPPINGS_FILE" ]; then
     # eliminar comentarios
     line="${line%%#*}"
     # recortar
-    line="${line#${line%%[![:space:]]*}}"
-    line="${line%${line##*[![:space:]]}}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
     [ -z "$line" ] && { i=$((i+1)); continue; }
     if [[ "$line" =~ ^default_action:[[:space:]]*([a-zA-Z_]+) ]]; then
       DEFAULT_ACTION="${BASH_REMATCH[1]}"
@@ -118,8 +118,8 @@ if [ -f "$MAPPINGS_FILE" ]; then
     if [[ "$line" =~ ^([^:]+):[[:space:]]*(.+)$ ]]; then
       key="${BASH_REMATCH[1]}"; val="${BASH_REMATCH[2]}"
       # recortar espacios
-      key="${key#${key%%[![:space:]]*}}"; key="${key%${key##*[![:space:]]}}"
-      val="${val#${val%%[![:space:]]*}}"; val="${val%${val##*[![:space:]]}}"
+      key="${key#"${key%%[![:space:]]*}"}"; key="${key%"${key##*[![:space:]]}"}"
+      val="${val#"${val%%[![:space:]]*}"}"; val="${val%"${val##*[![:space:]]}"}"
     elif [[ "$line" =~ ^([^:]+):[[:space:]]*$ ]]; then
       # clave seguida de una lista YAML indentada
       key="${BASH_REMATCH[1]}"
@@ -128,11 +128,11 @@ if [ -f "$MAPPINGS_FILE" ]; then
       while [ $j -lt ${#_map_lines[@]} ]; do
         nxt="${_map_lines[$j]}"
         nxt="${nxt%%#*}"
-        nxt="${nxt#${nxt%%[![:space:]]*}}"
-        nxt="${nxt%${nxt##*[![:space:]]}}"
+        nxt="${nxt#"${nxt%%[![:space:]]*}"}"
+        nxt="${nxt%"${nxt##*[![:space:]]}"}"
         if [[ "$nxt" =~ ^-[[:space:]]*(.+)$ ]]; then
           item="${BASH_REMATCH[1]}"
-          item="${item#${item%%[![:space:]]*}}"; item="${item%${item##*[![:space:]]}}"
+          item="${item#"${item%%[![:space:]]*}"}"; item="${item%"${item##*[![:space:]]}"}"
           if [ -z "$vals" ]; then vals="$item"; else vals+=",$item"; fi
           j=$((j+1)); continue
         fi
@@ -188,7 +188,7 @@ for MOD in "${MODULES[@]}"; do
     # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) porque este instalador
     # opera únicamente sobre archivos a nivel de usuario bajo $HOME. Si quieres aplicar archivos de sistema,
     # hazlo manualmente (o ejecuta un instalador a nivel de sistema como root).
-    if (cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read); then
+    if (cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read -r); then
       echo "Omitiendo módulo $BASENAME porque contiene archivos a nivel de sistema bajo 'etc/'." >&2
       echo "Este instalador no aplicará archivos destinados a /etc (p. ej., /etc/thinkfan.conf)." >&2
       continue
@@ -669,8 +669,8 @@ for MOD in "${MODULES[@]}"; do
         echo "Post-instalación: no se encontró un enlace simbólico en la ruta de mapeo $d — será respaldado y se recreará el enlace simbólico"
         if [ -e "$d" ]; then
           BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-          mkdir -p "$(dirname "$BACKUP_DIR/${d#${TARGET}/}")" || true
-          mv "$d" "$BACKUP_DIR/${d#${TARGET}/}" || true
+          mkdir -p "$(dirname "$BACKUP_DIR/${d#"${TARGET}/"}")" || true
+          mv "$d" "$BACKUP_DIR/${d#"${TARGET}/"}" || true
         fi
         # intentar recrear el enlace simbólico (buscar el origen por nombre de archivo dentro del módulo)
         fname="$(basename "$d")"
