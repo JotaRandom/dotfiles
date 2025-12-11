@@ -16,7 +16,7 @@ echo "Actualizando submodules en $TARGET_DIR..."
 for d in "$TARGET_DIR"/*; do
   if [ -d "$d" ]; then
     if [ -f "$d/.git" ] || git -C "$d" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      echo "Actualizando $(basename "$d")..."
+      echo "Actualizando $(basename -- "$d")..."
       git -C "$d" fetch --all
       git -C "$d" pull --ff-only || git -C "$d" pull --no-edit
       git add "$d"

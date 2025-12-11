@@ -58,6 +58,9 @@ fi
 # para descubrir la raíz; si no hay git, usar la ubicación del script.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || (cd "$SCRIPT_DIR/.." && pwd -P))"
+# Asegurarnos de operar desde la raíz del repositorio para evitar comportamientos
+# diferentes según el CWD desde el que se invoque el script.
+cd "$REPO_ROOT" || true
 
 # Normalizar entradas de MODULES a rutas absolutas dentro del repo para evitar
 # depender del directorio de trabajo actual.
@@ -75,7 +78,7 @@ echo "Instalando dependencias necesarias (git-lfs) si lo permiten el sistema (ap
 if command -v apt >/dev/null 2>&1; then
   sudo apt update && sudo apt install -y git-lfs || true
 elif command -v pacman >/dev/null 2>&1; then
-  sudo pacman -Syu --noconfirm git-lfs || true
+  sudo pacman -Syu --noconfirm --needed git-lfs || true
 elif command -v dnf >/dev/null 2>&1; then
   sudo dnf install -y git-lfs || true
 elif command -v slackpkg >/dev/null 2>&1; then
@@ -167,14 +170,14 @@ fi
 # Generar conjuntos rápidos de claves mapeadas
 declare -A _MAPPED_NAMES _MAPPED_RELS
 for k in "${!_MAPPER_GLOBAL[@]}"; do
-  _MAPPED_NAMES["$(basename "$k")"]=1
+  _MAPPED_NAMES["$(basename -- "$k")"]=1
   if [[ "$k" == */* ]]; then
     _MAPPED_RELS["$k"]=1
   fi
 done
 for k in "${!_MAPPER_MODULE[@]}"; do
   name="${k%%|*}"
-  _MAPPED_NAMES["$(basename "$name")"]=1
+  _MAPPED_NAMES["$(basename -- "$name")"]=1
   if [[ "$name" == */* ]]; then
     _MAPPED_RELS["$name|${k##*|}" ]=1
   fi
@@ -182,13 +185,13 @@ done
 for MOD in "${MODULES[@]}"; do
   declare -A _ALREADY_MAPPED=()
   if [ -d "$MOD" ]; then
-    BASENAME=$(basename "$MOD")
+    BASENAME=$(basename -- "$MOD")
     echo "Preparando instalación: $BASENAME -> $TARGET"
 
     # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) porque este instalador
     # opera únicamente sobre archivos a nivel de usuario bajo $HOME. Si quieres aplicar archivos de sistema,
     # hazlo manualmente (o ejecuta un instalador a nivel de sistema como root).
-    if (cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read -r); then
+    if (cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read -r); then
       echo "Omitiendo módulo $BASENAME porque contiene archivos a nivel de sistema bajo 'etc/'." >&2
       echo "Este instalador no aplicará archivos destinados a /etc (p. ej., /etc/thinkfan.conf)." >&2
       continue
@@ -204,7 +207,7 @@ for MOD in "${MODULES[@]}"; do
       XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
       XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
       # preferir el mapeo declarativo desde install-mappings.yml si está presente
-      base="$(basename "$srcfile")"
+      base="$(basename -- "$srcfile")"
       # Preferir coincidencia exacta por ruta relativa en mapeos por módulo
       if [[ -n "${_MAPPER_MODULE["$srcfile|$module_name"]+x}" ]]; then
         mapping="${_MAPPER_MODULE["$srcfile|$module_name"]}"
@@ -315,7 +318,7 @@ for MOD in "${MODULES[@]}"; do
         fi
         CONFLICTS+=("$TARGET_PATH")
       fi
-    done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -print0)
+    done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -print0)
 
     if [ ${#CONFLICTS[@]} -gt 0 ]; then
       echo "Conflictos detectados al aplicar módulo $BASENAME:" >&2
@@ -365,7 +368,7 @@ for MOD in "${MODULES[@]}"; do
     DOTIFY_BASENAMES=()
     if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
       while IFS= read -r -d $'\0' top; do
-        base="$(basename "$top")"
+        base="$(basename -- "$top")"
         # Omitir nombres que ya comienzan con '.' y nombres base que estén mapeados
         if [[ "${base}" == .* ]] || [[ -n "${_MAPPED_NAMES[$base]:-}" ]]; then
           continue
@@ -373,13 +376,13 @@ for MOD in "${MODULES[@]}"; do
         DOTIFY_BASENAMES+=("$base")
         EXCLUDE_ARGS+=(--exclude "**/${base}")
         EXCLUDE_ARGS+=(--exclude "/${base}")
-      done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -mindepth 1 -maxdepth 1 -print0 2>/dev/null || true)
+      done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 1 -print0 2>/dev/null || true)
     fi
     if command -v rsync >/dev/null 2>&1; then
-      (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
+      (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
     else
       # fallback: copiar todo el módulo y luego eliminar las entradas excluidas
-      (cd "$(dirname "$MOD")" && cp -a "$(basename "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
+      (cd "$(dirname "$MOD")" && cp -a "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
       # Eliminar solo ficheros mapeados (a nivel raíz y nombres base anidados) y el directorio etc/ de la copia temporal
       for ex in "${!_MAPPED_NAMES[@]}"; do
         find "${TMP_MOD_DIR}/${TMP_NAME}" -name "$ex" -exec rm -f {} + || true
@@ -406,8 +409,8 @@ for MOD in "${MODULES[@]}"; do
     map_created=()
     while IFS= read -r -d $'\0' found; do
       # compute relative path from module folder
-      found_rel=${found#"$(dirname "$MOD")/$(basename "$MOD")/"}
-      fbase=$(basename "$found_rel")
+      found_rel=${found#"$(dirname -- "$MOD")/$(basename -- "$MOD")/"}
+      fbase=$(basename -- "$found_rel")
       map_target "$found_rel" "$BASENAME"
       DEST="$MAP_TARGET_OUT"
       MAP_TARGET_EXPLICIT_TMP=${MAP_TARGET_EXPLICIT:-0}
@@ -426,7 +429,7 @@ for MOD in "${MODULES[@]}"; do
       # Si el mapeo se proporcionó por nombre base y varios archivos comparten ese nombre
       # evitamos instalaciones ambiguas — requerir que el usuario especifique la ruta relativa para desambiguar
       if [[ "${MAP_TARGET_KEY_TMP:-}" == base:* ]]; then
-        count=$(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -type f -name "$fbase" | wc -l || true)
+        count=$(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -name "$fbase" | wc -l || true)
         if [ "$count" -gt 1 ]; then
           echo "Mapeo ambiguo: existen varios archivos llamados $fbase en el módulo $BASENAME; usa un mapeo por ruta relativa en install-mappings.yml para desambiguar." >&2
           continue
@@ -457,7 +460,7 @@ for MOD in "${MODULES[@]}"; do
             mkdir -p "$(dirname "$DEST_PATH")" || true
             SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
             SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
-            base_name="$(basename "$found_rel")"
+            base_name="$(basename -- "$found_rel")"
             sanitized_src="$SRC_ABS"
             for _s in "${SANITIZE_BASENAMES[@]}"; do
               if [[ "$_s" == "$base_name" ]]; then
@@ -493,7 +496,7 @@ for MOD in "${MODULES[@]}"; do
             mkdir -p "$(dirname "$DEST")" || true
             SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
             SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
-            base_name="$(basename "$found_rel")"
+            base_name="$(basename -- "$found_rel")"
             sanitized_src="$SRC_ABS"
             for _s in "${SANITIZE_BASENAMES[@]}"; do
               if [[ "$_s" == "$base_name" ]]; then
@@ -518,14 +521,14 @@ for MOD in "${MODULES[@]}"; do
           fi
         fi
       fi
-    done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -type f -print0 2>/dev/null || true)
+    done < <(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -print0 2>/dev/null || true)
 
     # Si DEFAULT_ACTION es 'dotify', convertir cualquier entrada top-level sin punto en el módulo temporal
     # a nombres con prefijo '.' a menos que estén mapeadas por install-mappings.yml.
     if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
       for ent in "$TMP_MOD_DIR/$TMP_NAME"/*; do
         [ -e "$ent" ] || continue
-        base=$(basename "$ent")
+        base=$(basename -- "$ent")
         # Omitir nombres que ya comienzan con '.'
         case "$base" in
           .* ) continue ;;
@@ -598,7 +601,7 @@ for MOD in "${MODULES[@]}"; do
         mkdir -p "$(dirname "$DEST")" || true
         # Algunos archivos de inicio interactivo pueden tener CRLF; reutilizar la lógica de saneamiento
         SANITIZE_BASENAMES=('.bashrc' '.profile' '.bash_profile' '.zshrc' '.bash_logout')
-        base_name="$(basename "$rel")"
+        base_name="$(basename -- "$rel")"
         sanitized_src="$SRC_ABS"
         for _s in "${SANITIZE_BASENAMES[@]}"; do
           if [[ "$_s" == "$base_name" ]]; then
@@ -673,8 +676,8 @@ for MOD in "${MODULES[@]}"; do
           mv "$d" "$BACKUP_DIR/${d#"${TARGET}/"}" || true
         fi
         # intentar recrear el enlace simbólico (buscar el origen por nombre de archivo dentro del módulo)
-        fname="$(basename "$d")"
-        found_src=$(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -type f -name "$fname" -print -quit || true)
+        fname="$(basename -- "$d")"
+        found_src=$(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -name "$fname" -print -quit || true)
         if [ -n "$found_src" ]; then
           SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_src")"
           # mismo comportamiento de saneamiento que más arriba: si la fuente es uno de los archivos
@@ -682,11 +685,11 @@ for MOD in "${MODULES[@]}"; do
           # y enlazarla.
           SANITED_SRC_TO_LINK="$SRC_ABS"
           for _s in "${SANITIZE_BASENAMES[@]:-.bashrc .profile .bash_profile .zshrc .bash_logout}"; do
-            if [[ "${_s}" == "$(basename "$found_src")" ]]; then
+            if [[ "${_s}" == "$(basename -- "$found_src")" ]]; then
               if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
                 SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_src")"
                 mkdir -p "$SAN_DIR" || true
-                SAN_PATH="$SAN_DIR/$(basename "$found_src")"
+                SAN_PATH="$SAN_DIR/$(basename -- "$found_src")"
                 if [ -x "$SRC_ABS" ]; then
                   awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
                 else

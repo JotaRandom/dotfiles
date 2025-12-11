@@ -38,7 +38,7 @@ done <<<"$map_keys"
 
 errors=0
 while IFS= read -r -d $'\0' file; do
-  fname=$(basename "$file")
+  fname=$(basename -- "$file")
   # omitir archivos que son dotfiles (el instalador 'dotifica' por defecto, salvo en presencia de un mapeo)
   if [[ "$fname" == .* ]]; then
     # permitir mapeo explícito, pero omitir dotfiles predeterminados

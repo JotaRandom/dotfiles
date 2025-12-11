@@ -43,12 +43,12 @@ is_template() {
     fi
   fi
   # Las claves privadas se consideran secretos si no están vacías
-  bn=$(basename "$f")
+  bn=$(basename -- "$f")
   if [[ "$bn" =~ ^id_(rsa|ed25519)$ ]] || [[ "$bn" =~ ^id_.*_priv$ ]]; then
     return 1
   fi
   # Si cada línea no vacía comienza con un marcador de comentario (#, //, ;), tratar como plantilla
-  non_comment_count=$(grep -E -v '^[[:space:]]*($|#|//|;)' "$f" | wc -l | tr -d '[:space:]') || non_comment_count=0
+  non_comment_count=$(grep -c -E -v '^[[:space:]]*($|#|//|;)' "$f" || true)
   if [ "$non_comment_count" -eq 0 ]; then
     return 0
   fi
@@ -108,12 +108,12 @@ get_map_val(){
   local raw line val
   while IFS= read -r raw; do
     line="${raw%%#*}"
-    line="${line#${line%%[![:space:]]*}}"
-    line="${line%${line##*[![:space:]]}}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
     [ -z "$line" ] && continue
     if [[ "$line" == "$key:"* ]]; then
-      val="${line#${key}:}"
-      val="${val#${val%%[![:space:]]*}}"
+      val="${line#"${key}":}"
+      val="${val#"${val%%[![:space:]]*}"}"
       printf '%s' "$val"
       return 0
     fi
@@ -121,12 +121,12 @@ get_map_val(){
   # fallback: buscar entradas específicas por módulo (ej. key|module: value)
   while IFS= read -r raw; do
     line="${raw%%#*}"
-    line="${line#${line%%[![:space:]]*}}"
-    line="${line%${line##*[![:space:]]}}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
     [ -z "$line" ] && continue
     if [[ "$line" == "$key|"* ]]; then
       val="${line#*":"}"
-      val="${val#${val%%[![:space:]]*}}"
+      val="${val#"${val%%[![:space:]]*}"}"
       printf '%s' "$val"
       return 0
     fi
@@ -233,7 +233,7 @@ printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
     echo "OK: $expected -> $src" 
   done
 
-done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
+done
 
 if [ $errors -gt 0 ]; then
   echo "Se encontraron $errors errores de verificación de mapeos" >&2
@@ -250,7 +250,7 @@ while IFS= read -r k; do
   if echo "$key" | grep -q "\|"; then
     key="$(echo "$key" | cut -d'|' -f1)"
   fi
-  base="$(basename "$key")"
+  base="$(basename -- "$key")"
   if [[ "$base" == .* ]]; then
     bare="${base#.}"
     if [ -d "$TARGET/$bare" ]; then
@@ -263,7 +263,7 @@ while IFS= read -r k; do
       bad_dirs=$((bad_dirs+1))
     fi
   fi
-done < <(sed -n 's/^[[:space:]]*//; s/#.*$//; s/:.*$//p' "$MAP_FILE" | sed '/^[[:space:]]*$/d')
+done < <(printf '%s\n' "$map_keys")
 
 if [ $bad_dirs -gt 0 ]; then
   echo "Se encontraron $bad_dirs directorios no deseados que coinciden con nombres base de mapeos — limpia el layout del módulo o ajusta los mapeos." >&2
