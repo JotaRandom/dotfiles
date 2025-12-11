@@ -8,8 +8,28 @@ if [ ! -f "$MAPPINGS_FILE" ]; then
   exit 1
 fi
 
-# Recopilar claves de mapeo (eliminar el sufijo de módulo después de '|')
-map_keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//p' "$MAPPINGS_FILE" | sort -u)
+# Recopilar claves de mapeo de forma robusta: ignorar comentarios y
+# entradas de lista YAML (líneas que comienzan con '-') y extraer la
+# clave antes de los dos puntos. También eliminar el sufijo de módulo
+# después de '|' si está presente.
+map_keys=$(awk '
+  /^[[:space:]]*#/ { next }
+  /^[[:space:]]*-+[[:space:]]*/ { next }
+  {
+    line = $0
+    sub(/^[[:space:]]*/, "", line)
+    idx = index(line, ":")
+    if (idx > 0) {
+      key = substr(line, 1, idx-1)
+      # recortar espacios finales
+      sub(/[[:space:]]+$/, "", key)
+      # eliminar sufijo de módulo si existe
+      sub(/\|.*/, "", key)
+      if (length(key) > 0) print key
+    }
+  }
+' "$MAPPINGS_FILE" | sort -u)
+
 declare -A MAP_SET
 while IFS= read -r k; do
   [ -z "$k" ] && continue

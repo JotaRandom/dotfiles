@@ -1,3 +1,4 @@
+#!/bin/bash
 ## Archivo de inicialización de nano (ejemplo).
 ##
 ## Please note that you must have configured nano with --enable-nanorc

@@ -98,21 +98,47 @@ XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
 XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 
 errors=0
-# Leer mapeos: las claves son la parte izquierda (LHS) antes de ':' (eliminar espacios en blanco y comentarios)
-while IFS= read -r mapping_key; do
+# Leer mapeos: extraer solo las líneas que contienen ':' para obtener las claves (evitar líneas de listas YAML que empiezan con '-')
+# Usamos awk para eliminar comentarios y espacios y quedarnos solo con claves antes de ':'
+map_keys=$(awk '{ line=$0; sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(index(line,":")>0){ key=line; sub(/:.*/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
+
+get_map_val(){
+  # devuelve el valor de mapeo para una clave dada (puede devolver lista o único valor)
+  local key="$1"
+  local raw line val
+  while IFS= read -r raw; do
+    line="${raw%%#*}"
+    line="${line#${line%%[![:space:]]*}}"
+    line="${line%${line##*[![:space:]]}}"
+    [ -z "$line" ] && continue
+    if [[ "$line" == "$key:"* ]]; then
+      val="${line#${key}:}"
+      val="${val#${val%%[![:space:]]*}}"
+      printf '%s' "$val"
+      return 0
+    fi
+  done < "$MAP_FILE"
+  # fallback: buscar entradas específicas por módulo (ej. key|module: value)
+  while IFS= read -r raw; do
+    line="${raw%%#*}"
+    line="${line#${line%%[![:space:]]*}}"
+    line="${line%${line##*[![:space:]]}}"
+    [ -z "$line" ] && continue
+    if [[ "$line" == "$key|"* ]]; then
+      val="${line#*":"}"
+      val="${val#${val%%[![:space:]]*}}"
+      printf '%s' "$val"
+      return 0
+    fi
+  done < "$MAP_FILE"
+  return 1
+}
+
+printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
   [ -z "$mapping_key" ] && continue
-  # ignore comment lines / blank
-  # split key|module if present
   key="$mapping_key"
-  # resolución del valor del mapeo (prefijo del destino)
-  # handle keys containing '|' or other meta-chars (escape) in grep
-  safe_key=$(printf '%s' "$key" | sed -E 's/([][\\.*^$(){}+?|])/\\\1/g')
-  val=$(grep -E "^[[:space:]]*${safe_key}:" -m1 "$MAP_FILE" | sed -E "s/^[[:space:]]*${safe_key}:[[:space:]]*//" | sed -E "s/#.*$//" | xargs || true)
-  if [ -z "$val" ]; then
-    # buscar claves específicas por módulo o claves complejas que incluyan |module o que contengan rutas con / o |
-    safe_key2=$(printf '%s' "$key" | sed -E 's/([][\\.*^$(){}+?||])/\\\1/g')
-    val=$(grep -E "^[[:space:]]*${safe_key2}\|.*:" -m1 "$MAP_FILE" | sed -E "s/^[[:space:]]*${safe_key2}\|.*:[[:space:]]*//" | sed -E "s/#.*$//" | xargs || true)
-  fi
+  val=""
+  val=$(get_map_val "$key" || true)
   [ -z "$val" ] && continue
   # Si el mapeo es 'ignore' o 'skip', omitir
   if echo "$val" | grep -qE '^(ignore|skip)$'; then
