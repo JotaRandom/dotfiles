@@ -1,6 +1,8 @@
 ## ~/.nanorc — configuración compacta y comentada (español)
 
-## Colores: formato <atributos>,<fg>,<bg>
+include "/usr/share/nano/*.nanorc"    # cargar sintaxis y reglas del sistema
+
+# Colores: formato <atributos>,<fg>,<bg>
 set titlecolor    bold,white,blue     # barra superior
 set statuscolor   bold,white,blue     # barra inferior
 set promptcolor   bold,cyan,blue      # prompt
@@ -9,7 +11,7 @@ set functioncolor white               # nombres de funciones
 set selectedcolor black,cyan          # selección
 set errorcolor    bold,red,black      # errores
 
-## Comportamiento de edición
+# Comportamiento de edición
 set linenumbers                         # mostrar números de línea
 set constantshow                        # mostrar Line/Col siempre
 set stateflags                          # mostrar [Modified]
@@ -21,8 +23,5 @@ set tabstospaces                        # convertir tabs a espacios
 set autoindent                          # autoindentación en nuevas líneas
 set cutfromcursor                       # ^K corta desde cursor
 set mouse                               # soporte de ratón (terminal)
-
-## Cargar sintaxis y reglas del sistema
-include "/usr/share/nano/*.nanorc"
 
 # Nota: conservar este fichero compacto; ajustes finos en /usr/share/nano/*.nanorc
