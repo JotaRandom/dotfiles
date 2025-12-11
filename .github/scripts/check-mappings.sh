@@ -39,16 +39,36 @@ done <<<"$map_keys"
 errors=0
 while IFS= read -r -d $'\0' file; do
   fname=$(basename -- "$file")
+  # ruta relativa desde modules/ (p. ej. "cargo/config")
+  relpath=${file#*/}
+
   # omitir archivos que son dotfiles (el instalador 'dotifica' por defecto, salvo en presencia de un mapeo)
   if [[ "$fname" == .* ]]; then
-    # permitir mapeo explícito, pero omitir dotfiles predeterminados
     continue
   fi
-  # si no está presente en las claves de mapeo, es un error (el archivo de mapeo debería enumerar cada archivo raíz)
-    if [ -z "${MAP_SET[$fname]:-}" ]; then
-    echo "ERROR: archivo a nivel raíz en módulos sin mapeo: $fname (encontrado en $file)" >&2
-    errors=$((errors+1))
+
+  # Comprobar varias formas de clave en los mapeos:
+  #  - nombre base (p. ej. "config")
+  #  - ruta relativa "module/file" (p. ej. "cargo/config")
+  # Esto permite que install-mappings.yml use cualquiera de las dos convenciones.
+  if [ -n "${MAP_SET[$fname]:-}" ] || [ -n "${MAP_SET[$relpath]:-}" ]; then
+    continue
   fi
+
+  # Tampoco es un error si la clave aparece con prefijo de directorio distinto (compatibilidad extra)
+  # comprobar claves que terminen en "/$fname" (por si alguien puso "some/path/$fname")
+  matched=0
+  for k in "${!MAP_SET[@]}"; do
+    case "$k" in
+      */$fname) matched=1; break;;
+    esac
+  done
+  if [ $matched -eq 1 ]; then
+    continue
+  fi
+
+  echo "ERROR: archivo a nivel raíz en módulos sin mapeo: $fname (encontrado en $file)" >&2
+  errors=$((errors+1))
 done < <(find modules -maxdepth 2 -mindepth 2 -type f -print0 || true)
 
 if [ $errors -gt 0 ]; then
