@@ -123,12 +123,15 @@ jobs:
       - name: Instalar herramientas (git-lfs)
         run: |
           sudo apt-get update
-          sudo apt-get install -y git-lfs || true
+          # git-lfs es usado por el repo; rsync se requiere para que el instalador copie módulos
+          sudo apt-get install -y git-lfs rsync || true
       - name: Verificar instalador y mapeos
         run: |
           set -e
           TMP=$(mktemp -d)
           echo "Testing installer against temp target: $TMP"
+          # Asegurar que el instalador sea ejecutable
+          chmod +x ./scripts/install.sh || true
           chmod +x ./.github/scripts/test-install-mappings.sh
           ./.github/scripts/test-install-mappings.sh
 
