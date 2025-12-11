@@ -4,3 +4,7 @@ PKGBUILD/*/*
 PKGBUILD/*/*.*
 !PKGBUILD
 !PKGBUILD/*
+# Ignore temporary inspection scripts created during maintenance
+scripts/inspect_assets.sh
+scripts/remove_nonascii.sh
+scripts/cleanup_temp_scripts.sh
