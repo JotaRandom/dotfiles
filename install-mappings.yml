@@ -6,8 +6,7 @@ default_action: dotify
 README.md: ignore
 
 ## Apps (configuración XDG)
-chrome-flags.conf: xdg:chrome/chrome-flags.conf
-chromium-flags.conf: xdg:chromium/chromium-flags.conf
+flags.conf: xdg:chrome/flags.conf,xdg:chromium/flags.conf
 config.fish: xdg:fish/config.fish
 config.json|micro: xdg:micro/config.json
 config.toml|helix: xdg:helix/config.toml
@@ -39,8 +38,6 @@ kitty.conf|kitty: xdg:kitty/kitty.conf
 .lesskey: xdg:less/lesskey
 .mkshrc: home:.mkshrc
 .nanorc: xdg:nano/nanorc
-# Evitar instalación duplicada: usar la copia canonica en modules/editor/nano
-.nanorc|common: ignore
 .profile: home:.profile
 .tcshrc: home:.tcshrc
 .tmux.conf: xdg:tmux/tmux.conf

@@ -199,6 +199,13 @@ for MOD in "${MODULES[@]}"; do
           echo "__IGNORE__"
           return
         fi
+        # soportar múltiples destinos separados por comas: "xdg:chrome/flags,xdg:chromium/flags"
+        if [[ "$mapping" == *,* ]]; then
+          MAP_TARGET_OUT="__MULTI__:${mapping}"
+          MAP_TARGET_EXPLICIT=1
+          MAP_TARGET_KEY="${mapping}"
+          return
+        fi
         case "$mapping" in
           xdg:*) MAP_TARGET_OUT="${XDG_CONFIG_HOME}/${mapping#xdg:}"; MAP_TARGET_EXPLICIT=1; MAP_TARGET_KEY="${mapping}"; return;;
           xdg_state:*) echo "${XDG_STATE_HOME}/${mapping#xdg_state:}"; return;;
@@ -208,6 +215,20 @@ for MOD in "${MODULES[@]}"; do
           *) MAP_TARGET_OUT="$TARGET/$srcfile"; MAP_TARGET_EXPLICIT=1; MAP_TARGET_KEY="${mapping}"; return;;
         esac
       fi
+
+      # Helper: resolver una especificación de mapeo individual a una ruta absoluta
+      mapping_spec_to_path(){
+        local spec="$1" module_name="$2" out=""
+        case "$spec" in
+          xdg:*) out="${XDG_CONFIG_HOME}/${spec#xdg:}" ;; 
+          xdg_state:*) out="${XDG_STATE_HOME}/${spec#xdg_state:}" ;; 
+          xdg_data:*) out="${XDG_DATA_HOME}/${spec#xdg_data:}" ;; 
+          xdg_cache:*) out="${XDG_CACHE_HOME}/${spec#xdg_cache:}" ;; 
+          home:*) out="$TARGET/${spec#home:}" ;; 
+          *) out="$TARGET/$spec" ;;
+        esac
+        printf '%s' "$out"
+      }
 
       # No hay mapeo presente — respetar DEFAULT_ACTION
       case "$DEFAULT_ACTION" in
@@ -376,53 +397,86 @@ for MOD in "${MODULES[@]}"; do
       # que los archivos se instalen en destinos XDG/explicados aunque estén excluidos de la copia temporal del módulo.
       # los archivos se instalan en destinos XDG/explicados incluso cuando están excluidos de la copia temporal del módulo.
       if [ "${MAP_TARGET_EXPLICIT_TMP:-0}" -eq 1 ]; then
-        if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(cd "$(dirname "$MOD")" && echo "$(pwd -P)/$found_rel")" ]; then
-          echo "Omitiendo enlace simbólico ya existente: $DEST"
-        else
-          if [ -e "$DEST" ] || [ -L "$DEST" ]; then
-            BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-            mkdir -p "$(dirname "$BACKUP_DIR/$found_rel")" || true
-            echo "Respaldando $DEST a $BACKUP_DIR/$found_rel"
-            mv "$DEST" "$BACKUP_DIR/$found_rel" || true
-          fi
-          mkdir -p "$(dirname "$DEST")" || true
-          # depuración: impresiones removidas en producción
-          SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
-          # Algunos archivos de inicio interactivo (p. ej., .bashrc, .zshrc, .profile) pueden tener finales CRLF.
-          # Las shells pueden fallar con tokens $'\r'. Para evitar romper shells interactivas,
-          # crear una copia saneada solo con LF en $TARGET/.dotfiles_sanitized cuando se detecte CRLF,
-          # y crear enlaces simbólicos hacia esa copia. Esto preserva el repositorio tal cual y a la vez
-          # proporciona un entorno utilizable.
-          SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
-          base_name="$(basename "$found_rel")"
-          sanitized_src="$SRC_ABS"
-          for _s in "${SANITIZE_BASENAMES[@]}"; do
-            if [[ "$_s" == "$base_name" ]]; then
-              # detect CRLF (Carriage Return bytes) in source file
-              if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
-                SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_rel")"
-                mkdir -p "$SAN_DIR" || true
-                SAN_PATH="$SAN_DIR/$base_name"
-                # Convertir CRLF -> LF de forma segura a la ruta saneada; preservar el bit ejecutable
-                if [ -x "$SRC_ABS" ]; then
-                  awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
-                else
-                  awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
-                fi
-                sanitized_src="$SAN_PATH"
-                echo "Saneado CRLF -> LF y creado: $sanitized_src"
-              fi
-              break
+        # Soporte para mapeos múltiples separados por comas
+        if [[ "${MAP_TARGET_KEY_TMP:-}" == *,* ]]; then
+          specs="${MAP_TARGET_KEY_TMP}"
+          specs="${specs#__MULTI__:}"
+          IFS=',' read -ra SPEC_ARR <<< "$specs"
+          for spec in "${SPEC_ARR[@]}"; do
+            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
+            DEST_PATH="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
+            if [ -L "$DEST_PATH" ] && [ "$(readlink -f "$DEST_PATH")" = "$(cd "$(dirname "$MOD")" && echo "$(pwd -P)/$found_rel")" ]; then
+              echo "Omitiendo enlace simbólico ya existente: $DEST_PATH"
+              continue
             fi
+            if [ -e "$DEST_PATH" ] || [ -L "$DEST_PATH" ]; then
+              BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+              mkdir -p "$(dirname "$BACKUP_DIR/$found_rel")" || true
+              echo "Respaldando $DEST_PATH a $BACKUP_DIR/$found_rel"
+              mv "$DEST_PATH" "$BACKUP_DIR/$found_rel" || true
+            fi
+            mkdir -p "$(dirname "$DEST_PATH")" || true
+            SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
+            base_name="$(basename "$found_rel")"
+            sanitized_src="$SRC_ABS"
+            for _s in "${SANITIZE_BASENAMES[@]}"; do
+              if [[ "$_s" == "$base_name" ]]; then
+                if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
+                  SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_rel")"
+                  mkdir -p "$SAN_DIR" || true
+                  SAN_PATH="$SAN_DIR/$base_name"
+                  if [ -x "$SRC_ABS" ]; then
+                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
+                  else
+                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
+                  fi
+                  sanitized_src="$SAN_PATH"
+                  echo "Saneado CRLF -> LF y creado: $sanitized_src"
+                fi
+                break
+              fi
+            done
+            echo "Creando enlace simbólico: $DEST_PATH -> $sanitized_src"
+            ln -sf "$sanitized_src" "$DEST_PATH"
+            map_created+=("$DEST_PATH")
           done
-          if [ -n "${_ALREADY_MAPPED[$DEST]:-}" ]; then
-            echo "Omitiendo mapeo explícito (duplicado): $DEST ya fue mapeado"
-            continue
+        else
+          if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(cd "$(dirname "$MOD")" && echo "$(pwd -P)/$found_rel")" ]; then
+            echo "Omitiendo enlace simbólico ya existente: $DEST"
+          else
+            if [ -e "$DEST" ] || [ -L "$DEST" ]; then
+              BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+              mkdir -p "$(dirname "$BACKUP_DIR/$found_rel")" || true
+              echo "Respaldando $DEST a $BACKUP_DIR/$found_rel"
+              mv "$DEST" "$BACKUP_DIR/$found_rel" || true
+            fi
+            mkdir -p "$(dirname "$DEST")" || true
+            SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
+            base_name="$(basename "$found_rel")"
+            sanitized_src="$SRC_ABS"
+            for _s in "${SANITIZE_BASENAMES[@]}"; do
+              if [[ "$_s" == "$base_name" ]]; then
+                if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
+                  SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_rel")"
+                  mkdir -p "$SAN_DIR" || true
+                  SAN_PATH="$SAN_DIR/$base_name"
+                  if [ -x "$SRC_ABS" ]; then
+                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
+                  else
+                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
+                  fi
+                  sanitized_src="$SAN_PATH"
+                  echo "Saneado CRLF -> LF y creado: $sanitized_src"
+                fi
+                break
+              fi
+            done
+            echo "Creando enlace simbólico: $DEST -> $sanitized_src"
+            ln -sf "$sanitized_src" "$DEST"
+            map_created+=("$DEST")
           fi
-          echo "Creando enlace simbólico: $DEST -> $sanitized_src"
-          ln -sf "$sanitized_src" "$DEST"
-          map_created+=("$DEST")
-          _ALREADY_MAPPED[$DEST]=1
         fi
       fi
     done < <(cd "$(dirname "$MOD")" && find "$(basename "$MOD")" -type f -print0 2>/dev/null || true)
@@ -528,8 +582,22 @@ for MOD in "${MODULES[@]}"; do
           echo "Omitiendo mapeo (duplicado): $DEST ya fue mapeado"
           continue
         fi
-        echo "Creando enlace simbólico: $DEST -> $sanitized_src"
-        ln -sfn "$sanitized_src" "$DEST" || true
+        # Si el mapeo fue múltiple (coma-separado), crear un enlace por cada especificación
+        MAP_KEY_TMP2="${MAP_TARGET_KEY:-}"
+        if [[ "$MAP_KEY_TMP2" == *,* ]]; then
+          specs="${MAP_KEY_TMP2}"
+          specs="${specs#__MULTI__:}"
+          IFS=',' read -ra SPEC_TMP <<< "$specs"
+          for spec in "${SPEC_TMP[@]}"; do
+            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
+            destp="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
+            echo "Creando enlace simbólico: $destp -> $sanitized_src"
+            ln -sfn "$sanitized_src" "$destp" || true
+          done
+        else
+          echo "Creando enlace simbólico: $DEST -> $sanitized_src"
+          ln -sfn "$sanitized_src" "$DEST" || true
+        fi
         _ALREADY_MAPPED[$DEST]=1
       done < <(cd "$TMP_MOD_DIR/$TMP_NAME" && find . -mindepth 1 -print0)
     else
