@@ -15,7 +15,14 @@ function Test-GitLFS {
 }
 
 if ($Modules.Count -eq 0) {
-    $Modules = @('modules/shell/bash','modules/shell/zsh','modules/apps/tmux','modules/apps/xmms')
+    $Modules = @(
+        'modules/shell/bash','modules/shell/zsh','modules/shell/fish','modules/shell/ksh',
+        'modules/shell/tcsh','modules/shell/mksh','modules/shell/elvish','modules/shell/xonsh',
+        'modules/shell/pwsh','modules/apps/tmux','modules/apps/xmms','modules/windowing/x11',
+        'modules/pacman','modules/desktop/chrome','modules/git','modules/editor/nvim',
+        'modules/editor/vscode','modules/editor/emacs','modules/editor/vim','modules/editor/nano',
+        'modules/editor/latex','modules/terminal/alacritty','modules/terminal/kitty'
+    )
 }
 
 # Variables XDG por defecto (Windows: preferir APPDATA / LOCALAPPDATA, respetar variables XDG si están definidas)
@@ -59,6 +66,28 @@ if (-not (Test-GitLFS)) {
     Write-Warning "git-lfs no disponible; algunas características (LFS) pueden no funcionar"
 }
 
+# Resolver la raíz del repositorio y asegurarnos de operar desde ella (permitir ejecución desde cualquier CWD)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$RepoRoot = ''
+try {
+    $gitTop = git rev-parse --show-toplevel 2>$null
+    if ($gitTop) { $RepoRoot = $gitTop.Trim() }
+} catch { }
+if (-not $RepoRoot) {
+    $RepoRoot = (Resolve-Path (Join-Path $ScriptDir '..')).ProviderPath
+}
+Set-Location -Path $RepoRoot
+
+# Normalizar entradas de Modules a rutas absolutas dentro del repo
+for ($i=0; $i -lt $Modules.Count; $i++) {
+    $entry = $Modules[$i]
+    if ([System.IO.Path]::IsPathRooted($entry)) {
+        $Modules[$i] = $entry
+    } else {
+        $Modules[$i] = Join-Path $RepoRoot $entry
+    }
+}
+
 foreach ($module in $Modules) {
     $modulePath = Join-Path $PSScriptRoot $module
     if (-not (Test-Path $modulePath)) {
@@ -77,38 +106,70 @@ foreach ($module in $Modules) {
     $MAPPER_MODULE = @{}
     $DEFAULT_ACTION = 'dotify'
     if (Test-Path $MAPPINGS_FILE) {
-        Get-Content $MAPPINGS_FILE | ForEach-Object {
-            $line = $_ -replace '#.*',''    # eliminar comentarios
-            $line = $line.Trim()
-            if ([string]::IsNullOrWhiteSpace($line)) { return }
-            if ($line -match '^default_action:\s*(\w+)') { $DEFAULT_ACTION = $matches[1]; return }
-            if ($line -match '^([^:]+):\s*(.+)$') {
-                $k = $matches[1].Trim()
-                $v = $matches[2].Trim()
+            # Leer el fichero completo y soportar listas YAML (clave: \n  - item)
+            $mapLines = Get-Content $MAPPINGS_FILE -ErrorAction SilentlyContinue
+            for ($i=0; $i -lt $mapLines.Count; $i++) {
+                $line = $mapLines[$i]
+                $line = ($line -replace '#.*','').Trim()
+                if ([string]::IsNullOrWhiteSpace($line)) { continue }
+                if ($line -match '^default_action:\s*(\w+)') { $DEFAULT_ACTION = $matches[1]; continue }
+                if ($line -match '^([^:]+):\s*(.+)$') {
+                    $k = $matches[1].Trim(); $v = $matches[2].Trim()
+                } elseif ($line -match '^([^:]+):\s*$') {
+                    # clave seguida de lista indentada '-' en las siguientes líneas
+                    $k = $matches[1].Trim()
+                    $vals = @()
+                    $j = $i + 1
+                    while ($j -lt $mapLines.Count) {
+                        $nxt = ($mapLines[$j] -replace '#.*','').Trim()
+                        if ($nxt -match '^-[\s]*(.+)$') {
+                            $it = $matches[1].Trim()
+                            # re-evaluar matches variable name reuse
+                            $it = $nxt -replace '^-[\s]*',''
+                            $it = $it.Trim()
+                            if ($it -ne '') { $vals += $it }
+                            $j++
+                            continue
+                        }
+                        break
+                    }
+                    $i = $j - 1
+                    $v = ($vals -join ',')
+                } else {
+                    continue
+                }
                 if ($k -like '*|*') {
                     $parts = $k -split '\|',2
-                    $name = $parts[0].Trim()
-                    $mod  = $parts[1].Trim()
-                    $MAPPER_MODULE["$name|$mod"] = $v
+                    $name = $parts[0].Trim(); $mod = $parts[1].Trim()
+                    $key = "{0}|{1}" -f $name, $mod
+                    if ($MAPPER_MODULE.ContainsKey($key)) { $MAPPER_MODULE[$key] = "$($MAPPER_MODULE[$key]),$v" }
+                    else { $MAPPER_MODULE[$key] = $v }
                 } else {
-                    $MAPPER_GLOBAL[$k] = $v
+                    if ($MAPPER_GLOBAL.ContainsKey($k)) { $MAPPER_GLOBAL[$k] = "$($MAPPER_GLOBAL[$k]),$v" }
+                    else { $MAPPER_GLOBAL[$k] = $v }
                 }
-            }
         }
     }
 
-    # Construir conjunto de nombres de ficheros mapeados a nivel raíz en este repo (usado para influir en el comportamiento)
-    $MAPPED_NAMES = @{}
-    foreach ($k in $MAPPER_GLOBAL.Keys) { $MAPPED_NAMES[$k] = $true }
-    foreach ($k in $MAPPER_MODULE.Keys) { $name = $k -split '\|',2 | Select-Object -First 1; $MAPPED_NAMES[$name] = $true }
-    # También registrar mapeos relativos específicos por módulo para exclusión
-    $MAPPED_RELS = @{}
-    foreach ($k in $MAPPER_MODULE.Keys) {
-        $parts = $k -split '\|',2
-        $name = $parts[0]
-        $mod = $parts[1]
-        if ($name -match '[\\/]') { $MAPPED_RELS["$name|$mod"] = $true }
-    }
+        # Construir conjunto de nombres de ficheros mapeados a nivel raíz en este repo (usado para influir en el comportamiento)
+        $MAPPED_NAMES = @{}
+        foreach ($k in $MAPPER_GLOBAL.Keys) {
+            $bn = [System.IO.Path]::GetFileName($k)
+            if (-not [string]::IsNullOrWhiteSpace($bn)) { $MAPPED_NAMES[$bn] = $true }
+        }
+        foreach ($k in $MAPPER_MODULE.Keys) {
+            $name = ($k -split '\|',2)[0]
+            $bn = [System.IO.Path]::GetFileName($name)
+            if (-not [string]::IsNullOrWhiteSpace($bn)) { $MAPPED_NAMES[$bn] = $true }
+        }
+        # También registrar mapeos relativos específicos por módulo para exclusión
+        $MAPPED_RELS = @{}
+        foreach ($k in $MAPPER_MODULE.Keys) {
+            $parts = $k -split '\|',2
+            $name = $parts[0]
+            $mod = $parts[1]
+            if ($name -match '[\\/]') { $MAPPED_RELS["$name|$mod"] = $true }
+        }
 
     function Map-Target {
         param($relPath, $moduleName)
