@@ -5,12 +5,14 @@ default_action: dotify
 ## Docs (ignored)
 README.md: ignore
 
-## Apps (configuración XDG)
-flags.conf:
+## Browsers (configuración XDG)
+flags.conf|chrome:
   - xdg:chrome/chrome-flags.conf
   - xdg:chromium/chromium-flags.conf
   - home:.config/chrome-flags.conf
   - home:.config/chromium-flags.conf
+
+## Apps (configuración XDG)
 config.toml|helix: xdg:helix/config.toml
 config.toml|nushell: xdg:nushell/config.toml
 gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml

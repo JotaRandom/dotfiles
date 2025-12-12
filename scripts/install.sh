@@ -37,7 +37,7 @@ MODULES=(
   "modules/apps/xmms"
   "modules/windowing/x11"
   "modules/pacman"
-  "modules/desktop/chrome"
+  "modules/browsers/chrome"
   "modules/git"
   "modules/editor/nvim"
   "modules/editor/vscode"
