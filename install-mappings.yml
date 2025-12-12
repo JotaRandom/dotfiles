@@ -1,93 +1,128 @@
 # Declarative install mappings used by scripts/install.sh and CI
-# Simple, human-friendly layout. Destinations: xdg:, xdg_state:, xdg_data:, home:, ignore
+# Layout: grouped by module (modules/<group>/...), destinations: xdg:, xdg_state:, xdg_data:, home:, ignore
 default_action: dotify
 
-## Docs (ignored)
-README.md: ignore
+#########################
+# modules/shell
+#########################
+# Prompt and shell-specific configs (modules/shell/*)
+starship.toml: xdg:starship/starship.toml            # modules/shell/starship
+config.fish|fish: xdg:fish/config.fish              # modules/shell/fish
 
-## Browsers (configuración XDG)
-flags.conf|chrome:
+#########################
+# modules/cli-tools
+#########################
+# TMux and XMMS configs (modules/cli-tools/*)
+.tmux.conf: xdg:tmux/tmux.conf                       # modules/cli-tools/tmux
+.tmuxrc: xdg:tmux/tmux.conf                         # modules/cli-tools/tmux
+.xmms2rc: home:.xmms2rc                              # modules/cli-tools/xmms
+
+#########################
+# modules/browsers
+#########################
+# Browser flags and ignores (modules/browsers/*)
+chrome-flags.conf|chrome:
   - xdg:chrome/chrome-flags.conf
   - xdg:chromium/chromium-flags.conf
   - home:.config/chrome-flags.conf
-  - home:.config/chromium-flags.conf
-brave-flags.conf|brave: xdg:BraveSoftware/Brave-Browser/brave-flags.conf
+  - home:.config/chromium-flags.conf                 # modules/browsers/chrome
+brave-flags.conf|brave: xdg:BraveSoftware/Brave-Browser/brave-flags.conf  # modules/browsers/brave
+userChrome.css|firefox: ignore                        # modules/browsers/firefox (manual/profile)
+user.js|firefox: ignore                               # modules/browsers/firefox (manual/profile)
 
-# Firefox: configuración retro clásica
-# Nota: Firefox usa ~/.mozilla/ (no-estándar XDG), requiere instalación manual en perfil
-# Copiar a: ~/.mozilla/firefox/PROFILE_ID/user.js y ~/.mozilla/firefox/PROFILE_ID/chrome/userChrome.css
-userChrome.css|firefox: ignore
-user.js|firefox: ignore
+#########################
+# modules/desktop
+#########################
+# Desktop environment specific files (modules/desktop/*)
+# (X11/Xsession related dotfiles are listed under Dotfiles section)
+# de-settings.conf|de: xdg:de/settings.conf
 
-## Apps (configuración XDG)
-config.toml|helix: xdg:helix/config.toml
-config.toml|nushell: xdg:nushell/config.toml
-gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml
-init.el|emacs: xdg:emacs/init.el
-init.vim: xdg:nvim/init.vim
-kakrc|kakoune: xdg:kak/kakrc
-kateconfig|kate: xdg:kate/kateconfig
-settings.json|micro: xdg:micro/settings.json
-settings.json|vscode: xdg:Code/User/settings.json
+#########################
+# modules/pacman
+#########################
+makepkg.conf: xdg:pacman/makepkg.conf                # modules/pacman
+fortran.conf: xdg:pacman/fortran.conf                # modules/pacman
+rust.conf: xdg:pacman/rust.conf                      # modules/pacman
 
-# Starship prompt
-starship.toml: xdg:starship/starship.toml
+#########################
+# modules/dev-tools
+#########################
+# Git, SSH, cargo, npm related (modules/dev-tools/*)
+.gitconfig: xdg:git/config                            # modules/dev-tools/git
+.gitignore: xdg:git/ignore                           # modules/dev-tools/git
+.gitattributes: xdg:git/attributes                   # modules/dev-tools/git
+.git-credentials: xdg:git/credentials                # modules/dev-tools/git
+.gitk: xdg:git/gitk                                   # modules/dev-tools/git
+ssh/config.example: home:.ssh/config.example         # modules/dev-tools/ssh
+ssh/config: ignore                                   # modules/dev-tools/ssh (sensitive)
+lazygit/config.yml: xdg:lazygit/config.yml           # modules/dev-tools/lazygit
+cargo/config: xdg:cargo/config                       # modules/dev-tools/cargo
+.npmrc.example: home:.npmrc.example                  # modules/dev-tools/npm
+.npmrc: ignore                                       # modules/dev-tools/npm (sensitive)
 
-# Terminal emulators
-alacritty.yml|alacritty: xdg:alacritty/alacritty.yml
-kitty.conf|kitty: xdg:kitty/kitty.conf
+#########################
+# modules/editor
+#########################
+# Editor configurations (modules/editor/*)
+config.toml|helix: xdg:helix/config.toml             # modules/editor/helix
+config.toml|nushell: xdg:nushell/config.toml         # modules/editor/nushell
+gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml # modules/editor/gedit
+init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
+init.vim: xdg:nvim/init.vim                          # modules/editor/nvim
+kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
+kateconfig|kate: xdg:kate/kateconfig                 # modules/editor/kate
+settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
+settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
+config.json|micro: xdg:micro/config.json             # modules/editor/micro
 
+#########################
+# modules/term
+#########################
+# Terminal emulator configs (modules/term/*)
+alacritty.yml|alacritty: xdg:alacritty/alacritty.yml  # modules/term/alacritty
+kitty.conf|kitty: xdg:kitty/kitty.conf               # modules/term/kitty
 
-## Dotfiles (home by default; alphabetical)
-.bashrc: home:.bashrc
-.dmrc: home:.dmrc
-.elvishrc: xdg:elvish/init.el
-.inputrc: xdg:readline/inputrc
-.kshrc: home:.kshrc
-.latexmkrc: xdg:latexmk/latexmkrc
-.lesshst: xdg_state:less/lesshst
-.lesskey: xdg:less/lesskey
-.mkshrc: home:.mkshrc
-nanorc: xdg:nano/nanorc
-.profile: home:.profile
-.tcshrc: home:.tcshrc
-.tmux.conf: xdg:tmux/tmux.conf
-.tmuxrc: xdg:tmux/tmux.conf
-.twmrc: home:.twmrc
-.vimrc: xdg:vim/vimrc
-.xmms2rc: home:.xmms2rc
-.xonshrc: xdg:xonsh/rc.xsh
-.xinitrc: home:.xinitrc
-.xserverrc: home:.xserverrc
-.Xmodmap: xdg:X11/Xmodmap
-.Xresources: home:.Xresources
-.zshrc: xdg:zsh/.zshrc
+#########################
+# Dotfiles (home defaults)
+#########################
+# General user files; source canonical locations referenced in comments
+.bashrc: home:.bashrc                                 # modules/shell/bash/.bashrc
+.dmrc: home:.dmrc                                    # modules/shell/common/.dmrc
+.elvishrc: xdg:elvish/init.el                        # modules/shell/elvish
+.inputrc: xdg:readline/inputrc                       # modules/shell/common/.inputrc
+.kshrc: home:.kshrc                                  # modules/shell/ksh/.kshrc
+.latexmkrc: xdg:latexmk/latexmkrc                    # modules/editor/latex/.latexmkrc
+.lesshst: xdg_state:less/lesshst                     # modules/shell/common/.lesshst
+.lesskey: xdg:less/lesskey                            # modules/shell/common/.lesskey
+.mkshrc: home:.mkshrc                                # modules/shell/mksh/.mkshrc
+nanorc: xdg:nano/nanorc                              # modules/editor/nano/nanorc (canonical)
+.profile: home:.profile                              # modules/shell/bash/.profile
+.tcshrc: home:.tcshrc                                # modules/shell/tcsh/.tcshrc
+.twmrc: home:.twmrc                                  # modules/desktop/wm/.twmrc
+.vimrc: xdg:vim/vimrc                                # modules/editor/vim/.vimrc
+.xonshrc: xdg:xonsh/rc.xsh                           # modules/shell/xonsh/.xonshrc
+.xinitrc: home:.xinitrc                              # modules/desktop/.xinitrc
+.xserverrc: home:.xserverrc                          # modules/desktop/.xserverrc
+.Xmodmap: xdg:X11/Xmodmap                            # modules/desktop/X11/.Xmodmap
+.Xresources: home:.Xresources                        # modules/desktop/.Xresources
+.zshrc: xdg:zsh/.zshrc                               # modules/shell/zsh/.zshrc
 
-## Pacman configs (Makepkg, Fortran, and Rust)
-makepkg.conf: xdg:pacman/makepkg.conf
-fortran.conf: xdg:pacman/fortran.conf
-rust.conf: xdg:pacman/rust.conf
+#########################
+# Session / system (X11-specific)
+#########################
+.xsession: home:.xsession                            # session/X11
+.xsessionrc: home:.xsessionrc                        # session/X11
+.Xsession: home:.Xsession                            # session/X11
+.xsession-errors: home:.xsession-errors              # session/X11
+.Xdefaults: ignore                                   # session/X11 (ignored)
 
-## Session / system (X11-specific)
-.xsession: home:.xsession
-.xsessionrc: home:.xsessionrc
-.Xsession: home:.Xsession
-.xsession-errors: home:.xsession-errors
-.Xdefaults: ignore
+#########################
+# Misc / other
+#########################
+profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1  # modules/shell/pwsh
+thinkfan.conf: ignore                                  # hardware/system configs (ignored)
 
-## Misc / other
-profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1
-thinkfan.conf: ignore
-
-## Dev Tools (git, ssh, lazygit, cargo, npm)
-.gitconfig: xdg:git/config
-.gitignore: xdg:git/ignore
-.gitattributes: xdg:git/attributes
-.git-credentials: xdg:git/credentials
-.gitk: xdg:git/gitk
-ssh/config.example: home:.ssh/config.example
-ssh/config: ignore
-lazygit/config.yml: xdg:lazygit/config.yml
-cargo/config: xdg:cargo/config
-.npmrc.example: home:.npmrc.example
-.npmrc: ignore
+#########################
+# Docs (ignored)
+#########################
+README.md: ignore
