@@ -12,6 +12,15 @@ flags.conf|chrome:
   - home:.config/chrome-flags.conf
   - home:.config/chromium-flags.conf
 
+brave-flags.conf|brave:
+  - xdg:brave/brave-flags.conf
+  - home:.config/brave/brave-flags.conf
+
+# Firefox: plantillas para perfiles
+# Nota: copiar a ~/.mozilla/firefox/PROFILE_ID/ manualmente o usar setup script
+# userChrome.css|firefox: ignore
+# user.js|firefox: ignore
+
 ## Apps (configuración XDG)
 config.toml|helix: xdg:helix/config.toml
 config.toml|nushell: xdg:nushell/config.toml

@@ -1,0 +1,15 @@
+/* userChrome.css – Personalización visual de Firefox
+ * Ruta de instalación: ~/.mozilla/firefox/PROFILE_ID/chrome/userChrome.css
+ * Requiere: about:config → toolkit.legacyUserProfileCustomizations.stylesheets → true
+ */
+
+/* Ocultar algunos botones si es deseado (comentar según preferencia) */
+/* #back-button, #forward-button { display: none !important; } */
+
+/* Ejemplo: cambiar colores de la barra de direcciones */
+/* #urlbar { background-color: #f0f0f0 !important; } */
+
+/* Ejemplo: hacer la barra de pestañas más compacta */
+#TabsToolbar { --tab-height: 28px !important; }
+
+/* Más ejemplos: https://www.reddit.com/r/FirefoxCSS/ */
