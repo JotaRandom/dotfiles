@@ -1,9 +1,8 @@
-## Configuración de latexmk para proyectos LaTeX
-latexmk -pdf -interaction=nonstopmode -synctex=1
-
-## Objetivo por defecto
+# Configuración de latexmk para proyectos LaTeX
+# Comandos predeterminados para compilación PDF
+# latexmk -pdf -interaction=nonstopmode -synctex=1
 $pdflatex = 'pdflatex %O %S';
 $bibtex = 'bibtex %O %B';
 
-# Asegúrate de que la opción -output-directory sea soportada
+# Generar también archivos synctex comprimidos
 push @generated_exts, 'synctex.gz';
