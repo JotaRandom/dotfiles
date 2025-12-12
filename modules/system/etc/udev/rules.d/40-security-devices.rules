@@ -1,0 +1,36 @@
+# Reglas udev para seguridad de periféricos sin romper funcionalidad
+# Ideadas para laptops: protegen contra BadUSB y ataques de periféricos
+
+## Medidas contra BadUSB (ataques via USB)
+
+# Deshabilitar montaje automático de USB desconocidos (comentado por defecto)
+# SUBSYSTEM=="block", ACTION=="add", ATTRS{removable}=="1", ENV{UDISKS_IGNORE}="1"
+
+# Desactivar auto-run en dispositivos USB (buena práctica, pero requiere udisks)
+# ACTION=="add", SUBSYSTEM=="usb", ENV{ID_BUS}=="usb", ENV{UDISKS_AUTO}="0"
+
+## Protección de teclados y ratones USB
+
+# Registrar conexión de dispositivos USB HID (teclado, ratón, trackpad)
+# Útil para detectar dispositivos maliciosos
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{bDeviceClass}=="00", ATTRS{bDeviceSubClass}=="00", TAG+="access_control"
+
+## Bluetooth (opcional, permite pero registra)
+
+# Notificar cuando Bluetooth se conecta (informativo, no bloquea)
+ACTION=="add", SUBSYSTEM=="bluetooth", RUN+="/bin/logger -t udev 'Bluetooth device connected: %k'"
+
+# Opcional: deshabilitar Bluetooth al arrancar (descomenta si no lo usas)
+# ACTION=="add", SUBSYSTEM=="module", KERNEL=="btusb", RUN+="/usr/bin/modprobe -r btusb"
+
+## Smartcard / USB security tokens
+
+# Permitir acceso a smartcards sin sudo (útil si usas YubiKey, etc.)
+# SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", MODE="0666"
+
+## Notas
+
+# - Estas reglas no rompen funcionalidad; son principalmente informativas
+# - Para seguridad más estricta, considera usar SELinux o AppArmor
+# - BadUSB real requiere defensa a nivel firmware (poco se puede hacer desde Linux)
+# - Si tienes problemas con USB, comenta las reglas más restrictivas
