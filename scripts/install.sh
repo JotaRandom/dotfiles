@@ -29,7 +29,7 @@ MODULES=(
   "modules/browsers/firefox"
   "modules/cli-tools/tmux"
   "modules/cli-tools/xmms"
-  "modules/desktop/de/xfce"
+  "modules/desktop/de/"
   "modules/desktop/wm/x11"
   "modules/desktop/wm/twm"
   "modules/dev-tools/cargo"

@@ -101,7 +101,7 @@ nanorc: xdg:nano/nanorc                              # modules/editor/nano/nanor
 .twmrc: home:.twmrc                                  # modules/desktop/wm/.twmrc
 .vimrc: xdg:vim/vimrc                                # modules/editor/vim/.vimrc
 .xonshrc: xdg:xonsh/rc.xsh                           # modules/shell/xonsh/.xonshrc
-.xinitrc: home:.xinitrc                              # modules/desktop/.xinitrc
+.xinitrc: ignore            #home:.xinitrc           # modules/desktop/.xinitrc
 .xserverrc: home:.xserverrc                          # modules/desktop/.xserverrc
 .Xmodmap: xdg:X11/Xmodmap                            # modules/desktop/X11/.Xmodmap
 .Xresources: home:.Xresources                        # modules/desktop/.Xresources
