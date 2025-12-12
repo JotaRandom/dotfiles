@@ -12,8 +12,8 @@
 ## Protección de teclados y ratones USB
 
 # Registrar conexión de dispositivos USB HID (teclado, ratón, trackpad)
-# Útil para detectar dispositivos maliciosos
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{bDeviceClass}=="00", ATTRS{bDeviceSubClass}=="00", TAG+="access_control"
+# Útil para detectar dispositivos maliciosos (información en systemd journal)
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{bDeviceClass}=="00", ATTRS{bDeviceSubClass}=="00", RUN+="/usr/bin/logger -t udev 'USB HID device connected: %k'"
 
 ## Bluetooth (opcional, permite pero registra)
 
