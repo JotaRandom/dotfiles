@@ -1,0 +1,10 @@
+# Reglas genéricas udev para ahorro de energía en dispositivos USB
+# Permite que el kernel suspenda automáticamente dispositivos USB no esenciales
+
+# Habilitar autosuspensión para dispositivos USB (excepto hub root)
+ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="auto"
+
+# Nota: algunos dispositivos (como lectores de tarjetas, discos duros externos antiguos)
+# pueden no funcionar correctamente con autosuspensión. Si tienes problemas, puedes:
+# - Crear una regla más específica para excluir ese dispositivo (por ID_VENDOR/ID_MODEL)
+# - Usar 'on' en lugar de 'auto' para deshabilitar autosuspensión

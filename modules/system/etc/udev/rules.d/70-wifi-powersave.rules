@@ -1,0 +1,8 @@
+# Regla genérica udev para ahorro de energía en interfaces WiFi
+# Activa power_save en interfaces inalámbricas al conectarlas
+
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlan*", RUN+="/usr/bin/iw dev %k set power_save on"
+
+# Nota: algunos drivers WiFi (especialmente propietarios) pueden no soportar power_save.
+# Si experimentas desconexiones frecuentes, descomenta esta línea o crea una
+# excepción específica para tu tarjeta WiFi.
