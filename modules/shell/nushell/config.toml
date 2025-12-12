@@ -1,4 +1,13 @@
-; Configuración mínima de Nushell (ejemplo).
+# Configuración mínima de Nushell (ejemplo).
+# Referencia: https://www.nushell.sh/book/configuration.html
+
 [settings]
-prompt = 'nu'
-set -g editor 'nvim'
+# Definir editor predeterminado
+editor = "nvim"
+
+# Prompt: símbolo predeterminado "nu" o personaliza según necesites
+# prompt = "❯ "
+
+# Nota: `set -g` es sintaxis Nu shell, no TOML. Las variables en config
+# se definen en el archivo env.nu, no aquí. Este archivo debe contener
+# solo pares clave=valor TOML válidos.
