@@ -78,16 +78,16 @@ rust.conf: xdg:pacman/rust.conf
 ## Misc / other
 profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1
 thinkfan.conf: ignore
+
+## Dev Tools (git, ssh, lazygit, cargo, npm)
+.gitconfig: xdg:git/config
+.gitignore: xdg:git/ignore
+.gitattributes: xdg:git/attributes
+.git-credentials: xdg:git/credentials
+.gitk: xdg:git/gitk
 ssh/config.example: home:.ssh/config.example
 ssh/config: ignore
 lazygit/config.yml: xdg:lazygit/config.yml
 cargo/config: xdg:cargo/config
 .npmrc.example: home:.npmrc.example
 .npmrc: ignore
-
-## Git files
-.gitconfig: xdg:git/config
-.gitignore: xdg:git/ignore
-.gitattributes: xdg:git/attributes
-.git-credentials: xdg:git/credentials
-.gitk: xdg:git/gitk
