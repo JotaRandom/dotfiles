@@ -11,15 +11,13 @@ flags.conf|chrome:
   - xdg:chromium/chromium-flags.conf
   - home:.config/chrome-flags.conf
   - home:.config/chromium-flags.conf
+brave-flags.conf|brave: xdg:BraveSoftware/Brave-Browser/brave-flags.conf
 
-brave-flags.conf|brave:
-  - xdg:brave/brave-flags.conf
-  - home:.config/brave/brave-flags.conf
-
-# Firefox: plantillas para perfiles
-# Nota: copiar a ~/.mozilla/firefox/PROFILE_ID/ manualmente o usar setup script
-# userChrome.css|firefox: ignore
-# user.js|firefox: ignore
+# Firefox: configuración retro clásica
+# Nota: Firefox usa ~/.mozilla/ (no-estándar XDG), requiere instalación manual en perfil
+# Copiar a: ~/.mozilla/firefox/PROFILE_ID/user.js y ~/.mozilla/firefox/PROFILE_ID/chrome/userChrome.css
+userChrome.css|firefox: ignore
+user.js|firefox: ignore
 
 ## Apps (configuración XDG)
 config.toml|helix: xdg:helix/config.toml
