@@ -18,10 +18,11 @@ if ($Modules.Count -eq 0) {
     $Modules = @(
         'modules/shell/bash','modules/shell/zsh','modules/shell/fish','modules/shell/ksh',
         'modules/shell/tcsh','modules/shell/mksh','modules/shell/elvish','modules/shell/xonsh',
-        'modules/shell/pwsh','modules/apps/tmux','modules/apps/xmms','modules/windowing/x11',
-        'modules/pacman','modules/desktop/chrome','modules/git','modules/editor/nvim',
-        'modules/editor/vscode','modules/editor/emacs','modules/editor/vim','modules/editor/nano',
-        'modules/editor/latex','modules/terminal/alacritty','modules/terminal/kitty'
+        'modules/shell/pwsh','modules/shell/starship','modules/cli-tools/tmux','modules/cli-tools/xmms',
+        'modules/pacman','modules/dev-tools/git','modules/dev-tools/cargo','modules/dev-tools/npm',
+        'modules/dev-tools/ssh','modules/editor/nvim','modules/editor/vscode','modules/editor/emacs',
+        'modules/editor/vim','modules/editor/nano','modules/editor/helix','modules/term/alacritty',
+        'modules/term/kitty'
     )
 }
 
@@ -89,7 +90,7 @@ for ($i=0; $i -lt $Modules.Count; $i++) {
 }
 
 foreach ($module in $Modules) {
-    $modulePath = Join-Path $PSScriptRoot $module
+    $modulePath = $module
     if (-not (Test-Path $modulePath)) {
         Write-Host "Advertencia: módulo $modulePath no existe" -ForegroundColor Yellow
         continue

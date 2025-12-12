@@ -83,6 +83,12 @@ alacritty.yml|alacritty: xdg:alacritty/alacritty.yml  # modules/term/alacritty
 kitty.conf|kitty: xdg:kitty/kitty.conf               # modules/term/kitty
 
 #########################
+# modules/system
+#########################
+# System-level configs, may require manual linking with sudo
+etc/default/console-setup: ignore                      # Symlink manually: sudo ln -s <repo_path> /etc/default/console-setup
+
+#########################
 # Dotfiles (home defaults)
 #########################
 # General user files; source canonical locations referenced in comments

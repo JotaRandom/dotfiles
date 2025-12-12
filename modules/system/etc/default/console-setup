@@ -1,0 +1,16 @@
+# ARCHIVO DE CONFIGURACIÓN PARA SETUPCON
+
+# Consulte la página del manual de console-setup(5).
+
+export ACTIVE_CONSOLES="/dev/tty[1-6]"
+
+export CHARMAP="UTF-8"
+
+export CODESET="guess"
+export FONTFACE="Terminus"
+export FONTSIZE="16x32"
+
+export VIDEOMODE=
+
+# El siguiente es un ejemplo de cómo usar una fuente braille
+# FONT='lat9w-08.psf.gz brl-8x8.psf'
