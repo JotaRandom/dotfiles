@@ -7,8 +7,9 @@ printf "\033[38;2;211;215;207mUtilizando zsh en %s\033[0m\n" $HOST
 
 # Prompt: username@host:pwd $
 # - %n: usuario, %m: hostname corto, %~: directorio relativo
+# - %F{color}: set foreground color (color can be color name or number)
 autoload -U colors && colors
-PS1='%F{white}%n@%m%f:%F{142}%~%f \$ '
+PS1='%F{white}%n@%m%f:%F{green}%~%f %B%F{cyan}$%f%b '
 
 ## Color en herramientas estándar
 if [ -x /usr/bin/dircolors ]; then

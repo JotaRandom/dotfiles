@@ -36,7 +36,9 @@ GREEN='\[\e[01;32m\]'   # Verde brillante
 RESET='\[\e[0m\]'       # Restablecer color
 
 # Construcción del prompt
-PS1="${GREEN}C:${PWD#>}${RESET}> "
+# Nota: ${PWD#/} elimina el primer '/' de PWD para obtener la ruta sin slash inicial
+# Para estética "C:\ruta>", usamos la ruta completa como está
+PS1="${GREEN}C:\\${PWD}${RESET}> "
 
 # Si estás en tmux, añade [tmux]
 # Si estamos dentro de una sesión tmux, indicarlo en el prompt (ayuda visual)

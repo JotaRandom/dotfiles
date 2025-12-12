@@ -3,14 +3,9 @@ export EDITOR=vi
 
 # Alias ejemplos
 alias ll = 'ls -al'
-# Configuración de Elvish: plantilla mínima
-# Añade tus alias y funciones aquí
 
 # Variables de entorno
 export EDITOR=vi
 
-# Alias ejemplos
-alias ll = 'ls -al'
-
-# Prompt simple
+# Prompt simple: muestra pwd y símbolo '>'
 set prompt = &{echo -n (pwd) ' > '}
