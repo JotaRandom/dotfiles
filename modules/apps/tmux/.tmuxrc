@@ -1,1 +1,7 @@
-.tmux.conf
+# Symlink descriptor for tmux configuration
+# This file should be symlinked to ~/.tmuxrc
+# which points to ~/.tmux.conf
+#
+# Standard tmux looks for ~/.tmux.conf automatically.
+# This .tmuxrc is provided as an alternative path for some configurations
+# that explicitly look for ~/.tmuxrc (e.g., older tmux versions or specific tools).
