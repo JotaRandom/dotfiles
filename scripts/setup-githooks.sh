@@ -13,7 +13,7 @@ echo "Ruta de hooks de Git configurada a '.githooks' en este repositorio. Para r
 
 # Asegurar que scripts/*.sh con shebang sean ejecutables en el índice (idempotente)
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  for f in $(git ls-files 2>/dev/null || true); do
+  git ls-files -z 2>/dev/null | while IFS= read -r -d '' f; do
     if [ -f "$f" ]; then
       if head -n 1 "$f" | grep -q '^#!'; then
         git update-index --chmod=+x "$f" || true

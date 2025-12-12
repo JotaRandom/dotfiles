@@ -25,7 +25,20 @@ mkdir -p "$TARGET"
 
 echo "Ejecutando instalador contra TARGET: $TARGET"
 cd "$ROOT"
-MOD_LIST=(modules/*)
+# Construir lista de módulos: buscar directorios (profundidad 1-3) que contengan archivos de configuración.
+# Evitar subdirectorios de módulos ya identificados (ej. evitar modules/shell/fish/.config si modules/shell/fish ya es módulo).
+MOD_LIST=()
+while IFS= read -r d; do
+  # Si el directorio es subdirectorio de uno ya añadido, saltar
+  for m in "${MOD_LIST[@]}"; do
+    if [[ "$d" == "$m"/* ]]; then continue 2; fi
+  done
+
+  # Si contiene archivos (excluyendo README/LICENSE), es un módulo
+  if find "$d" -maxdepth 1 -type f -not -name 'README*' -not -name 'LICENSE*' -print -quit | grep -q .; then
+    MOD_LIST+=("$d")
+  fi
+done < <(find modules -mindepth 1 -maxdepth 3 -type d | sort)
 
 # Función auxiliar: is_template(file)
 # Devuelve 0 (verdadero) si el archivo está vacío o parece una plantilla (solo líneas en blanco/comentario o JSON trivial "{}"/"[]").
@@ -100,7 +113,7 @@ XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 errors=0
 # Leer mapeos: extraer solo las líneas que contienen ':' para obtener las claves (evitar líneas de listas YAML que empiezan con '-')
 # Usamos awk para eliminar comentarios y espacios y quedarnos solo con claves antes de ':'
-map_keys=$(awk '{ line=$0; sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(index(line,":")>0){ key=line; sub(/:.*/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
+map_keys=$(awk '{ line=$0; sub(/\r$/,"",line); sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(line ~ /^-/) next; if(index(line,":")>0){ key=line; sub(/:.*/,"",key); sub(/[[:space:]]*$/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
 
 get_map_val(){
   # devuelve el valor de mapeo para una clave dada (puede devolver lista o único valor)
@@ -108,6 +121,7 @@ get_map_val(){
   local raw line val
   while IFS= read -r raw; do
     line="${raw%%#*}"
+    line="${line%$'\r'}"
     line="${line#"${line%%[![:space:]]*}"}"
     line="${line%"${line##*[![:space:]]}"}"
     [ -z "$line" ] && continue
@@ -121,6 +135,7 @@ get_map_val(){
   # fallback: buscar entradas específicas por módulo (ej. key|module: value)
   while IFS= read -r raw; do
     line="${raw%%#*}"
+    line="${line%$'\r'}"
     line="${line#"${line%%[![:space:]]*}"}"
     line="${line%"${line##*[![:space:]]}"}"
     [ -z "$line" ] && continue
@@ -134,7 +149,7 @@ get_map_val(){
   return 1
 }
 
-printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
+while IFS= read -r mapping_key; do
   [ -z "$mapping_key" ] && continue
   key="$mapping_key"
   val=""
@@ -144,6 +159,7 @@ printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
   if echo "$val" | grep -qE '^(ignore|skip)$'; then
     continue
   fi
+  val="${val%$'\r'}"
   # buscar archivos candidatos en los módulos para esta clave de mapeo
   # Si la clave contiene el sufijo '|module', eso se incluye en la cadena de clave
   cmap="$key"
@@ -156,9 +172,20 @@ printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
   if echo "$cmap" | grep -q '/' ; then
     # buscar por módulo la ruta relativa
     if [ -n "$module_override" ]; then
-      src="$MODULES_DIR/$module_override/$cmap"
-      if [ -f "$src" ]; then
-        found_paths=("$src")
+      # Resolver directorio del módulo (puede estar anidado, ej. modules/shell/fish)
+      if [ -d "$MODULES_DIR/$module_override" ]; then
+        mod_dir="$MODULES_DIR/$module_override"
+      else
+        mod_dir=$(find "$MODULES_DIR" -type d -name "$module_override" -print -quit)
+      fi
+
+      if [ -n "$mod_dir" ]; then
+        src="$mod_dir/$cmap"
+        if [ -f "$src" ]; then
+          found_paths=("$src")
+        else
+          found_paths=()
+        fi
       else
         found_paths=()
       fi
@@ -169,7 +196,18 @@ printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
   else
     # basename-only; try to locate under modules
     if [ -n "$module_override" ]; then
-      mapfile -t found_paths < <(find "$MODULES_DIR/$module_override" -type f -name "$cmap" -print || true)
+      # Resolver directorio del módulo (puede estar anidado)
+      if [ -d "$MODULES_DIR/$module_override" ]; then
+        mod_dir="$MODULES_DIR/$module_override"
+      else
+        mod_dir=$(find "$MODULES_DIR" -type d -name "$module_override" -print -quit)
+      fi
+
+      if [ -n "$mod_dir" ]; then
+        mapfile -t found_paths < <(find "$mod_dir" -type f -name "$cmap" -print || true)
+      else
+        found_paths=()
+      fi
     else
       mapfile -t found_paths < <(find "$MODULES_DIR" -type f -name "$cmap" -print || true)
     fi
@@ -233,7 +271,7 @@ printf '%s\n' "$map_keys" | while IFS= read -r mapping_key; do
     echo "OK: $expected -> $src" 
   done
 
-done
+done < <(printf '%s\n' "$map_keys")
 
 if [ $errors -gt 0 ]; then
   echo "Se encontraron $errors errores de verificación de mapeos" >&2

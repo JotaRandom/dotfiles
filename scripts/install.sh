@@ -18,6 +18,7 @@ EOF
 }
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+# ToDo: agregar opcion "help" sin lineas al estilo systemd
   usage
   exit 0
 fi
@@ -104,14 +105,31 @@ elif command -v sbopkg >/dev/null 2>&1; then
   # sbopkg (SlackBuilds) puede usarse para construir paquetes de fuente; intentamos instalar git-lfs si hay un sbopkg instalable
   sudo sbopkg -i git-lfs || true
   # Si no funciona, el usuario puede instalar git-lfs manualmente (installpkg / pkgtool)
+  ## ToDo: agregar soporte para gentoo y freebsd
 else
   echo "No se detectó gestor de paquetes compatible. Asegúrate de instalar 'git-lfs' manualmente."
 fi
 
 git lfs install || true
 
+# --- INICIO DE CAMBIO ---
+# Asegurarse de que los submódulos y Git LFS estén inicializados
+echo "Inicializando submódulos y Git LFS (si aplica)..."
+if git submodule update --init --recursive -f && git lfs pull; then
+  echo "Submódulos y Git LFS inicializados correctamente."
+else
+  echo "Advertencia: Falló la inicialización de submódulos o Git LFS. Algunas características pueden no estar disponibles." >&2
+fi
+# --- FIN DE CAMBIO ---
+
 TARGET="${TARGET:-$HOME}"
 echo "Usando target: $TARGET"
+
+# Definir variables XDG base globalmente para uso en funciones auxiliares
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$TARGET/.config}"
+XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
+XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
+XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 
 # Cargar reglas de mapeo si están disponibles (install-mappings.yml)
 declare -A _MAPPER_GLOBAL _MAPPER_MODULE
@@ -161,6 +179,7 @@ if [ -f "$MAPPINGS_FILE" ]; then
       # avanzar el índice principal hasta la última línea procesada
       i=$((j-1))
     else
+      echo "Advertencia: Línea no reconocida en $MAPPINGS_FILE (línea $((i+1))): '$line'" >&2
       i=$((i+1)); continue
     fi
 
@@ -198,6 +217,87 @@ for k in "${!_MAPPER_MODULE[@]}"; do
     _MAPPED_RELS["$name|${k##*|}" ]=1
   fi
 done
+
+# Helper: resolver una especificación de mapeo individual a una ruta absoluta
+mapping_spec_to_path(){
+  local spec="$1" module_name="$2" out=""
+  case "$spec" in
+    xdg:*) out="${XDG_CONFIG_HOME}/${spec#xdg:}" ;; 
+    xdg_state:*) out="${XDG_STATE_HOME}/${spec#xdg_state:}" ;; 
+    xdg_data:*) out="${XDG_DATA_HOME}/${spec#xdg_data:}" ;; 
+    xdg_cache:*) out="${XDG_CACHE_HOME}/${spec#xdg_cache:}" ;; 
+    home:*) out="$TARGET/${spec#home:}" ;; 
+    *) out="$TARGET/$spec" ;;
+  esac
+  printf '%s' "$out"
+}
+
+# Auxiliar: mapear ruta destino usando solo valores de install-mappings.yml y DEFAULT_ACTION
+map_target(){
+  local srcfile module_name base mapping
+  srcfile="$1"; module_name="$2"
+  
+  # preferir el mapeo declarativo desde install-mappings.yml si está presente
+  base="$(basename -- "$srcfile")"
+  # Preferir coincidencia exacta por ruta relativa en mapeos por módulo
+  if [[ -n "${_MAPPER_MODULE["$srcfile|$module_name"]+x}" ]]; then
+    mapping="${_MAPPER_MODULE["$srcfile|$module_name"]}"
+    MAP_TARGET_EXPLICIT=1
+    MAP_TARGET_KEY="rel:$srcfile"
+  elif [[ -n "${_MAPPER_MODULE["$base|$module_name"]+x}" ]]; then
+    mapping="${_MAPPER_MODULE["$base|$module_name"]}"
+    MAP_TARGET_EXPLICIT=1
+    MAP_TARGET_KEY="base:$base"
+  elif [[ -n "${_MAPPER_GLOBAL["$srcfile"]+x}" ]]; then
+    mapping="${_MAPPER_GLOBAL["$srcfile"]}"
+    MAP_TARGET_EXPLICIT=1
+    MAP_TARGET_KEY="rel:$srcfile"
+  elif [[ -n "${_MAPPER_GLOBAL["$base"]+x}" ]]; then
+    mapping="${_MAPPER_GLOBAL["$base"]}"
+    MAP_TARGET_EXPLICIT=1
+    MAP_TARGET_KEY="base:$base"
+  else
+    mapping=""
+    MAP_TARGET_EXPLICIT=0
+    MAP_TARGET_KEY=""
+  fi
+  # Restablecer auxiliares/variables de salida
+  MAP_TARGET_OUT=""
+  # MAP_TARGET_EXPLICIT y MAP_TARGET_KEY ya se establecieron arriba
+  
+  if [ -n "$mapping" ]; then
+    # permitir valores centinela especiales en los mapeos como 'ignore' o 'skip'
+    if [[ "$mapping" =~ ^(ignore|skip)$ ]]; then
+      MAP_TARGET_OUT="__IGNORE__"
+      return
+    fi
+    # soportar múltiples destinos separados por comas
+    if [[ "$mapping" == *,* ]]; then
+      MAP_TARGET_OUT="__MULTI__:${mapping}"
+      MAP_TARGET_EXPLICIT=1
+      MAP_TARGET_KEY="${mapping}"
+      return
+    fi
+    # Reutilizar lógica de mapeo simple
+    MAP_TARGET_OUT="$(mapping_spec_to_path "$mapping" "$module_name")"
+    MAP_TARGET_EXPLICIT=1
+    MAP_TARGET_KEY="${mapping}"
+    return
+  fi
+
+  # No hay mapeo presente — respetar DEFAULT_ACTION
+  case "$DEFAULT_ACTION" in
+    dotify)
+      if [[ "$base" == .* ]]; then MAP_TARGET_OUT="$TARGET/$base"; else MAP_TARGET_OUT="$TARGET/.${base}"; fi
+      MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base"
+      ;;
+    home) MAP_TARGET_OUT="$TARGET/$base"; MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base" ;;
+    error) MAP_TARGET_OUT="__ERROR__"; MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:error" ;;
+    *) if [[ "$base" == .* ]]; then MAP_TARGET_OUT="$TARGET/$base"; else MAP_TARGET_OUT="$TARGET/.${base}"; fi
+       MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base" ;;
+  esac
+}
+
 for MOD in "${MODULES[@]}"; do
   declare -A _ALREADY_MAPPED=()
   if [ -d "$MOD" ]; then
@@ -212,111 +312,6 @@ for MOD in "${MODULES[@]}"; do
       echo "Este instalador no aplicará archivos destinados a /etc (p. ej., /etc/thinkfan.conf)." >&2
       continue
     fi
-
-    # Auxiliar: mapear ruta destino usando solo valores de install-mappings.yml y DEFAULT_ACTION
-    map_target(){
-      local srcfile module_name base mapping
-      srcfile="$1"; module_name="$2"
-      # Usar directorios XDG cuando estén disponibles; en caso contrario, usar ubicaciones estándar
-      XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$TARGET/.config}"
-      XDG_DATA_HOME="${XDG_DATA_HOME:-$TARGET/.local/share}"
-      XDG_STATE_HOME="${XDG_STATE_HOME:-$TARGET/.local/state}"
-      XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
-      # preferir el mapeo declarativo desde install-mappings.yml si está presente
-      base="$(basename -- "$srcfile")"
-      # Preferir coincidencia exacta por ruta relativa en mapeos por módulo
-      if [[ -n "${_MAPPER_MODULE["$srcfile|$module_name"]+x}" ]]; then
-        mapping="${_MAPPER_MODULE["$srcfile|$module_name"]}"
-        MAP_TARGET_EXPLICIT=1
-        MAP_TARGET_KEY="rel:$srcfile"
-      elif [[ -n "${_MAPPER_MODULE["$base|$module_name"]+x}" ]]; then
-        mapping="${_MAPPER_MODULE["$base|$module_name"]}"
-        MAP_TARGET_EXPLICIT=1
-        MAP_TARGET_KEY="base:$base"
-      elif [[ -n "${_MAPPER_GLOBAL["$srcfile"]+x}" ]]; then
-        mapping="${_MAPPER_GLOBAL["$srcfile"]}"
-        MAP_TARGET_EXPLICIT=1
-        MAP_TARGET_KEY="rel:$srcfile"
-      elif [[ -n "${_MAPPER_GLOBAL["$base"]+x}" ]]; then
-        mapping="${_MAPPER_GLOBAL["$base"]}"
-        MAP_TARGET_EXPLICIT=1
-        MAP_TARGET_KEY="base:$base"
-      else
-        mapping=""
-        MAP_TARGET_EXPLICIT=0
-        MAP_TARGET_KEY=""
-      fi
-      # Restablecer auxiliares/variables de salida
-      MAP_TARGET_OUT=""
-      MAP_TARGET_EXPLICIT=0
-      MAP_TARGET_KEY=""
-      if [ -n "$mapping" ]; then
-        # permitir valores centinela especiales en los mapeos como 'ignore' o 'skip' para indicar
-        # "no crear un mapeo / enlace para este archivo raíz"
-        if [[ "$mapping" =~ ^(ignore|skip)$ ]]; then
-          echo "__IGNORE__"
-          return
-        fi
-        # soportar múltiples destinos separados por comas: "xdg:chrome/flags,xdg:chromium/flags"
-        if [[ "$mapping" == *,* ]]; then
-          MAP_TARGET_OUT="__MULTI__:${mapping}"
-          MAP_TARGET_EXPLICIT=1
-          MAP_TARGET_KEY="${mapping}"
-          return
-        fi
-        case "$mapping" in
-          xdg:*) MAP_TARGET_OUT="${XDG_CONFIG_HOME}/${mapping#xdg:}"; MAP_TARGET_EXPLICIT=1; MAP_TARGET_KEY="${mapping}"; return;;
-          xdg_state:*) echo "${XDG_STATE_HOME}/${mapping#xdg_state:}"; return;;
-          xdg_data:*) echo "${XDG_DATA_HOME}/${mapping#xdg_data:}"; return;;
-          xdg_cache:*) echo "${XDG_CACHE_HOME}/${mapping#xdg_cache:}"; return;;
-          home:*) MAP_TARGET_OUT="$TARGET/${mapping#home:}"; MAP_TARGET_EXPLICIT=1; MAP_TARGET_KEY="${mapping}"; return;;
-          *) MAP_TARGET_OUT="$TARGET/$srcfile"; MAP_TARGET_EXPLICIT=1; MAP_TARGET_KEY="${mapping}"; return;;
-        esac
-      fi
-
-      # Helper: resolver una especificación de mapeo individual a una ruta absoluta
-      mapping_spec_to_path(){
-        local spec="$1" module_name="$2" out=""
-        case "$spec" in
-          xdg:*) out="${XDG_CONFIG_HOME}/${spec#xdg:}" ;; 
-          xdg_state:*) out="${XDG_STATE_HOME}/${spec#xdg_state:}" ;; 
-          xdg_data:*) out="${XDG_DATA_HOME}/${spec#xdg_data:}" ;; 
-          xdg_cache:*) out="${XDG_CACHE_HOME}/${spec#xdg_cache:}" ;; 
-          home:*) out="$TARGET/${spec#home:}" ;; 
-          *) out="$TARGET/$spec" ;;
-        esac
-        printf '%s' "$out"
-      }
-
-      # No hay mapeo presente — respetar DEFAULT_ACTION
-      case "$DEFAULT_ACTION" in
-        dotify)
-          # dotify: crear un nombre con prefijo '.' en HOME a menos que ya comience con '.'
-          if [[ "$base" == .* ]]; then
-            MAP_TARGET_OUT="$TARGET/$base"
-          else
-            MAP_TARGET_OUT="$TARGET/.${base}"
-          fi
-          MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base"
-          ;;
-        home)
-          MAP_TARGET_OUT="$TARGET/$base"; MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base"
-          ;;
-        error)
-          MAP_TARGET_OUT="__ERROR__"; MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:error"
-          ;;
-        *)
-          # predeterminado seguro
-            if [[ "$base" == .* ]]; then
-              MAP_TARGET_OUT="$TARGET/$base"
-            else
-              MAP_TARGET_OUT="$TARGET/.${base}"
-            fi
-            MAP_TARGET_EXPLICIT=0; MAP_TARGET_KEY="default:$base"
-          ;;
-      esac
-      # asegurar que MAP_TARGET_OUT esté establecido al salir
-    }
 
     # Verificación en seco: listar destinos en conflicto (considerar mapeos XDG)
     CONFLICTS=()
@@ -425,7 +420,7 @@ for MOD in "${MODULES[@]}"; do
     map_created=()
     while IFS= read -r -d $'\0' found; do
       # compute relative path from module folder
-      found_rel=${found#"$(dirname -- "$MOD")/$(basename -- "$MOD")/"}
+      found_rel=${found#"$(basename -- "$MOD")/"}
       fbase=$(basename -- "$found_rel")
       map_target "$found_rel" "$BASENAME"
       DEST="$MAP_TARGET_OUT"
@@ -474,7 +469,7 @@ for MOD in "${MODULES[@]}"; do
               mv "$DEST_PATH" "$BACKUP_DIR/$found_rel" || true
             fi
             mkdir -p "$(dirname "$DEST_PATH")" || true
-            SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
             SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
             base_name="$(basename -- "$found_rel")"
             sanitized_src="$SRC_ABS"
@@ -510,7 +505,7 @@ for MOD in "${MODULES[@]}"; do
               mv "$DEST" "$BACKUP_DIR/$found_rel" || true
             fi
             mkdir -p "$(dirname "$DEST")" || true
-            SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
             SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
             base_name="$(basename -- "$found_rel")"
             sanitized_src="$SRC_ABS"
@@ -565,7 +560,7 @@ for MOD in "${MODULES[@]}"; do
     fi
 
     # Eliminar cualquier directorio vacío dejado por exclusiones para evitar crear carpetas vacías con puntos
-    find "$TMP_MOD_DIR/$TMP_NAME" -type d -empty -delete || true
+    find "$TMP_MOD_DIR/$TMP_NAME" -mindepth 1 -type d -empty -delete || true
 
     echo "Aplicando módulo $BASENAME (desde copia saneada)"
     # Ejecutar la instalación solo si la copia temporal del módulo contiene archivos tras aplicar las exclusiones
@@ -598,7 +593,7 @@ for MOD in "${MODULES[@]}"; do
             repo_rel="$non_dot"
           fi
         fi
-        SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$repo_rel")"
+        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$repo_rel")"
         # Omitir directorios (crearemos los directorios padres por separado)
         if [ -d "$TMP_MOD_DIR/$TMP_NAME/$rel" ]; then
           mkdir -p "$DEST" || true
@@ -664,7 +659,7 @@ for MOD in "${MODULES[@]}"; do
     # Crear enlaces simbólicos con prefijo '.' para los nombres identificados en DOTIFY_BASENAMES
     if [[ ${#DOTIFY_BASENAMES[@]} -gt 0 ]]; then
       for base in "${DOTIFY_BASENAMES[@]}"; do
-        SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$base")"
+        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$base")"
         DEST="$TARGET/.${base}"
         # Omitir si el enlace simbólico ya es correcto
         if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$SRC_ABS" ]; then
@@ -693,9 +688,10 @@ for MOD in "${MODULES[@]}"; do
         fi
         # intentar recrear el enlace simbólico (buscar el origen por nombre de archivo dentro del módulo)
         fname="$(basename -- "$d")"
-        found_src=$(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -name "$fname" -print -quit || true)
+        found_src=$(cd "$MOD" && find . -type f -name "$fname" -print -quit || true)
         if [ -n "$found_src" ]; then
-          SRC_ABS="$(cd "$(dirname "$MOD")" && printf '%s/%s' "$(pwd -P)" "$found_src")"
+          found_src="${found_src#./}"
+          SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_src")"
           # mismo comportamiento de saneamiento que más arriba: si la fuente es uno de los archivos
           # de inicio interactivo y contiene CRLF, escribir una copia saneada bajo $TARGET/.dotfiles_sanitized
           # y enlazarla.

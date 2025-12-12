@@ -371,3 +371,15 @@ try {
 } catch {
     # No es un repositorio git o git no está disponible; ignorar
 }
+
+# --- INICIO DE CAMBIO ---
+# Asegurarse de que los submódulos y Git LFS estén inicializados
+Write-Host "Inicializando submódulos y Git LFS (si aplica)..." -ForegroundColor Cyan
+try {
+    git submodule update --init --recursive -Force
+    git lfs pull
+    Write-Host "Submódulos y Git LFS inicializados correctamente." -ForegroundColor Green
+} catch {
+    Write-Warning "Advertencia: Falló la inicialización de submódulos o Git LFS. Algunas características pueden no estar disponibles. Error: $_"
+}
+# --- FIN DE CAMBIO ---

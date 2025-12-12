@@ -9,7 +9,12 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mapfile -d '' -t allfiles < <(git ls-files -z)
 cr_files=()
 for f in "${allfiles[@]}"; do
-  if [ -f "$f" ] && grep -q $'\r' "$f" 2>/dev/null; then
+  # Ignorar directorio assets explícitamente para evitar corromper binarios
+  if [[ "$f" == assets/* ]]; then
+    continue
+  fi
+  # Usar grep -I para tratar archivos binarios como no coincidentes
+  if [ -f "$f" ] && grep -Iq $'\r' "$f" 2>/dev/null; then
     cr_files+=("$f")
   fi
 done
