@@ -1,0 +1,38 @@
+{
+  "general": {
+    "vimMode": false,
+    "preferredEditor": "code"
+  },
+  "ui": {
+    "theme": "GitHub",
+    "hideBanner": true,
+    "customWittyPhrases": [
+      "Conectando con AGI",
+      "Listo para revisar tu código",
+      "Analizando tu proyecto"
+    ]
+  },
+  "tools": {
+    "sandbox": "docker",
+    "exclude": ["write_file"]
+  },
+  "model": {
+    "name": "gemini-1.5-pro-latest",
+    "maxSessionTurns": 10
+  },
+  "context": {
+    "fileName": ["CONTEXT.md", "GEMINI.md", "README.md"],
+    "loadFromIncludeDirectories": true
+  },
+  "privacy": {
+    "dataRetentionMonths": 18,
+    "autoDelete": true
+  },
+  "safety": {
+    "harassment": "BLOCK_MEDIUM_AND_ABOVE",
+    "hateSpeech": "BLOCK_MEDIUM_AND_ABOVE",
+    "sexuallyExplicit": "BLOCK_MEDIUM_AND_ABOVE",
+    "dangerousContent": "BLOCK_MEDIUM_AND_ABOVE"
+  }
+}
+

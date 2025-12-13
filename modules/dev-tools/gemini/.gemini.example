@@ -1,0 +1,53 @@
+# Configuración de Gemini (Google AI)
+# 
+# INSTRUCCIONES:
+# 1. Copia este archivo a ~/.gemini:
+#    cp ~/.gemini.example ~/.gemini
+#
+# 2. Edita ~/.gemini y reemplaza "TU_CLAVE_API_AQUI" con tu clave real
+#
+# 3. Obtén tu clave de API en: https://makersuite.google.com/app/apikey
+#
+# NOTA: El archivo ~/.gemini contiene información sensible (API key) y NO debe
+#       subirse al repositorio. Este archivo .gemini.example es solo una plantilla.
+
+# Clave de API de Google AI Studio
+api_key: "TU_CLAVE_API_AQUI"
+
+# Configuraciones de privacidad y seguridad
+privacy_settings:
+  # Retención de datos en meses (por defecto 18 meses)
+  data_retention: 18
+  # Eliminación automática de datos después del período de retención
+  auto_delete: true
+
+# Configuraciones de modelo
+model_settings:
+  # Modelo a utilizar (gemini-pro, gemini-pro-vision, etc.)
+  model: "gemini-pro"
+  # Temperatura para la generación (0.0 - 2.0, más alto = más creativo)
+  temperature: 0.7
+  # Tokens máximos en la respuesta
+  max_tokens: 2048
+
+# Configuraciones de seguridad
+safety_settings:
+  # Nivel de filtrado de contenido (BLOCK_NONE, BLOCK_ONLY_HIGH, BLOCK_MEDIUM_AND_ABOVE, BLOCK_LOW_AND_ABOVE)
+  harassment: "BLOCK_MEDIUM_AND_ABOVE"
+  hate_speech: "BLOCK_MEDIUM_AND_ABOVE"
+  sexually_explicit: "BLOCK_MEDIUM_AND_ABOVE"
+  dangerous_content: "BLOCK_MEDIUM_AND_ABOVE"
+
+# Configuraciones de proxy (opcional)
+# proxy:
+#   host: "proxy.example.com"
+#   port: 8080
+#   username: ""
+#   password: ""
+
+# Configuraciones de logging (opcional)
+# logging:
+#   enabled: false
+#   level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+#   file: "~/.gemini.log"
+

@@ -95,10 +95,17 @@ if [ $secret_errors -gt 0 ]; then
   exit 4
 fi
 
-if [ -e "${MOD_LIST[0]}" ]; then
-  ./scripts/install.sh "${MOD_LIST[@]}" || true
-else
+if [ ${#MOD_LIST[@]} -eq 0 ]; then
   echo "No se encontraron módulos en modules/ - nada que instalar" >&2
+  exit 0
+fi
+
+# Ejecutar el instalador y capturar el código de salida
+# NO usar || true aquí - queremos que falle si install.sh falla
+echo "Instalando módulos: ${MOD_LIST[*]}"
+if ! ./scripts/install.sh "${MOD_LIST[@]}"; then
+  echo "ERROR: install.sh falló con código de salida $?" >&2
+  exit 1
 fi
 
 # Give installer a second to settle and produce symlinks if it forks background processes
@@ -241,8 +248,30 @@ while IFS= read -r mapping_key; do
       continue
     fi
     # Verificar que el objetivo del enlace simbólico apunta al archivo fuente en el módulo
-    targ=$(readlink -f "$expected")
-    srcf=$(readlink -f "$src")
+    # Usar función compatible con sistemas sin readlink -f
+    readlink_canonical() {
+      local path="$1"
+      if command -v readlink >/dev/null 2>&1 && readlink -f /dev/null >/dev/null 2>&1; then
+        readlink -f "$path" 2>/dev/null || echo "$path"
+      else
+        # Alternativa compatible: usar cd y pwd -P
+        if [ -d "$path" ]; then
+          (cd "$path" && pwd -P) 2>/dev/null || echo "$path"
+        else
+          local dir file
+          dir=$(dirname -- "$path")
+          file=$(basename -- "$path")
+          if [ -d "$dir" ]; then
+            printf '%s/%s' "$(cd "$dir" && pwd -P)" "$file" 2>/dev/null || echo "$path"
+          else
+            echo "$path"
+          fi
+        fi
+      fi
+    }
+    
+    targ=$(readlink_canonical "$expected")
+    srcf=$(readlink_canonical "$src")
     if [ "$targ" = "$srcf" ]; then
       echo "OK: $expected -> $src"
       continue
@@ -266,9 +295,7 @@ while IFS= read -r mapping_key; do
       continue
     fi
     echo "ERROR: discrepancia en el objetivo del enlace para el mapeo '$key'. Se esperaba <$srcf>, pero se encontró <$targ>. (dest: $expected)" >&2
-    errors=$((errors+1))
-    continue
-    echo "OK: $expected -> $src" 
+    errors=$((errors+1)) 
   done
 
 done < <(printf '%s\n' "$map_keys")
@@ -278,7 +305,41 @@ if [ $errors -gt 0 ]; then
   exit 2
 fi
 
-echo "Todos los mapeos declarados que tenían un archivo de origen se instalaron correctamente como enlaces simbólicos." 
+echo "Todos los mapeos declarados que tenían un archivo de origen se instalaron correctamente como enlaces simbólicos."
+
+# Verificación adicional: probar que install.sh funciona desde diferentes directorios
+echo ""
+echo "Verificando que install.sh funciona desde diferentes directorios..."
+if [ ${#MOD_LIST[@]} -gt 0 ]; then
+  TEST_MODULE="${MOD_LIST[0]}"
+  if [ -n "$TEST_MODULE" ] && [ -d "$TEST_MODULE" ]; then
+    # Probar desde un subdirectorio temporal
+    TEST_SUBDIR=$(mktemp -d)
+    cd "$TEST_SUBDIR"
+    # Limpiar el TARGET anterior y crear uno nuevo para esta prueba
+    TEST_TARGET=$(mktemp -d)
+    export TARGET="$TEST_TARGET"
+    if ! "$ROOT/scripts/install.sh" "$TEST_MODULE" >/dev/null 2>&1; then
+      echo "ERROR: install.sh falló cuando se ejecutó desde un directorio diferente ($TEST_SUBDIR)" >&2
+      cd "$ROOT"
+      rm -rf "$TEST_SUBDIR" "$TEST_TARGET"
+      exit 1
+    fi
+    # Verificar que se crearon los enlaces simbólicos esperados
+    if [ ! -L "$TEST_TARGET/.config" ] && [ ! -d "$TEST_TARGET/.config" ]; then
+      # Al menos debería haber creado algo en el TARGET
+      if [ -z "$(find "$TEST_TARGET" -mindepth 1 -maxdepth 2 2>/dev/null | head -1)" ]; then
+        echo "ERROR: install.sh no creó ningún archivo cuando se ejecutó desde un directorio diferente" >&2
+        cd "$ROOT"
+        rm -rf "$TEST_SUBDIR" "$TEST_TARGET"
+        exit 1
+      fi
+    fi
+    cd "$ROOT"
+    rm -rf "$TEST_SUBDIR" "$TEST_TARGET"
+    echo "OK: install.sh funciona correctamente desde diferentes directorios"
+  fi
+fi
 
 # Verificación de coherencia adicional: asegurar que no se crearon directorios top-level que coincidan con nombres base de mappings
 bad_dirs=0

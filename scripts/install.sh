@@ -3,6 +3,9 @@
 
 set -euo pipefail
 
+# Archivos de texto que son candidatos para el saneamiento de finales de línea (CRLF -> LF).
+readonly SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
+
 usage(){
   cat <<EOF
 Uso: $0 [modulo1 modulo2 ...]
@@ -23,6 +26,557 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   exit 0
 fi
 
+#
+# readlink_canonical
+#
+# Resuelve la ruta canónica de un archivo o enlace simbólico de forma compatible
+# con sistemas que no tienen readlink -f (BSD, macOS, algunos Gentoo).
+#
+# Uso:
+#   resolved_path=$(readlink_canonical "ruta/al/archivo")
+#
+# Parámetros:
+#   $1: path - Ruta al archivo o enlace simbólico a resolver
+#
+# Salida:
+#   Imprime la ruta canónica resuelta, o la ruta original si no se puede resolver
+#
+readlink_canonical() {
+  local target_path="$1"
+  
+  # Si la ruta está vacía, devolverla tal cual
+  if [ -z "$target_path" ]; then
+    printf '%s' "$target_path"
+    return 0
+  fi
+  
+  # Intentar usar readlink -f si está disponible (GNU/Linux)
+  if command -v readlink >/dev/null 2>&1; then
+    # Probar si readlink soporta -f usando un archivo que sabemos que existe
+    # Usar /dev/null que existe en todos los sistemas Unix
+    if readlink -f /dev/null >/dev/null 2>&1; then
+      local resolved
+      resolved=$(readlink -f "$target_path" 2>/dev/null)
+      if [ -n "$resolved" ]; then
+        printf '%s' "$resolved"
+        return 0
+      fi
+    fi
+  fi
+  
+  # Alternativa: usar cd y pwd -P para resolver la ruta canónica
+  # Esto funciona en BSD, macOS y sistemas sin readlink -f
+  # Primero, resolver enlaces simbólicos manualmente si es necesario
+  local current_path="$target_path"
+  local max_links=40  # Límite para evitar bucles infinitos
+  local link_count=0
+  
+  # Seguir enlaces simbólicos hasta llegar al archivo real
+  while [ -L "$current_path" ] && [ $link_count -lt $max_links ]; do
+    local link_target
+    link_target=$(readlink "$current_path" 2>/dev/null || echo "")
+    if [ -z "$link_target" ]; then
+      break
+    fi
+    # Si el enlace es relativo, resolverlo respecto al directorio del enlace
+    if [ "${link_target#/}" = "$link_target" ]; then
+      current_path="$(dirname -- "$current_path")/$link_target"
+    else
+      current_path="$link_target"
+    fi
+    # Normalizar la ruta (eliminar .. y .)
+    current_path=$(cd "$(dirname -- "$current_path")" 2>/dev/null && printf '%s/%s' "$(pwd -P)" "$(basename -- "$current_path")" 2>/dev/null || echo "$current_path")
+    link_count=$((link_count + 1))
+  done
+  
+  # Ahora resolver la ruta canónica usando cd y pwd -P
+  local dir_name file_name
+  if [ -d "$current_path" ]; then
+    # Es un directorio
+    dir_name="$current_path"
+    file_name=""
+  else
+    # Es un archivo, separar directorio y nombre
+    dir_name="$(dirname -- "$current_path")"
+    file_name="$(basename -- "$current_path")"
+  fi
+  
+  # Resolver el directorio canónico
+  local canonical_dir
+  if [ -d "$dir_name" ]; then
+    canonical_dir=$(cd "$dir_name" && pwd -P 2>/dev/null)
+    if [ -z "$canonical_dir" ]; then
+      # Fallback: usar la ruta original si cd falla
+      printf '%s' "$target_path"
+      return 0
+    fi
+  else
+    # El directorio no existe, devolver la ruta original
+    printf '%s' "$target_path"
+    return 0
+  fi
+  
+  # Si es un archivo, agregar el nombre del archivo
+  if [ -n "$file_name" ]; then
+    printf '%s/%s' "$canonical_dir" "$file_name"
+  else
+    printf '%s' "$canonical_dir"
+  fi
+}
+
+#
+# sanitize_crlf_if_needed
+#
+# Comprueba si un archivo de texto necesita saneamiento de finales de línea (CRLF -> LF)
+# y, de ser así, crea una copia saneada en un directorio temporal bajo $TARGET.
+# Esto es importante para scripts de shell (.bashrc, .profile, etc.) que pueden
+# fallar si tienen finales de línea de Windows.
+#
+# Uso:
+#   local source_to_link
+#   source_to_link=$(sanitize_crlf_if_needed "ruta/al/origen" "ruta/relativa/origen" "nombre_del_modulo")
+#
+# Parámetros:
+#   $1: src_abs_path  - Ruta absoluta al archivo fuente original en el repositorio.
+#   $2: rel_path      - Ruta relativa del archivo dentro del módulo (para la estructura del directorio de saneado).
+#   $3: module_name   - Nombre base del módulo actual (para la estructura del directorio de saneado).
+#
+# Salida:
+#   Imprime la ruta al archivo que se debe enlazar. Será la ruta original si no se
+#   necesitó saneamiento, o la ruta al nuevo archivo saneado si se realizó la conversión.
+#
+sanitize_crlf_if_needed() {
+  local src_abs_path="$1"
+  local rel_path="$2"
+  local module_name="$3"
+  
+  local base_name
+  base_name=$(basename -- "$rel_path")
+  
+  local needs_sanitization=0
+  for s in "${SANITIZE_BASENAMES[@]}"; do
+    if [[ "$s" == "$base_name" ]]; then
+      # Detectar si el archivo contiene carácteres de retorno de carro (CR).
+      # `grep -q` es más eficiente ya que se detiene en la primera coincidencia.
+      if grep -q $'\r' "$src_abs_path"; then
+        needs_sanitization=1
+      fi
+      break
+    fi
+  done
+
+  if [[ $needs_sanitization -eq 1 ]]; then
+    # Construir la ruta para el archivo saneado, p. ej., ~/.dotfiles_sanitized/bash/.bashrc
+    local san_dir
+    san_dir="$TARGET/.dotfiles_sanitized/$module_name/$(dirname "$rel_path")"
+    mkdir -p "$san_dir"
+    
+    local san_path="$san_dir/$base_name"
+    
+    echo "Saneando CRLF -> LF para '$rel_path' en: $san_path"
+    
+    # Usar awk para eliminar el carácter de retorno de carro de cada línea.
+    # Preservar el bit de ejecución si el archivo original lo tenía.
+    if [ -x "$src_abs_path" ]; then
+      awk '{ sub("\r$", ""); print }' "$src_abs_path" > "$san_path" && chmod +x "$san_path"
+    else
+      awk '{ sub("\r$", ""); print }' "$src_abs_path" > "$san_path"
+    fi
+    
+    # Devolver la ruta al nuevo archivo saneado.
+    printf '%s' "$san_path"
+  else
+    # No se necesita saneamiento, devolver la ruta original.
+    printf '%s' "$src_abs_path"
+  fi
+}
+
+_create_symlink_and_backup_if_needed() {
+  local src_abs_path="$1"
+  local dest_path="$2"
+  local module_name="$3"
+  local relative_path_for_backup="$4"
+  local check_already_mapped="$5" # 1 para sí, 0 para no
+
+  # Omitir si el enlace simbólico ya existe y es correcto
+  local dest_resolved src_resolved
+  dest_resolved=$(readlink_canonical "$dest_path")
+  src_resolved=$(readlink_canonical "$src_abs_path")
+  if [ -L "$dest_path" ] && [ "$dest_resolved" = "$src_resolved" ]; then
+    echo "Omitiendo enlace simbólico ya existente: $dest_path"
+    return 0
+  fi
+
+  # Respaldar si existe y no es un enlace simbólico
+  if [ -e "$dest_path" ] && [ ! -L "$dest_path" ]; then
+    local BACKUP_DIR
+    BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$module_name"
+    mkdir -p "$(dirname "$BACKUP_DIR/$relative_path_for_backup")"
+    echo "Respaldando $dest_path a $BACKUP_DIR/$relative_path_for_backup"
+    mv "$dest_path" "$BACKUP_DIR/$relative_path_for_backup"
+  fi
+
+  mkdir -p "$(dirname "$dest_path")"
+  echo "Creando enlace simbólico: $dest_path -> $src_abs_path"
+  ln -sfn "$src_abs_path" "$dest_path"
+
+  if [ "$check_already_mapped" -eq 1 ]; then
+    _ALREADY_MAPPED[$dest_path]=1
+  fi
+  return 0
+}
+
+# Función para instalar un módulo individual
+install_module() {
+  local MOD="$1"
+  declare -A _ALREADY_MAPPED=()
+  if [ -d "$MOD" ]; then
+    local BASENAME; BASENAME=$(basename -- "$MOD")
+    echo "Preparando instalación: $BASENAME -> $TARGET"
+
+    # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) porque este instalador
+    # opera únicamente sobre archivos a nivel de usuario bajo $HOME. Si quieres aplicar archivos de sistema,
+    # hazlo manualmente (o ejecuta un instalador a nivel de sistema como root).
+    if (cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read -r); then
+      echo "Omitiendo módulo $BASENAME porque contiene archivos a nivel de sistema bajo 'etc/'." >&2
+      echo "Este instalador no aplicará archivos destinados a /etc (p. ej., /etc/thinkfan.conf)." >&2
+      return
+    fi
+
+    # Verificación en seco: listar destinos en conflicto (considerar mapeos XDG)
+    local CONFLICTS=()
+    while IFS= read -r -d $'\0' SRC; do
+      # calcular REL relativo a la raíz del módulo (eliminar prefijo de la carpeta del módulo)
+      local REL=${SRC#"${BASENAME}"/}
+      map_target "$REL" "$BASENAME"
+      local TARGET_PATH="$MAP_TARGET_OUT"
+      if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
+        # si es un enlace simbólico que apunta al mismo destino, omitir
+        if [ -L "$TARGET_PATH" ]; then
+          local target_resolved mod_rel_resolved
+          target_resolved=$(readlink_canonical "$TARGET_PATH")
+          mod_rel_resolved=$(readlink_canonical "$MOD/$REL")
+          if [ "$target_resolved" = "$mod_rel_resolved" ]; then
+            continue
+          fi
+        fi
+        CONFLICTS+=("$TARGET_PATH")
+      fi
+    done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -print0)
+
+    if [ ${#CONFLICTS[@]} -gt 0 ]; then
+      echo "Conflictos detectados al aplicar módulo $BASENAME:" >&2
+      for c in "${CONFLICTS[@]}"; do echo "  - $c" >&2; done
+      local BACKUP_DIR
+      BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+      echo "Respaldando archivos conflictivos a: $BACKUP_DIR"
+      for c in "${CONFLICTS[@]}"; do
+        local RELPATH="${c#"$HOME"/}"
+        mkdir -p "$(dirname "$BACKUP_DIR/$RELPATH")"
+        mv "$c" "$BACKUP_DIR/$RELPATH"
+      done
+    fi
+
+    # Detectar ficheros mapeados en cualquier parte del módulo (no solo en la raíz) y
+    # crear los enlaces simbólicos XDG/~/HOME correctos. Luego excluirlos de la copia
+    # temporal del módulo.
+    # Crear un módulo temporal saneado para la instalación (excluir ficheros mapeados en raíz y cualquier entrada etc/)
+    local TMP_MOD_DIR; TMP_MOD_DIR="$(mktemp -d)"
+    local TMP_NAME="${BASENAME}.tmp"
+    mkdir -p "$TMP_MOD_DIR/$TMP_NAME"
+    # Copiar el contenido del módulo pero excluir los ficheros a nivel raíz que se mapean
+    # a otras ubicaciones y excluir también la carpeta etc/
+    # Construir la lista de exclusión para archivos situada en la raíz del módulo que estén mapeados
+    # (los manejaremos con enlaces simbólicos explícitos) — además excluir etc/
+    local EXCLUDE_ARGS=(--exclude '/etc/')
+    # Excluir solo ficheros mapeados coincidentes; soportar rutas relativas exactas y nombres base.
+    for rel in "${!_MAPPED_RELS[@]}"; do
+      # si este es un mapeo específico por módulo (formato 'rel|module'), dividirlo y asegurar que coincida con el módulo
+      if [[ "$rel" == *"|"* ]]; then
+        local rel_key="${rel%%|*}"
+        local rel_mod="${rel##*|}"
+        if [[ "$rel_mod" != "$BASENAME" ]]; then
+          continue
+        fi
+        EXCLUDE_ARGS+=(--exclude "/${rel_key}")
+      else
+        EXCLUDE_ARGS+=(--exclude "/${rel}")
+      fi
+    done
+    for mapped in "${!_MAPPED_NAMES[@]}"; do
+      # excluir cualquier ocurrencia del nombre base mapeado en cualquier parte del árbol del módulo
+      EXCLUDE_ARGS+=(--exclude "**/${mapped}")
+      # exclude any top-level occurrence as well
+      EXCLUDE_ARGS+=(--exclude "/${mapped}")
+    done
+    # Si DEFAULT_ACTION es 'dotify', identificar entradas top-level que deberíamos dotificar
+    local DOTIFY_BASENAMES=()
+    if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
+      while IFS= read -r -d $'\0' top; do
+        local base
+        base="$(basename -- "$top")"
+        # Omitir nombres que ya comienzan con '.' y nombres base que estén mapeados
+        if [[ "${base}" == .* ]] || [[ -n "${_MAPPED_NAMES[$base]:-}" ]]; then
+          continue
+        fi
+        DOTIFY_BASENAMES+=("$base")
+        EXCLUDE_ARGS+=(--exclude "**/${base}")
+        EXCLUDE_ARGS+=(--exclude "/${base}")
+      done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 1 -print0 2>/dev/null || true)
+    fi
+    if command -v rsync >/dev/null 2>&1; then
+      (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
+    else
+      # Si rsync no está disponible, copiar todo y luego eliminar los archivos excluidos manualmente
+      (cd "$(dirname "$MOD")" && cp -a "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" )
+      # Eliminar archivos y directorios excluidos del módulo temporal
+      for exclude_pattern in "${EXCLUDE_ARGS[@]}"; do
+        # rsync usa --exclude, pero aquí necesitamos usar find para eliminar
+        # Convertir patrón de exclusión de rsync a patrón de find
+        local pattern="${exclude_pattern#--exclude }"
+        # Eliminar barras iniciales y ajustar patrón
+        pattern="${pattern#/}"
+        if [[ "$pattern" == **/* ]]; then
+          # Patrón recursivo: eliminar todas las ocurrencias
+          find "$TMP_MOD_DIR/$TMP_NAME" -path "*/${pattern#**/}" -delete 2>/dev/null || true
+        else
+          # Patrón simple: eliminar en raíz
+          # SC2115: Proteger contra expansión a / usando ${var:?}
+          local target_path="${TMP_MOD_DIR:?}/$TMP_NAME/${pattern#/}"
+          if [ -n "$target_path" ] && [ "$target_path" != "/" ]; then
+            rm -rf "$target_path" 2>/dev/null || true
+          fi
+        fi
+      done
+    fi
+
+    # Manejar ficheros mapeados encontrados en cualquier parte del módulo (crear enlaces simbólicos XDG apropiados)
+    # Intentaremos coincidir primero con mapeos por módulo, y luego volver al mapeo global
+    # Para mapeos por nombre base, buscar una única coincidencia dentro del módulo
+    local map_created=()
+    while IFS= read -r -d $'\0' found; do
+      # compute relative path from module folder
+      local found_rel
+      found_rel=${found#"$(basename -- "$MOD")/"}
+      local fbase
+      fbase=$(basename -- "$found_rel")
+      map_target "$found_rel" "$BASENAME"
+      local DEST="$MAP_TARGET_OUT"
+      local MAP_TARGET_EXPLICIT_TMP=${MAP_TARGET_EXPLICIT:-0}
+      local MAP_TARGET_KEY_TMP=${MAP_TARGET_KEY:-}
+      echo "Mapeo: $found_rel => $DEST (explícito=${MAP_TARGET_EXPLICIT_TMP:-0}, clave=${MAP_TARGET_KEY_TMP:-})"
+      # Solo crear enlaces simbólicos explícitos para archivos con mapeos declarados en install-mappings.yml.
+      if [ "${MAP_TARGET_EXPLICIT_TMP:-0}" -eq 0 ]; then
+        continue
+      fi
+      # Si el archivo se mapea dentro de un subdirectorio de $HOME (XDG), crear el directorio padre y el enlace
+      # Si el mapeo devuelve el centinela IGNORE, omitir la creación de un mapeo especial
+      if [[ "$DEST" == "__IGNORE__" ]]; then
+        echo "Archivo ignorado: $found_rel (omitido)" >&2
+        continue
+      fi
+      # Si el mapeo se proporcionó por nombre base y varios archivos comparten ese nombre
+      # evitamos instalaciones ambiguas — requerir que el usuario especifique la ruta relativa para desambiguar
+      if [[ "${MAP_TARGET_KEY_TMP:-}" == base:* ]]; then
+        local count
+        count=$(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -name "$fbase" | wc -l)
+        if [ "$count" -gt 1 ]; then
+          echo "Mapeo ambiguo: existen varios archivos llamados $fbase en el módulo $BASENAME; usa un mapeo por ruta relativa en install-mappings.yml para desambiguar." >&2
+          continue
+        fi
+      fi
+      # Siempre crear enlace simbólico para mapeos explícitos (incluso si la ruta coincide con la predeterminada); esto asegura
+      # que los archivos se instalen en destinos XDG/explicados aunque estén excluidos de la copia temporal del módulo.
+      # los archivos se instalan en destinos XDG/explicados incluso cuando están excluidos de la copia temporal del módulo.
+      if [ "${MAP_TARGET_EXPLICIT_TMP:-1}" -eq 1 ]; then
+        # Soporte para mapeos múltiples separados por comas
+        if [[ "${MAP_TARGET_KEY_TMP:-}" == *,* ]]; then
+          local specs="${MAP_TARGET_KEY_TMP}"
+          local specs="${specs#__MULTI__:}"
+          IFS=',' read -ra SPEC_ARR <<< "$specs"
+          for spec in "${SPEC_ARR[@]}"; do
+            local spec_trimmed
+            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
+            local DEST_PATH
+            DEST_PATH="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
+            local SRC_ABS
+            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            local sanitized_src
+            sanitized_src=$(sanitize_crlf_if_needed "$SRC_ABS" "$found_rel" "$BASENAME")
+            _create_symlink_and_backup_if_needed "$sanitized_src" "$DEST_PATH" "$BASENAME" "$found_rel" 0
+            map_created+=("$DEST_PATH")
+          done
+        else
+          local dest_resolved expected_resolved
+          dest_resolved=$(readlink_canonical "$DEST")
+          expected_resolved=$(readlink_canonical "$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")")
+          if [ -L "$DEST" ] && [ "$dest_resolved" = "$expected_resolved" ]; then
+            echo "Omitiendo enlace simbólico ya existente: $DEST"
+          else
+            local SRC_ABS
+            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
+            local sanitized_src
+            sanitized_src=$(sanitize_crlf_if_needed "$SRC_ABS" "$found_rel" "$BASENAME")
+            _create_symlink_and_backup_if_needed "$sanitized_src" "$DEST" "$BASENAME" "$found_rel" 0
+            map_created+=("$DEST")
+          fi
+        fi
+      fi
+    done < <(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -print0 2>/dev/null || true)
+
+    # Si DEFAULT_ACTION es 'dotify', convertir cualquier entrada top-level sin punto en el módulo temporal
+    # a nombres con prefijo '.' a menos que estén mapeadas por install-mappings.yml.
+    if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
+      for ent in "$TMP_MOD_DIR/$TMP_NAME"/*; do
+        [ -e "$ent" ] || continue
+        local base
+        base=$(basename -- "$ent")
+        # Omitir nombres que ya comienzan con '.'
+        case "$base" in
+          .* ) continue ;;
+        esac
+        # Si este nombre base está mapeado, omitir el proceso de dotify
+        if [[ -n "${_MAPPED_NAMES[$base]:-}" ]]; then
+          continue
+        fi
+        # Si el nombre con '.' ya existe en el módulo, advertir y omitir
+        local dotpath="$TMP_MOD_DIR/$TMP_NAME/.$base"
+        if [ -e "$dotpath" ]; then
+          echo "Advertencia: no se dotificará $base porque .$base ya existe en el módulo $BASENAME" >&2
+          continue
+        fi
+        # Renombrar (mover) la entrada a su nombre con prefijo '.'
+        mv "$ent" "$dotpath"
+      done
+    fi
+
+    # Eliminar cualquier directorio vacío dejado por exclusiones para evitar crear carpetas vacías con puntos
+    find "$TMP_MOD_DIR/$TMP_NAME" -mindepth 1 -type d -empty -delete
+
+    echo "Aplicando módulo $BASENAME (desde copia saneada)"
+    # Ejecutar la instalación solo si la copia temporal del módulo contiene archivos tras aplicar las exclusiones
+    if (cd "$TMP_MOD_DIR" && find "$TMP_NAME" -mindepth 1 -print -quit | grep -q .); then
+      # Crear manualmente enlaces simbólicos para evitar dejar archivos sin punto en $HOME
+      echo "Creando enlaces simbólicos para archivos en $TMP_NAME"
+      while IFS= read -r -d $'\0' tmpf; do
+        # eliminar el prefijo './' producido por find y omitir la raíz './'
+        local rel=${tmpf#./}
+        [ "$rel" = "." ] && continue
+        # mapear al destino usando el auxiliar/función existente
+        map_target "$rel" "$BASENAME"
+        local DEST="$MAP_TARGET_OUT"
+        if [[ "$DEST" == "__IGNORE__" ]]; then
+          continue
+        fi
+        # Si es un mapeo explícito, ya se manejó anteriormente
+        if [ "${MAP_TARGET_EXPLICIT:-0}" -eq 1 ]; then
+          continue
+        fi
+        # Resolver la fuente en el repositorio. Si una entrada dotificada a nivel superior existe solo en tmp,
+        # intentar el nombre sin punto en el origen (i.e., 'name' -> '.name' fue dotificado in tmp)
+        local repo_rel="$rel"
+        if [[ "$repo_rel" == .* ]]; then
+          # para nombres dotificados a nivel superior de la forma '.foo' => intentar 'foo'
+          # solo alterar el primer segmento de la ruta
+          local rest="${repo_rel#./}" || true
+          local non_dot="${repo_rel#.}"
+          if [ -e "$MOD/$non_dot" ]; then
+            repo_rel="$non_dot"
+          fi
+        fi
+        local SRC_ABS
+        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$repo_rel")"
+        # Omitir directorios (crearemos los directorios padres por separado)
+        if [ -d "$TMP_MOD_DIR/$TMP_NAME/$rel" ]; then
+          mkdir -p "$DEST"
+          continue
+        fi
+        # Si el destino existe y ya es el enlace simbólico correcto, omitir
+        local dest_resolved src_abs_resolved
+        dest_resolved=$(readlink_canonical "$DEST")
+        src_abs_resolved=$(readlink_canonical "$SRC_ABS")
+        if [ -L "$DEST" ] && [ "$dest_resolved" = "$src_abs_resolved" ]; then
+          continue
+        fi
+        # Respaldar destinos existentes que no sean enlaces simbólicos
+        if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
+          local BACKUP_DIR
+          BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+          mkdir -p "$(dirname "$BACKUP_DIR/$rel")"
+          mv "$DEST" "$BACKUP_DIR/$rel"
+        fi
+        mkdir -p "$(dirname "$DEST")"
+        # Algunos archivos de inicio interactivo pueden tener CRLF; reutilizar la lógica de saneamiento
+        local sanitized_src
+        sanitized_src=$(sanitize_crlf_if_needed "$SRC_ABS" "$rel" "$BASENAME")
+        if [ -n "${_ALREADY_MAPPED[$DEST]:-}" ]; then
+          echo "Omitiendo mapeo (duplicado): $DEST ya fue mapeado"
+          continue
+        fi
+        # Si el mapeo fue múltiple (coma-separado), crear un enlace por cada especificación
+        local MAP_KEY_TMP2="${MAP_TARGET_KEY:-}"
+        if [[ "$MAP_KEY_TMP2" == *,* ]]; then
+          local specs="${MAP_KEY_TMP2}"
+          local specs="${specs#__MULTI__:}"
+          IFS=',' read -ra SPEC_TMP <<< "$specs"
+          for spec in "${SPEC_TMP[@]}"; do
+            local spec_trimmed
+            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
+            local destp
+            destp="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
+            _create_symlink_and_backup_if_needed "$sanitized_src" "$destp" "$BASENAME" "$rel" 1
+          done
+        else
+          _create_symlink_and_backup_if_needed "$sanitized_src" "$DEST" "$BASENAME" "$rel" 1
+        fi
+      done < <(cd "$TMP_MOD_DIR/$TMP_NAME" && find . -mindepth 1 -print0)
+    else
+      echo "Omitiendo módulo (nada que instalar tras las exclusiones): $BASENAME"
+    fi
+    # Crear enlaces simbólicos con prefijo '.' para los nombres identificados en DOTIFY_BASENAMES
+    if [[ ${#DOTIFY_BASENAMES[@]} -gt 0 ]]; then
+      for base in "${DOTIFY_BASENAMES[@]}"; do
+        local SRC_ABS
+        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$base")"
+        local DEST="$TARGET/.${base}"
+        _create_symlink_and_backup_if_needed "$SRC_ABS" "$DEST" "$BASENAME" "$base" 0
+        echo "Creado enlace dotificado: $DEST -> $SRC_ABS"
+      done
+    fi
+    # verificar que los destinos de mapeo explícitos sean enlaces simbólicos; si no, hacer respaldo y recrearlos
+    for d in "${map_created[@]:-}"; do
+      [ -z "$d" ] && continue
+      if [ ! -L "$d" ]; then
+        echo "Post-instalación: no se encontró un enlace simbólico en la ruta de mapeo $d — será respaldado y se recreará el enlace simbólico"
+        if [ -e "$d" ]; then
+          local BACKUP_DIR
+          BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
+          mkdir -p "$(dirname "$BACKUP_DIR/${d#"${TARGET}/"}")"
+          mv "$d" "$BACKUP_DIR/${d#"${TARGET}/"}"
+        fi
+        # intentar recrear el enlace simbólico (buscar el origen por nombre de archivo dentro del módulo)
+        local fname
+        fname="$(basename -- "$d")"
+        local found_src
+        found_src=$(cd "$MOD" && find . -type f -name "$fname" -print -quit)
+        if [ -n "$found_src" ]; then
+          found_src="${found_src#./}"
+          local SRC_ABS
+          SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_src")"
+          local SANITED_SRC_TO_LINK
+          SANITED_SRC_TO_LINK=$(sanitize_crlf_if_needed "$SRC_ABS" "$found_src" "$BASENAME")
+          ln -sfn "$SANITED_SRC_TO_LINK" "$d"
+        fi
+      fi
+    done
+    # limpieza
+    rm -rf "$TMP_MOD_DIR"
+
+  else
+    echo "Advertencia: módulo $MOD no existe"
+  fi
+}
+
 # Módulos predeterminados: reflejan la estructura de modules/ (excluye carpetas a nivel sistema como "system")
 MODULES=(
   "modules/browsers/brave"
@@ -30,10 +584,10 @@ MODULES=(
   "modules/browsers/firefox"
   "modules/cli-tools/tmux"
   "modules/cli-tools/xmms"
-  "modules/desktop/de/"
   "modules/desktop/wm/x11"
   "modules/desktop/wm/twm"
   "modules/dev-tools/cargo"
+  "modules/dev-tools/gemini"
   "modules/dev-tools/git"
   "modules/dev-tools/lazygit"
   "modules/dev-tools/npm"
@@ -77,7 +631,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || (cd "$SCRIPT_DIR/.." && pwd -P))"
 # Asegurarnos de operar desde la raíz del repositorio para evitar comportamientos
 # diferentes según el CWD desde el que se invoque el script.
-cd "$REPO_ROOT" || true
+cd "$REPO_ROOT"
 
 # Normalizar entradas de MODULES a rutas absolutas dentro del repo para evitar
 # depender del directorio de trabajo actual.
@@ -91,26 +645,104 @@ cd "$REPO_ROOT" || true
   fi
 done
 
-echo "Instalando dependencias necesarias (git-lfs) si lo permiten el sistema (apt/pacman/dnf)..."
-if command -v apt >/dev/null 2>&1; then
-  sudo apt update && sudo apt install -y git-lfs || true
-elif command -v pacman >/dev/null 2>&1; then
-  sudo pacman -Syu --noconfirm --needed git-lfs || true
-elif command -v dnf >/dev/null 2>&1; then
-  sudo dnf install -y git-lfs || true
-elif command -v slackpkg >/dev/null 2>&1; then
-  # Slackware-style systems: intentamos usar slackpkg si está disponible
-  sudo slackpkg update && sudo slackpkg install -y git-lfs || true
-elif command -v sbopkg >/dev/null 2>&1; then
-  # sbopkg (SlackBuilds) puede usarse para construir paquetes de fuente; intentamos instalar git-lfs si hay un sbopkg instalable
-  sudo sbopkg -i git-lfs || true
-  # Si no funciona, el usuario puede instalar git-lfs manualmente (installpkg / pkgtool)
-  ## ToDo: agregar soporte para gentoo y freebsd
-else
-  echo "No se detectó gestor de paquetes compatible. Asegúrate de instalar 'git-lfs' manualmente."
+# Función para instalar git-lfs de forma segura
+install_git_lfs_safely() {
+  # 1. Comprobar si git-lfs ya está instalado
+  if command -v git-lfs >/dev/null 2>&1; then
+    echo "git-lfs ya está instalado."
+    return 0
+  fi
+
+  echo "El comando 'git-lfs' no se encontró. Es necesario para inicializar algunos submódulos."
+
+  # 2. Determinar el gestor de paquetes y el comando de instalación
+  local pkg_manager=""
+  local install_cmd=""
+  local needs_sudo=1 # La mayoría necesita sudo por defecto
+
+  if command -v apt >/dev/null 2>&1; then
+    pkg_manager="apt"
+    install_cmd="sudo apt update && sudo apt install -y git-lfs"
+  elif command -v pacman >/dev/null 2>&1; then
+    pkg_manager="pacman"
+    install_cmd="sudo pacman -Syu --noconfirm --needed git-lfs"
+  elif command -v dnf >/dev/null 2>&1; then
+    pkg_manager="dnf"
+    install_cmd="sudo dnf install -y git-lfs"
+  elif command -v zypper >/dev/null 2>&1; then
+    pkg_manager="zypper"
+    install_cmd="sudo zypper install -y git-lfs"
+  elif command -v emerge >/dev/null 2>&1; then
+    pkg_manager="emerge (Gentoo)"
+    install_cmd="sudo emerge --ask=n --quiet-build dev-vcs/git-lfs"
+  elif command -v apk >/dev/null 2>&1; then
+    pkg_manager="apk (Alpine)"
+    install_cmd="sudo apk add git-lfs"
+  elif command -v pkg >/dev/null 2>&1; then # Para FreeBSD
+    pkg_manager="pkg (FreeBSD)"
+    install_cmd="sudo pkg install -y git-lfs"
+  elif command -v brew >/dev/null 2>&1; then # Para macOS Homebrew
+    pkg_manager="brew (macOS)"
+    install_cmd="brew install git-lfs"
+    needs_sudo=0 # Homebrew no usa sudo
+  elif command -v slackpkg >/dev/null 2>&1; then
+    pkg_manager="slackpkg"
+    install_cmd="sudo slackpkg update && sudo slackpkg install git-lfs"
+  elif command -v sbopkg >/dev/null 2>&1; then
+    pkg_manager="sbopkg"
+    install_cmd="sudo sbopkg -i git-lfs"
+  else
+    echo "Advertencia: No se detectó un gestor de paquetes compatible para instalar 'git-lfs'." >&2
+    echo "Por favor, instala 'git-lfs' manualmente." >&2
+    return 1
+  fi
+  
+  # 3. Comprobar si es un shell no interactivo. No preguntar si no está en un TTY.
+  if [[ ! -t 1 ]]; then
+      echo "Advertencia: Entorno no interactivo detectado. Omitiendo la instalación de 'git-lfs'." >&2
+      echo "Por favor, instala 'git-lfs' manualmente." >&2
+      return 1
+  fi
+
+  # 4. Si se necesita sudo, hacer las comprobaciones pertinentes
+  if [[ $needs_sudo -eq 1 ]] && ! command -v sudo >/dev/null 2>&1; then
+    echo "Advertencia: El comando 'sudo' no está disponible, pero es necesario para '$pkg_manager'. No se puede instalar 'git-lfs' automáticamente." >&2
+    echo "Por favor, instala 'git-lfs' manualmente y vuelve a ejecutar el script." >&2
+    return 1
+  fi
+
+  # 5. Pedir confirmación al usuario
+  local prompt_msg="Con tu gestor de paquetes '$pkg_manager', ¿quieres intentar instalar 'git-lfs'?"
+  if [[ $needs_sudo -eq 1 ]]; then
+    prompt_msg+=" (se usará sudo)"
+  fi
+  read -p "$prompt_msg (s/n) " -n 1 -r
+  echo
+
+  if [[ $REPLY =~ ^[Ss]$ ]]; then
+    echo "Ejecutando: $install_cmd"
+    if sh -c "$install_cmd"; then
+        echo "'git-lfs' instalado correctamente."
+        return 0
+    else
+        echo "Error: La instalación de 'git-lfs' falló." >&2
+        return 1
+    fi
+  else
+    echo "Omitiendo la instalación de 'git-lfs'. Algunos assets pueden no estar disponibles." >&2
+    return 1
+  fi
+}
+
+echo "Verificando dependencia: git-lfs..."
+# Ejecutar la instalación segura y advertir si falla, pero no salir del script principal.
+if ! install_git_lfs_safely; then
+    echo "Advertencia: 'git-lfs' no está disponible o la instalación fue omitida. Los assets gestionados por LFS pueden no cargarse." >&2
 fi
 
-git lfs install || true
+if ! git lfs install; then
+    echo "Advertencia: 'git lfs install' falló. La configuración local de LFS puede estar incompleta." >&2
+fi
 
 # --- INICIO DE CAMBIO ---
 # Asegurarse de que los submódulos y Git LFS estén inicializados
@@ -232,6 +864,23 @@ mapping_spec_to_path(){
   printf '%s' "$out"
 }
 
+# Helper: verificar si un patrón con wildcard coincide con un nombre de archivo
+_match_pattern() {
+  local pattern="$1"
+  local filename="$2"
+  
+  # Convertir patrón de shell a regex básico
+  # * -> .*
+  # ? -> .
+  local regex="${pattern//\*/.*}"
+  regex="${regex//\?/.}"
+  
+  if [[ "$filename" =~ ^${regex}$ ]]; then
+    return 0
+  fi
+  return 1
+}
+
 # Auxiliar: mapear ruta destino usando solo valores de install-mappings.yml y DEFAULT_ACTION
 map_target(){
   local srcfile module_name base mapping
@@ -257,9 +906,22 @@ map_target(){
     MAP_TARGET_EXPLICIT=1
     MAP_TARGET_KEY="base:$base"
   else
-    mapping=""
-    MAP_TARGET_EXPLICIT=0
-    MAP_TARGET_KEY=""
+    # Intentar coincidencia con patrones wildcard globales
+    for pattern in "${!_MAPPER_GLOBAL[@]}"; do
+      if [[ "$pattern" == *"*"* ]] || [[ "$pattern" == *"?"* ]]; then
+        if _match_pattern "$pattern" "$base"; then
+          mapping="${_MAPPER_GLOBAL[$pattern]}"
+          MAP_TARGET_EXPLICIT=1
+          MAP_TARGET_KEY="pattern:$pattern"
+          break
+        fi
+      fi
+    done
+    if [ -z "${mapping:-}" ]; then
+      mapping=""
+      MAP_TARGET_EXPLICIT=0
+      MAP_TARGET_KEY=""
+    fi
   fi
   # Restablecer auxiliares/variables de salida
   MAP_TARGET_OUT=""
@@ -298,431 +960,79 @@ map_target(){
   esac
 }
 
-for MOD in "${MODULES[@]}"; do
-  declare -A _ALREADY_MAPPED=()
-  if [ -d "$MOD" ]; then
-    BASENAME=$(basename -- "$MOD")
-    echo "Preparando instalación: $BASENAME -> $TARGET"
+# Function to perform pre-flight checks, including for ambiguous mappings.
+preflight_checks() {
+  echo "Realizando verificaciones previas al vuelo para mapeos ambiguos..."
+  declare -A global_map_sources
+  local has_ambiguities=0
 
-    # Precaución: omitir módulos que contengan rutas a nivel de sistema (p. ej., etc/) porque este instalador
-    # opera únicamente sobre archivos a nivel de usuario bajo $HOME. Si quieres aplicar archivos de sistema,
-    # hazlo manualmente (o ejecuta un instalador a nivel de sistema como root).
-    if (cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 2 -type f -path '*/etc/*' | read -r); then
-      echo "Omitiendo módulo $BASENAME porque contiene archivos a nivel de sistema bajo 'etc/'." >&2
-      echo "Este instalador no aplicará archivos destinados a /etc (p. ej., /etc/thinkfan.conf)." >&2
-      continue
-    fi
+  for MOD in "${MODULES[@]}"; do
+    local MOD_NAME; MOD_NAME=$(basename -- "$MOD")
+    # Skip non-existent directories
+    [ ! -d "$MOD" ] && continue
 
-    # Verificación en seco: listar destinos en conflicto (considerar mapeos XDG)
-    CONFLICTS=()
-    while IFS= read -r -d $'\0' SRC; do
-      # calcular REL relativo a la raíz del módulo (eliminar prefijo de la carpeta del módulo)
-      REL=${SRC#"${BASENAME}"/}
-      map_target "$REL" "$BASENAME"
-      TARGET_PATH="$MAP_TARGET_OUT"
-      if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
-        # si es un enlace simbólico que apunta al mismo destino, omitir
-        if [ -L "$TARGET_PATH" ]; then
-          if [ "$(readlink -f "$TARGET_PATH")" = "$(readlink -f "$MOD/$REL")" ]; then
-            continue
-          fi
-        fi
-        CONFLICTS+=("$TARGET_PATH")
+    while IFS= read -r -d $'\0' FILE_PATH; do
+      local REL_PATH
+      REL_PATH=${FILE_PATH#"$MOD/"}
+      local BASE_NAME
+      BASE_NAME=$(basename -- "$REL_PATH")
+
+      # Check for module-specific mapping (overrides global)
+      if [[ -n "${_MAPPER_MODULE["$REL_PATH|$MOD_NAME"]+x}" || -n "${_MAPPER_MODULE["$BASE_NAME|$MOD_NAME"]+x}" ]]; then
+        continue # This file is explicitly mapped for this module, no ambiguity.
       fi
-    done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -print0)
 
-    if [ ${#CONFLICTS[@]} -gt 0 ]; then
-      echo "Conflictos detectados al aplicar módulo $BASENAME:" >&2
-      for c in "${CONFLICTS[@]}"; do echo "  - $c" >&2; done
-      BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-      echo "Respaldando archivos conflictivos a: $BACKUP_DIR"
-      for c in "${CONFLICTS[@]}"; do
-        RELPATH="${c#"$HOME"/}"
-        mkdir -p "$(dirname "$BACKUP_DIR/$RELPATH")" || true
-        mv "$c" "$BACKUP_DIR/$RELPATH" || true
-      done
-    fi
-
-    # Detectar ficheros mapeados en cualquier parte del módulo (no solo en la raíz) y
-    # crear los enlaces simbólicos XDG/~/HOME correctos. Luego excluirlos de la copia
-    # temporal del módulo.
-    # Crear un módulo temporal saneado para la instalación (excluir ficheros mapeados en raíz y cualquier entrada etc/)
-    TMP_MOD_DIR="$(mktemp -d)"
-    TMP_NAME="${BASENAME}.tmp"
-    mkdir -p "$TMP_MOD_DIR/$TMP_NAME"
-    # Copiar el contenido del módulo pero excluir los ficheros a nivel raíz que se mapean
-    # a otras ubicaciones y excluir también la carpeta etc/
-    # Construir la lista de exclusión para archivos situada en la raíz del módulo que estén mapeados
-    # (los manejaremos con enlaces simbólicos explícitos) — además excluir etc/
-    EXCLUDE_ARGS=(--exclude '/etc/')
-    # Excluir solo ficheros mapeados coincidentes; soportar rutas relativas exactas y nombres base.
-    for rel in "${!_MAPPED_RELS[@]}"; do
-      # si este es un mapeo específico por módulo (formato 'rel|module'), dividirlo y asegurar que coincida con el módulo
-      if [[ "$rel" == *"|"* ]]; then
-        rel_key="${rel%%|*}"
-        rel_mod="${rel##*|}"
-        if [[ "$rel_mod" != "$BASENAME" ]]; then
-          continue
-        fi
-        EXCLUDE_ARGS+=(--exclude "/${rel_key}")
-      else
-        EXCLUDE_ARGS+=(--exclude "/${rel}")
+      # Check for global mapping by relative path or basename
+      local global_map_key=""
+      if [[ -n "${_MAPPER_GLOBAL["$REL_PATH"]+x}" ]]; then
+        global_map_key="$REL_PATH"
+      elif [[ -n "${_MAPPER_GLOBAL["$BASE_NAME"]+x}" ]]; then
+        global_map_key="$BASE_NAME"
       fi
-    done
-    for mapped in "${!_MAPPED_NAMES[@]}"; do
-      # excluir cualquier ocurrencia del nombre base mapeado en cualquier parte del árbol del módulo
-      EXCLUDE_ARGS+=(--exclude "**/${mapped}")
-      # exclude any top-level occurrence as well
-      EXCLUDE_ARGS+=(--exclude "/${mapped}")
-    done
-    # Si DEFAULT_ACTION es 'dotify', identificar entradas top-level que deberíamos dotificar
-    DOTIFY_BASENAMES=()
-    if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
-      while IFS= read -r -d $'\0' top; do
-        base="$(basename -- "$top")"
-        # Omitir nombres que ya comienzan con '.' y nombres base que estén mapeados
-        if [[ "${base}" == .* ]] || [[ -n "${_MAPPED_NAMES[$base]:-}" ]]; then
-          continue
-        fi
-        DOTIFY_BASENAMES+=("$base")
-        EXCLUDE_ARGS+=(--exclude "**/${base}")
-        EXCLUDE_ARGS+=(--exclude "/${base}")
-      done < <(cd "$(dirname "$MOD")" && find "$(basename -- "$MOD")" -mindepth 1 -maxdepth 1 -print0 2>/dev/null || true)
-    fi
-    if command -v rsync >/dev/null 2>&1; then
-      (cd "$(dirname "$MOD")" && rsync -a "${EXCLUDE_ARGS[@]}" "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/")
-    else
-      # fallback: copiar todo el módulo y luego eliminar las entradas excluidas
-      (cd "$(dirname "$MOD")" && cp -a "$(basename -- "$MOD")/" "$TMP_MOD_DIR/$TMP_NAME/" ) || true
-      # Eliminar solo ficheros mapeados (a nivel raíz y nombres base anidados) y el directorio etc/ de la copia temporal
-      for ex in "${!_MAPPED_NAMES[@]}"; do
-        find "${TMP_MOD_DIR}/${TMP_NAME}" -name "$ex" -exec rm -f {} + || true
-      done
-      for rel in "${!_MAPPED_RELS[@]}"; do
-        # dividir entradas por módulo
-        if [[ "$rel" == *"|"* ]]; then
-          rkey="${rel%%|*}"
-          rmodule="${rel##*|}"
-          if [[ "$rmodule" != "$BASENAME" ]]; then
-            continue
-          fi
-          rm -rf "${TMP_MOD_DIR:?}/${TMP_NAME:?}/${rkey:?}" || true
-        else
-          rm -rf "${TMP_MOD_DIR:?}/${TMP_NAME:?}/${rel:?}" || true
-        fi
-      done
-      rm -rf "${TMP_MOD_DIR:?}/${TMP_NAME:?}/etc" || true
-    fi
 
-    # Manejar ficheros mapeados encontrados en cualquier parte del módulo (crear enlaces simbólicos XDG apropiados)
-    # Intentaremos coincidir primero con mapeos por módulo, y luego volver al mapeo global
-    # Para mapeos por nombre base, buscar una única coincidencia dentro del módulo
-    map_created=()
-    while IFS= read -r -d $'\0' found; do
-      # compute relative path from module folder
-      found_rel=${found#"$(basename -- "$MOD")/"}
-      fbase=$(basename -- "$found_rel")
-      map_target "$found_rel" "$BASENAME"
-      DEST="$MAP_TARGET_OUT"
-      MAP_TARGET_EXPLICIT_TMP=${MAP_TARGET_EXPLICIT:-0}
-      MAP_TARGET_KEY_TMP=${MAP_TARGET_KEY:-}
-      echo "Mapeo: $found_rel => $DEST (explícito=${MAP_TARGET_EXPLICIT_TMP:-0}, clave=${MAP_TARGET_KEY_TMP:-})"
-      # Solo crear enlaces simbólicos explícitos para archivos con mapeos declarados en install-mappings.yml.
-      if [ "${MAP_TARGET_EXPLICIT_TMP:-0}" -eq 0 ]; then
-        continue
+      if [[ -n "$global_map_key" ]]; then
+        # It's globally mapped. Record the source module.
+        global_map_sources["$global_map_key"]+="${MOD_NAME} "
       fi
-      # Si el archivo se mapea dentro de un subdirectorio de $HOME (XDG), crear el directorio padre y el enlace
-      # Si el mapeo devuelve el centinela IGNORE, omitir la creación de un mapeo especial
-      if [[ "$DEST" == "__IGNORE__" ]]; then
-        echo "Archivo ignorado: $found_rel (omitido)" >&2
-        continue
-      fi
-      # Si el mapeo se proporcionó por nombre base y varios archivos comparten ese nombre
-      # evitamos instalaciones ambiguas — requerir que el usuario especifique la ruta relativa para desambiguar
-      if [[ "${MAP_TARGET_KEY_TMP:-}" == base:* ]]; then
-        count=$(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -name "$fbase" | wc -l || true)
-        if [ "$count" -gt 1 ]; then
-          echo "Mapeo ambiguo: existen varios archivos llamados $fbase en el módulo $BASENAME; usa un mapeo por ruta relativa en install-mappings.yml para desambiguar." >&2
-          continue
-        fi
-      fi
-      # Siempre crear enlace simbólico para mapeos explícitos (incluso si la ruta coincide con la predeterminada); esto asegura
-      # que los archivos se instalen en destinos XDG/explicados aunque estén excluidos de la copia temporal del módulo.
-      # los archivos se instalan en destinos XDG/explicados incluso cuando están excluidos de la copia temporal del módulo.
-      if [ "${MAP_TARGET_EXPLICIT_TMP:-0}" -eq 1 ]; then
-        # Soporte para mapeos múltiples separados por comas
-        if [[ "${MAP_TARGET_KEY_TMP:-}" == *,* ]]; then
-          specs="${MAP_TARGET_KEY_TMP}"
-          specs="${specs#__MULTI__:}"
-          IFS=',' read -ra SPEC_ARR <<< "$specs"
-          for spec in "${SPEC_ARR[@]}"; do
-            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
-            DEST_PATH="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
-            if [ -L "$DEST_PATH" ] && [ "$(readlink -f "$DEST_PATH")" = "$(cd "$(dirname "$MOD")" && echo "$(pwd -P)/$found_rel")" ]; then
-              echo "Omitiendo enlace simbólico ya existente: $DEST_PATH"
-              continue
-            fi
-            if [ -e "$DEST_PATH" ] || [ -L "$DEST_PATH" ]; then
-              BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-              mkdir -p "$(dirname "$BACKUP_DIR/$found_rel")" || true
-              echo "Respaldando $DEST_PATH a $BACKUP_DIR/$found_rel"
-              mv "$DEST_PATH" "$BACKUP_DIR/$found_rel" || true
-            fi
-            mkdir -p "$(dirname "$DEST_PATH")" || true
-            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
-            SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
-            base_name="$(basename -- "$found_rel")"
-            sanitized_src="$SRC_ABS"
-            for _s in "${SANITIZE_BASENAMES[@]}"; do
-              if [[ "$_s" == "$base_name" ]]; then
-                if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
-                  SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_rel")"
-                  mkdir -p "$SAN_DIR" || true
-                  SAN_PATH="$SAN_DIR/$base_name"
-                  if [ -x "$SRC_ABS" ]; then
-                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
-                  else
-                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
-                  fi
-                  sanitized_src="$SAN_PATH"
-                  echo "Saneado CRLF -> LF y creado: $sanitized_src"
-                fi
-                break
-              fi
-            done
-            echo "Creando enlace simbólico: $DEST_PATH -> $sanitized_src"
-            ln -sf "$sanitized_src" "$DEST_PATH"
-            map_created+=("$DEST_PATH")
-          done
-        else
-          if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(cd "$(dirname "$MOD")" && echo "$(pwd -P)/$found_rel")" ]; then
-            echo "Omitiendo enlace simbólico ya existente: $DEST"
-          else
-            if [ -e "$DEST" ] || [ -L "$DEST" ]; then
-              BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-              mkdir -p "$(dirname "$BACKUP_DIR/$found_rel")" || true
-              echo "Respaldando $DEST a $BACKUP_DIR/$found_rel"
-              mv "$DEST" "$BACKUP_DIR/$found_rel" || true
-            fi
-            mkdir -p "$(dirname "$DEST")" || true
-            SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_rel")"
-            SANITIZE_BASENAMES=(".bashrc" ".profile" ".bash_profile" ".zshrc" ".bash_logout")
-            base_name="$(basename -- "$found_rel")"
-            sanitized_src="$SRC_ABS"
-            for _s in "${SANITIZE_BASENAMES[@]}"; do
-              if [[ "$_s" == "$base_name" ]]; then
-                if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
-                  SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_rel")"
-                  mkdir -p "$SAN_DIR" || true
-                  SAN_PATH="$SAN_DIR/$base_name"
-                  if [ -x "$SRC_ABS" ]; then
-                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
-                  else
-                    awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
-                  fi
-                  sanitized_src="$SAN_PATH"
-                  echo "Saneado CRLF -> LF y creado: $sanitized_src"
-                fi
-                break
-              fi
-            done
-            echo "Creando enlace simbólico: $DEST -> $sanitized_src"
-            ln -sf "$sanitized_src" "$DEST"
-            map_created+=("$DEST")
-          fi
-        fi
-      fi
-    done < <(cd "$(dirname -- "$MOD")" && find "$(basename -- "$MOD")" -type f -print0 2>/dev/null || true)
+    done < <(find "$MOD" -type f -print0 2>/dev/null)
+  done
 
-    # Si DEFAULT_ACTION es 'dotify', convertir cualquier entrada top-level sin punto en el módulo temporal
-    # a nombres con prefijo '.' a menos que estén mapeadas por install-mappings.yml.
-    if [[ "$DEFAULT_ACTION" == "dotify" ]]; then
-      for ent in "$TMP_MOD_DIR/$TMP_NAME"/*; do
-        [ -e "$ent" ] || continue
-        base=$(basename -- "$ent")
-        # Omitir nombres que ya comienzan con '.'
-        case "$base" in
-          .* ) continue ;;
-        esac
-        # Si este nombre base está mapeado, omitir el proceso de dotify
-        if [[ -n "${_MAPPED_NAMES[$base]:-}" ]]; then
-          continue
-        fi
-        # Si el nombre con '.' ya existe en el módulo, advertir y omitir
-        dotpath="$TMP_MOD_DIR/$TMP_NAME/.$base"
-        if [ -e "$dotpath" ]; then
-          echo "Advertencia: no se dotificará $base porque .$base ya existe en el módulo $BASENAME" >&2
-          continue
-        fi
-        # Renombrar (mover) la entrada a su nombre con prefijo '.'
-        mv "$ent" "$dotpath" || true
-      done
+  # Now, analyze the collected sources
+  for key in "${!global_map_sources[@]}"; do
+    # Trim whitespace and count words
+    # SC2001: Use parameter expansion instead of sed
+    local sources_str="${global_map_sources[$key]}"
+    sources_str="${sources_str% }"  # Remove trailing space
+    local sources_arr
+    read -ra sources_arr <<< "$sources_str"
+    
+    if [[ ${#sources_arr[@]} -gt 1 ]]; then
+      if [[ $has_ambiguities -eq 0 ]]; then
+        echo "ERROR: Ambiguous file mappings detected. The following files exist in multiple modules but are governed by a single global mapping rule." >&2
+        echo "This would lead to an unpredictable installation where the last module installed wins." >&2
+        echo "To resolve this, create a module-specific mapping (e.g., 'filename|module_name: ...') in install-mappings.yml for each one." >&2
+        echo "" >&2
+        has_ambiguities=1
+      fi
+      echo "  - File/Key: '$key'" >&2
+      echo "    Found in modules: ${sources_arr[*]}" >&2
+      echo "    Governed by global rule: '$key: ${_MAPPER_GLOBAL[$key]}'" >&2
+      echo "" >&2
     fi
+  done
 
-    # Eliminar cualquier directorio vacío dejado por exclusiones para evitar crear carpetas vacías con puntos
-    find "$TMP_MOD_DIR/$TMP_NAME" -mindepth 1 -type d -empty -delete || true
-
-    echo "Aplicando módulo $BASENAME (desde copia saneada)"
-    # Ejecutar la instalación solo si la copia temporal del módulo contiene archivos tras aplicar las exclusiones
-    if (cd "$TMP_MOD_DIR" && find "$TMP_NAME" -mindepth 1 -print -quit | grep -q .); then
-      # Crear manualmente enlaces simbólicos para evitar dejar archivos sin punto en $HOME
-      echo "Creando enlaces simbólicos para archivos en $TMP_NAME"
-      while IFS= read -r -d $'\0' tmpf; do
-        # eliminar el prefijo './' producido por find y omitir la raíz './'
-        rel=${tmpf#./}
-        [ "$rel" = "." ] && continue
-        # mapear al destino usando el auxiliar/función existente
-        map_target "$rel" "$BASENAME"
-        DEST="$MAP_TARGET_OUT"
-        if [[ "$DEST" == "__IGNORE__" ]]; then
-          continue
-        fi
-        # Si es un mapeo explícito, ya se manejó anteriormente
-        if [ "${MAP_TARGET_EXPLICIT:-0}" -eq 1 ]; then
-          continue
-        fi
-        # Resolver la fuente en el repositorio. Si una entrada dotificada a nivel superior existe solo en tmp,
-        # intentar el nombre sin punto en el origen (i.e., 'name' -> '.name' fue dotificado en tmp)
-        repo_rel="$rel"
-        if [[ "$repo_rel" == .* ]]; then
-          # para nombres dotificados a nivel superior de la forma '.foo' => intentar 'foo'
-          # solo alterar el primer segmento de la ruta
-          rest="${repo_rel#./}" || true
-          non_dot="${repo_rel#.}"
-          if [ -e "$MOD/$non_dot" ]; then
-            repo_rel="$non_dot"
-          fi
-        fi
-        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$repo_rel")"
-        # Omitir directorios (crearemos los directorios padres por separado)
-        if [ -d "$TMP_MOD_DIR/$TMP_NAME/$rel" ]; then
-          mkdir -p "$DEST" || true
-          continue
-        fi
-        # Si el destino existe y ya es el enlace simbólico correcto, omitir
-        if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$(readlink -f "$SRC_ABS")" ]; then
-          continue
-        fi
-        # Respaldar destinos existentes que no sean enlaces simbólicos
-        if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
-          BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-          mkdir -p "$(dirname "$BACKUP_DIR/$rel")" || true
-          mv "$DEST" "$BACKUP_DIR/$rel" || true
-        fi
-        mkdir -p "$(dirname "$DEST")" || true
-        # Algunos archivos de inicio interactivo pueden tener CRLF; reutilizar la lógica de saneamiento
-        SANITIZE_BASENAMES=('.bashrc' '.profile' '.bash_profile' '.zshrc' '.bash_logout')
-        base_name="$(basename -- "$rel")"
-        sanitized_src="$SRC_ABS"
-        for _s in "${SANITIZE_BASENAMES[@]}"; do
-          if [[ "$_s" == "$base_name" ]]; then
-            if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
-              SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$rel")"
-              mkdir -p "$SAN_DIR" || true
-              SAN_PATH="$SAN_DIR/$base_name"
-              if [ -x "$SRC_ABS" ]; then
-                awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
-              else
-                awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
-              fi
-              sanitized_src="$SAN_PATH"
-              echo "Saneado CRLF -> LF y creado: $sanitized_src"
-            fi
-            break
-          fi
-        done
-        if [ -n "${_ALREADY_MAPPED[$DEST]:-}" ]; then
-          echo "Omitiendo mapeo (duplicado): $DEST ya fue mapeado"
-          continue
-        fi
-        # Si el mapeo fue múltiple (coma-separado), crear un enlace por cada especificación
-        MAP_KEY_TMP2="${MAP_TARGET_KEY:-}"
-        if [[ "$MAP_KEY_TMP2" == *,* ]]; then
-          specs="${MAP_KEY_TMP2}"
-          specs="${specs#__MULTI__:}"
-          IFS=',' read -ra SPEC_TMP <<< "$specs"
-          for spec in "${SPEC_TMP[@]}"; do
-            spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
-            destp="$(mapping_spec_to_path "$spec_trimmed" "$BASENAME")"
-            echo "Creando enlace simbólico: $destp -> $sanitized_src"
-            ln -sfn "$sanitized_src" "$destp" || true
-          done
-        else
-          echo "Creando enlace simbólico: $DEST -> $sanitized_src"
-          ln -sfn "$sanitized_src" "$DEST" || true
-        fi
-        _ALREADY_MAPPED[$DEST]=1
-      done < <(cd "$TMP_MOD_DIR/$TMP_NAME" && find . -mindepth 1 -print0)
-    else
-      echo "Omitiendo módulo (nada que instalar tras las exclusiones): $BASENAME"
-    fi
-    # Crear enlaces simbólicos con prefijo '.' para los nombres identificados en DOTIFY_BASENAMES
-    if [[ ${#DOTIFY_BASENAMES[@]} -gt 0 ]]; then
-      for base in "${DOTIFY_BASENAMES[@]}"; do
-        SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$base")"
-        DEST="$TARGET/.${base}"
-        # Omitir si el enlace simbólico ya es correcto
-        if [ -L "$DEST" ] && [ "$(readlink -f "$DEST")" = "$SRC_ABS" ]; then
-          continue
-        fi
-        # Respaldar si existe y no es un enlace simbólico
-        if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
-          BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-          mkdir -p "$(dirname "$BACKUP_DIR/$base")" || true
-          mv "$DEST" "$BACKUP_DIR/$base" || true
-        fi
-        mkdir -p "$(dirname "$DEST")" || true
-        ln -sfn "$SRC_ABS" "$DEST" || true
-        echo "Creado enlace dotificado: $DEST -> $SRC_ABS"
-      done
-    fi
-    # verificar que los destinos de mapeo explícitos sean enlaces simbólicos; si no, hacer respaldo y recrearlos
-    for d in "${map_created[@]:-}"; do
-      [ -z "$d" ] && continue
-      if [ ! -L "$d" ]; then
-        echo "Post-instalación: no se encontró un enlace simbólico en la ruta de mapeo $d — será respaldado y se recreará el enlace simbólico"
-        if [ -e "$d" ]; then
-          BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%s)/$BASENAME"
-          mkdir -p "$(dirname "$BACKUP_DIR/${d#"${TARGET}/"}")" || true
-          mv "$d" "$BACKUP_DIR/${d#"${TARGET}/"}" || true
-        fi
-        # intentar recrear el enlace simbólico (buscar el origen por nombre de archivo dentro del módulo)
-        fname="$(basename -- "$d")"
-        found_src=$(cd "$MOD" && find . -type f -name "$fname" -print -quit || true)
-        if [ -n "$found_src" ]; then
-          found_src="${found_src#./}"
-          SRC_ABS="$(cd "$MOD" && printf '%s/%s' "$(pwd -P)" "$found_src")"
-          # mismo comportamiento de saneamiento que más arriba: si la fuente es uno de los archivos
-          # de inicio interactivo y contiene CRLF, escribir una copia saneada bajo $TARGET/.dotfiles_sanitized
-          # y enlazarla.
-          SANITED_SRC_TO_LINK="$SRC_ABS"
-          for _s in "${SANITIZE_BASENAMES[@]:-.bashrc .profile .bash_profile .zshrc .bash_logout}"; do
-            if [[ "${_s}" == "$(basename -- "$found_src")" ]]; then
-              if grep -q $'\r' "$SRC_ABS" 2>/dev/null || head -c 1 -q "$SRC_ABS" | od -An -t x1 | grep -q '0d'; then
-                SAN_DIR="$TARGET/.dotfiles_sanitized/$BASENAME/$(dirname "$found_src")"
-                mkdir -p "$SAN_DIR" || true
-                SAN_PATH="$SAN_DIR/$(basename -- "$found_src")"
-                if [ -x "$SRC_ABS" ]; then
-                  awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" && chmod +x "$SAN_PATH" || true
-                else
-                  awk '{ sub("\r$", ""); print }' "$SRC_ABS" > "$SAN_PATH" || true
-                fi
-                SANITED_SRC_TO_LINK="$SAN_PATH"
-                echo "Post-instalación: Saneado CRLF -> LF y creado: $SANITED_SRC_TO_LINK"
-              fi
-              break
-            fi
-          done
-          ln -sfn "$SANITED_SRC_TO_LINK" "$d" || true
-        fi
-      fi
-    done
-    # limpieza
-    rm -rf "$TMP_MOD_DIR"
-
-  else
-    echo "Advertencia: módulo $MOD no existe"
+  if [[ $has_ambiguities -eq 1 ]]; then
+    exit 1
   fi
+
+  echo "No ambiguous mappings found. Proceeding with installation."
+}
+
+# Run pre-flight checks before starting installation
+preflight_checks
+
+for MOD in "${MODULES[@]}"; do
+  install_module "$MOD"
 done
 
 echo "Instalación finalizada. Este instalador solo aplica dotfiles de usuario en \\${HOME}."
@@ -736,6 +1046,8 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   if [ -f "$SETUP_SCRIPT" ]; then
     echo "Configurando hooks de git localmente (core.hooksPath -> .githooks)"
     # ejecutar script de configuración, omitir errores (no fatales)
-    "$SETUP_SCRIPT" || true
+    if ! "$SETUP_SCRIPT"; then
+      echo "Advertencia: La configuración de los githooks falló." >&2
+    fi
   fi
 fi
