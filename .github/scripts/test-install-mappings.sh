@@ -120,7 +120,7 @@ XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 errors=0
 # Leer mapeos: extraer solo las líneas que contienen ':' para obtener las claves (evitar líneas de listas YAML que empiezan con '-')
 # Usamos awk para eliminar comentarios y espacios y quedarnos solo con claves antes de ':'
-map_keys=$(awk '{ line=$0; sub(/\r$/,"",line); sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(line ~ /^-/) next; if(index(line,":")>0){ key=line; sub(/:.*/, "",key); sub(/[[:space:]]*$/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
+map_keys=$(awk '{ line=$0; sub(/\r$/,"",line); sub(/^[[:space:]]+/,"",line); if(line !~ /^#/ && line !~ /^-/ && line ~ /:/ && line !~ /^default_action:/) { key=gensub(/([^:]+):.*/, "\\1", 1, line); sub(/^[[:space:]]+/,"",key); sub(/[[:space:]]+$/,"",key); if(key != "") print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
 
 # Función para resolver canonical path (compatible con install.sh)
 readlink_canonical() {
