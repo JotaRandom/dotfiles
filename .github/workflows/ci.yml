@@ -133,7 +133,33 @@ jobs:
           # Asegurar que el instalador sea ejecutable
           chmod +x ./scripts/install.sh || true
           chmod +x ./.github/scripts/test-install-mappings.sh
-          ./.github/scripts/test-install-mappings.sh
+          
+          # Ejecutar test y capturar salida
+          echo "=== Ejecutando test-install-mappings.sh ==="
+          ./.github/scripts/test-install-mappings.sh 2>&1 | tee /tmp/test-mappings.log
+          
+          # Verificar que no haya NOTAs críticas (solo permitir las de archivos opcionales conocidos)
+          echo ""
+          echo "=== Verificando NOTAs ==="
+          if grep -q "^NOTA:" /tmp/test-mappings.log; then
+            echo "⚠️  Se encontraron NOTAs en el test:"
+            grep "^NOTA:" /tmp/test-mappings.log || true
+            
+            # Contar NOTAs
+            nota_count=$(grep -c "^NOTA:" /tmp/test-mappings.log || echo "0")
+            echo ""
+            echo "Total de NOTAs: $nota_count"
+            
+            # Fallar si hay más de 5 NOTAs (archivos opcionales esperados)
+            if [ "$nota_count" -gt 5 ]; then
+              echo "❌ ERROR: Demasiadas NOTAs ($nota_count). Se esperan máximo 5 (archivos opcionales)."
+              exit 1
+            else
+              echo "✅ NOTAs dentro del rango aceptable (archivos opcionales conocidos)"
+            fi
+          else
+            echo "✅ No se encontraron NOTAs - Test perfecto!"
+          fi
 
       - name: Comprobar archivos top-level en módulos que podrían contaminar $HOME
         run: |
