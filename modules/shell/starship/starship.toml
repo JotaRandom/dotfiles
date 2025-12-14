@@ -1,12 +1,87 @@
-[prompt]
-add_newline = true
-format = "${username}@${hostname} ${directory} ${git_branch} ${git_state}"
+# starship.toml - Starship Prompt optimizado para ThinkPad L420 (1366x768)
 
-[git_branch]
-symbol = ""
+# ===== FORMATO COMPACTO PARA PANTALLA PEQUEÑA =====
+# Prompt en 1 línea para maximizar espacio vertical
 
+# Timeout rápido (performance)
+command_timeout = 500
+scan_timeout = 30
+
+# Formato del prompt (compacto)
+format = """
+[╭─](bold green)\
+$username\
+[@](bold white)\
+$hostname\
+[](bold white)\
+$directory\
+$git_branch\
+$git_status\
+[\\$](bold green) 
+"""
+
+# ===== CHARACTER =====
 [character]
-success_symbol = ">"
-error_symbol = "x"
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
 
-# Ejemplo de configuración de starship — edítalo para tu entorno.
+# ===== DIRECTORY =====
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "bold cyan"
+format = "[$path]($style) "
+
+# ===== USERNAME =====
+[username]
+style_user = "bold green"
+style_root = "bold red"
+format = "[$user]($style)"
+show_always = true
+
+# ===== HOSTNAME =====
+[hostname]
+ssh_only = false
+format = "[$hostname](bold green)"
+disabled = false
+
+# ===== GIT BRANCH =====
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+# ===== GIT STATUS =====
+[git_status]
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+style = "bold red"
+conflicted = "🏳"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# ===== DESHABILITAR MÓDULOS PESADOS =====
+# Para performance en hardware limitado
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[docker_context]
+disabled = true
