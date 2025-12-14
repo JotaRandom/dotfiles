@@ -210,19 +210,18 @@ etc/X11/40-libinput.conf: ignore                       # System-level config (re
 etc/X11/70-wacom.conf: ignore                          # System-level config (requires root)
 usr/local/bin/*: ignore                                # System-level scripts (requires root)
 
-# Session / system (X11-specific)
-#########################
-.xsession|x11: home:.xsession                       # modules/desktop/wm/x11 (para TWM, IceWM, FVWM)
-.xsessionrc|x11: home:.xsessionrc                    # modules/desktop/wm/x11 (configuración temprana)
-.Xsession|x11: home:.Xsession                        # modules/desktop/wm/x11 (variante de .xsession)
-.xsession-errors: ignore                             # session/X11 (runtime file, should not be symlinked)
-.Xdefaults: ignore                                   # session/X11 (deprecated, use .Xresources instead)
-
 #########################
 # Misc / other
 #########################
-profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1  # modules/shell/pwsh
 thinkfan.conf: ignore                                  # hardware/system configs (requires root, copy manually)
+
+#########################
+# Docs and templates (ignored)
+#########################
+README.md: ignore
+ATTRIBUTIONS.md: ignore
+config.example: ignore
+
 
 #########################
 # Docs and templates (ignored)
