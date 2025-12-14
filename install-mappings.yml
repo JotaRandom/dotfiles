@@ -179,9 +179,9 @@ usr/local/bin/*: ignore                                # System-level scripts (r
 
 # Session / system (X11-specific)
 #########################
-.xsession: home:.xsession                            # session/X11
-.xsessionrc: home:.xsessionrc                        # session/X11
-.Xsession: home:.Xsession                            # session/X11
+.xsession|x11: home:.xsession                       # modules/desktop/wm/x11 (para TWM, IceWM, FVWM)
+.xsessionrc|x11: home:.xsessionrc                    # modules/desktop/wm/x11 (configuración temprana)
+.Xsession|x11: home:.Xsession                        # modules/desktop/wm/x11 (variante de .xsession)
 .xsession-errors: ignore                             # session/X11 (runtime file, should not be symlinked)
 .Xdefaults: ignore                                   # session/X11 (deprecated, use .Xresources instead)
 

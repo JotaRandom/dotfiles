@@ -1,0 +1,22 @@
+#!/bin/sh
+# .xsessionrc - Script ejecutado ANTES de iniciar la sesión X11
+# Para configuraciones que deben ejecutarse temprano en el inicio de sesión
+
+# Variables de entorno adicionales
+export XDG_SESSION_TYPE=x11
+
+# Servicios básicos para WMs minimalistas
+# Polkit (autenticación gráfica)
+if command -v polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+    polkit-gnome-authentication-agent-1 &
+fi
+
+# NetworkManager applet
+if command -v nm-applet >/dev/null 2>&1; then
+    nm-applet &
+fi
+
+# Compositor (opcional, comentado por defecto)
+# if command -v picom >/dev/null 2>&1; then
+#     picom -b
+# fi
