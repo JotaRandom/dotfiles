@@ -42,13 +42,6 @@ Cómo funciona `install.sh` (explicado de forma muy simple):
 	- realiza backups en `$HOME/.dotfiles_backup/<timestamp>` antes de sobrescribir archivos no enlazados,
 	- incluye protecciones de seguridad para evitar eliminación accidental de directorios importantes.
 
-Mejoras recientes (Diciembre 2024):
-
-- **Xinitrc por DE**: Configuraciones optimizadas para cada desktop environment (Cinnamon, XFCE, GNOME, KDE, LXQt) y WMs en `modules/desktop/`.
-- **Testing automático**: CI ejecuta `test-install-mappings.sh` para validar que todos los mapeos funcionen correctamente.
-- **Funciones helper**: Código más limpio en `install.sh` con 4 funciones de utilidad que reducen duplicación.
-- **Mapeos con módulos**: Todos los archivos importantes ahora usan `archivo|módulo:` para búsqueda correcta (ej: `cargo/config|cargo`).
-
 Ejemplos concretos (muy simples):
 
 -- Si en `modules/miapp/` existe un archivo `myapp` (en la raíz del módulo):

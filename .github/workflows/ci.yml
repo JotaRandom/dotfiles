@@ -155,7 +155,7 @@ jobs:
               echo "❌ ERROR: Demasiadas NOTAs ($nota_count). Se esperan máximo 5 (archivos opcionales)."
               exit 1
             else
-              echo "✅ NOTAs dentro del rango aceptable (archivos opcionales conocidos)"
+              echo "⚠️ NOTAs dentro del rango aceptable (archivos opcionales conocidos)"
             fi
           else
             echo "✅ No se encontraron NOTAs - Test perfecto!"
