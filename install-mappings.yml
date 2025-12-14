@@ -162,7 +162,6 @@ trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (
 config.toml|helix: xdg:helix/config.toml             # modules/editor/helix
 init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
 gedit-settings.sh|gedit: ignore                      # modules/editor/gedit (aplicar con bash)
-init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
 init.vim|nvim: xdg:nvim/init.vim                     # modules/editor/nvim
 kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
 katerc|kate: xdg:kate/katerc                         # modules/editor/kate
