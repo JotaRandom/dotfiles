@@ -11,17 +11,20 @@ default_action: dotify
 # Shell-specific configs (modules/shell/*)
 starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
 config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
-profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
+Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1 # modules/shell/pwsh
 
 # Dotfiles de shells específicas
 .bashrc|bash: home:.bashrc                            # modules/shell/bash
+.bash_profile|bash: home:.bash_profile               # modules/shell/bash
 .profile|bash: home:.profile                          # modules/shell/bash
 .zshrc|zsh: home:.zshrc                               # modules/shell/zsh
+.zprofile|zsh: home:.zprofile                         # modules/shell/zsh
 .kshrc|ksh: home:.kshrc                               # modules/shell/ksh
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
-.elvishrc|elvish: home:.elvishrc                      # modules/shell/elvish
+rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
+config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
