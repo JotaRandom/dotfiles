@@ -47,4 +47,23 @@ fi
 # ------------------------------------------------------------------
 # 5. Iniciar XFCE
 # ------------------------------------------------------------------
+#!/bin/sh
+# .xinitrc para XFCE - Optimizado para ThinkPad L420 (1366x768)
+
+# ===== OPTIMIZACIONES PANTALLA PEQUEÑA Y PERFORMANCE =====
+(sleep 3 &&
+  # Deshabilitar compositing (GPU limitada)
+  xfconf-query -c xfwm4 -p /general/use_compositing -s false
+  
+  # Theme sin sombras
+  xfconf-query -c xfwm4 -p /general/theme -s "Default"
+  
+  # Panel compacto 24px
+  xfconf-query -c xfce4-panel -p /panels/panel-1/size -s 24
+  
+  # Fuentes pequeñas
+  xfconf-query -c xsettings -p /Gtk/FontName -s "Sans 9"
+  xfconf-query -c xfwm4 -p /general/title_font -s "Sans Bold 9"
+) &
+
 exec startxfce4

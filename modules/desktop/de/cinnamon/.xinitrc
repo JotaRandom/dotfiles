@@ -56,5 +56,29 @@ fi
 # ------------------------------------------------------------------
 # 5. Iniciar Cinnamon
 # ------------------------------------------------------------------
-# Usa 'exec' para reemplazar el proceso xinit
+# Usa 'exec' para reemplazar el proceso x
+# .xinitrc para Cinnamon - Optimizado para ThinkPad L420 (1366x768)
+
+# ===== OPTIMIZACIONES PANTALLA PEQUEÑA (1366x768) =====
+# Esperar a que Cinnamon esté listo
+(sleep 3 &&
+  # Deshabilitar todos los efectos visuales (GPU limitada)
+  gsettings set org.cinnamon desktop-effects false
+  gsettings set org.cinnamon.desktop.interface enable-animations false
+  
+  # Panel más compacto (24px vs 32px default)
+  gsettings set org.cinnamon panels-height "['1:24']"
+  
+  # Scaling factor 1 (sin escalado)
+  gsettings set org.cinnamon.desktop.interface scaling-factor uint32 1
+  
+  # Fuentes más pequeñas (9pt)
+  gsettings set org.cinnamon.desktop.interface font-name 'Sans 9'
+  gsettings set org.cinnamon.desktop.wm.preferences titlebar-font 'Sans Bold 9'
+  gsettings set org.cinnamon.desktop.interface monospace-font-name 'Monospace 9'
+  
+  # Deshabilitar shadow en ventanas (performance)
+  gsettings set org.cinnamon.desktop.wm.preferences theme 'Adwaita'
+) &
+
 exec cinnamon-session

@@ -1,6 +1,5 @@
 #!/bin/sh
-# ~/.xinitrc - Inicio para LXQt vía startx
-# Optimizado específicamente para LXQt Desktop Environment
+# .xinitrc para LXQt - Optimizado para ThinkPad L420 (1366x768)
 
 # ------------------------------------------------------------------
 # 1. Cargar configuraciones del sistema
@@ -17,27 +16,36 @@ xsetroot -solid "#2d2d2d"
 xset r rate 300 50
 
 # ------------------------------------------------------------------
-# 3. Configuración de locale y teclado
+# 3. Locale y teclado
 # ------------------------------------------------------------------
 export LANG=es_CL.UTF-8
 export LC_ALL=es_CL.UTF-8
 export LANGUAGE=es_CL.UTF-8
 setxkbmap latam
 
-# ------------------------------------------------------------------
-# 4. Servicios específicos para LXQt
-# ------------------------------------------------------------------
-# Polkit para LXQt
-if command -v lxqt-policykit-agent >/dev/null 2>&1; then
-    lxqt-policykit-agent &
-fi
+# ===== OPTIMIZACIONES PANTALLA PEQUEÑA (1366x768) =====
+# LXQt es ligero por defecto, pero se puede optimizar más
 
-# NetworkManager applet
-if command -v nm-applet >/dev/null 2>&1; then
-    nm-applet &
-fi
+# Variables Qt
+export QT_SCALE_FACTOR=1
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
 
-# ------------------------------------------------------------------
-# 5. Iniciar LXQt
-# ------------------------------------------------------------------
+(sleep 3 &&
+  # Compositor Compton/Picom OFF (performance)
+  killall picom 2>/dev/null
+  killall compton 2>/dev/null
+  
+  # Panel compacto 24px (via config)
+  # LXQt panel height se configura en ~/.config/lxqt/panel.conf
+  if [ -f ~/.config/lxqt/panel.conf ]; then
+    sed -i 's/^panelSize=.*/panelSize=24/' ~/.config/lxqt/panel.conf
+  fi
+  
+  # Fuentes pequeñas en Qt
+  if [ -f ~/.config/fontconfig/fonts.conf ]; then
+    # Ya está configurado en modules/system/fontconfig
+    :
+  fi
+) &
+
 exec startlxqt

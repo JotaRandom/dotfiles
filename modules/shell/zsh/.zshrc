@@ -1,54 +1,85 @@
-# Configuración de Zsh — opciones principales y alias
-# Este archivo configura prompt, color, historial y completado.
-# Usa colores type "Tango" y respeta variables de entorno globales (*.Xresources).
+# .zshrc - Optimizado para ThinkPad L420 (1366x768)
 
-## Mensaje de bienvenida (útil en sesiones interactivas)
-printf "\033[38;2;211;215;207mUtilizando zsh en %s\033[0m\n" $HOST
+# ===== PROMPT COMPACTO (1 línea para pantalla pequeña) =====
+# Usuario@host:directorio$
+PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
 
-# Prompt: username@host:pwd $
-# - %n: usuario, %m: hostname corto, %~: directorio relativo
-# - %F{color}: set foreground color (color can be color name or number)
-autoload -U colors && colors
-PS1='%F{white}%n@%m%f:%F{green}%~%f %B%F{cyan}$%f%b '
-
-## Color en herramientas estándar
-if [ -x /usr/bin/dircolors ]; then
-    eval "$(dircolors -b)"    # carga esquema de colores para terminal
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-fi
-
-# Alias comunes para mejorar la productividad
-alias ll='ls -l --human-readable'
-alias la='ls -la --human-readable'
-alias nano='nano --rcfile ~/.nanorc'
-alias vi='nano'
-alias less='less -R'
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
-
-## Historial: tamaño y opciones para mantener historial sano y completo
+# ===== HISTORY OPTIMIZADO =====
+HISTSIZE=5000
+SAVEHIST=5000
 HISTFILE=~/.zsh_history
-HISTSIZE=8192
-SAVEHIST=8192
-setopt APPEND_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-setopt HIST_SAVE_BY_COPY
-setopt EXTENDED_HISTORY
+setopt SHARE_HISTORY
 
-## Autocompletado y comportamiento de coincidencias (case-insensitive)
+# ===== OPCIONES =====
+# No beep
+unsetopt beep
+
+# Auto cd
+setopt auto_cd
+
+# Glob extendido
+setopt extended_glob
+
+# ===== COMPLETION =====
 autoload -Uz compinit
 compinit
+
+# Completion cache (más rápido)
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# Completion con colores
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Completion case-insensitive
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
-# Environment variables
-export EDITOR=nano
-export VISUAL=nano
-export TERM=xterm-256color
-export LESSCHARSET=utf-8
+# ===== ALIASES =====
+# Navegación
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 
-# Cargar alias y funciones definidos por usuario si existen
-[ -f ~/.zsh_aliases ] && . ~/.zsh_aliases
-[ -f ~/.zsh_functions ] && . ~/.zsh_functions
+# ls
+alias ls='ls --color=auto -h'
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
+
+# grep
+alias grep='grep --color=auto'
+
+# Seguridad
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# ===== FUNCIONES =====
+# Crear y entrar directorio
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+# ===== FZF INTEGRATION =====
+if [ -f ~/.config/fzf/fzf.bash ]; then
+  source ~/.config/fzf/fzf.bash
+fi
+
+# ===== EXPORTS =====
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
+
+# ===== KEY BINDINGS =====
+# Emacs-style keybindings
+bindkey -e
+
+# History search
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search

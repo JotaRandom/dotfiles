@@ -1,10 +1,9 @@
 #!/bin/sh
-# ~/.xinitrc - Inicio GENÉRICO para window managers standalone
-# Usar para: i3, awesome, bspwm, dwm, openbox, fluxbox, etc.
-# Este archivo debe editarse para especificar qué WM iniciar
+# .xinitrc para WM minimalistas (TWM, IceWM, FVWM, etc.)
+# Optimizado para ThinkPad L420 (1366x768)
 
 # ------------------------------------------------------------------
-# 1. Cargar configuraciones del sistema
+# 1. Cargar recursos y configuraciones del sistema
 # ------------------------------------------------------------------
 [ -f /etc/X11/xinit/xinitrc ] && . /etc/X11/xinit/xinitrc
 [ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
@@ -13,67 +12,71 @@
 # ------------------------------------------------------------------
 # 2. Configuraciones básicas de X
 # ------------------------------------------------------------------
-# Desactivar pitido
+# Desactivar beep
 xset -b
 
-# Fondo sólido (evita fondo negro)
+# Fondo de pantalla sólido (liviano)
 xsetroot -solid "#2d2d2d"
 
-# Repetición de teclado
+# Tasa de repetición del teclado
 xset r rate 300 50
 
 # ------------------------------------------------------------------
-# 3. Configuración de locale y teclado  
+# 3. Locale y teclado
 # ------------------------------------------------------------------
 export LANG=es_CL.UTF-8
 export LC_ALL=es_CL.UTF-8
 export LANGUAGE=es_CL.UTF-8
-
-# Teclado latinoamericano
 setxkbmap latam
 
 # ------------------------------------------------------------------
-# 4. Servicios básicos para window managers
+# 4. Servicios mínimos (solo lo esencial para WM básico)
 # ------------------------------------------------------------------
-# Polkit (autenticación gráfica)
+# Polkit (autenticación gráfica básica)
 if [ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
     /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 fi
 
-# NetworkManager applet (gestión de redes)
+# NetworkManager applet (si está disponible)
 if command -v nm-applet >/dev/null 2>&1; then
     nm-applet &
 fi
 
-# Compositor (opcional - descomentar si se usa)
-# if command -v picom >/dev/null 2>&1; then
-#     picom -b &
-# fi
-
-# Wallpaper (opcional - descomentar y ajustar)
-# if command -v feh >/dev/null 2>&1; then
-#     feh --bg-scale ~/Pictures/wallpaper.jpg &
+# ------------------------------------------------------------------
+# 5. Panel ligero (opcional - lxpanel o tint2)
+# ------------------------------------------------------------------
+# Descomentar si quieres panel en WM minimalista
+# if command -v tint2 >/dev/null 2>&1; then
+#     tint2 &
+# elif command -v lxpanel >/dev/null 2>&1; then
+#     lxpanel --profile default &
 # fi
 
 # ------------------------------------------------------------------
-# 5. Iniciar Window Manager
+# 6. Optimizaciones específicas para 1366x768
 # ------------------------------------------------------------------
-# Descomentar/editar el WM que deseas usar:
+# Sin compositor (WM minimalistas no lo necesitan)
+# Fuentes configuradas en ~/.config/fontconfig/fonts.conf
 
-# i3 window manager
-exec i3
+# ------------------------------------------------------------------
+# 7. Iniciar Window Manager
+# ------------------------------------------------------------------
+# Descomentar el WM que uses:
 
-# Awesome window manager
-# exec awesome
+# TWM (muy básico, ideal para L420)
+exec twm
 
-# bspwm
-# exec bspwm
+# IceWM (ligero y funcional)
+# exec icewm-session
 
-# dwm
-# exec dwm
+# FVWM (altamente configurable)
+# exec fvwm
 
-# Openbox
+# i3 (tiling WM)
+# exec i3
+
+# Openbox (ligero y moderno)
 # exec openbox-session
 
-# Fluxbox
+# Fluxbox (ligero, estilo blackbox)
 # exec startfluxbox
