@@ -1,0 +1,52 @@
+# ripgrep configuration
+# ~/.config/ripgrep/ripgreprc or ~/.ripgreprc
+
+# Smart case (case insensitive si todo minúsculas)
+--smart-case
+
+# Buscar en archivos ocultos (excepto .git)
+--hidden
+
+# Respetar .gitignore
+--no-ignore-vcs
+
+# Seguir symlinks
+--follow
+
+# Mostrar números de línea
+--line-number
+
+# Colores personalizados
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:red
+--colors=match:style:bold
+
+# Tipo de archivos a ignorar globalmente
+--glob=!.git/*
+--glob=!node_modules/*
+--glob=!.venv/*
+--glob=!venv/*
+--glob=!__pycache__/*
+--glob=!*.pyc
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!.cache/*
+--glob=!build/*
+--glob=!dist/*
+--glob=!target/*
+--glob=!.next/*
+
+# Número máximo de columnas para preview
+--max-columns=150
+
+# Mostrar contexto (líneas antes y después)
+# --context=2
+
+# Usar PCRE2 regex engine (más potente)
+--pcre2
+
+# Sortear archivos por path
+--sort=path

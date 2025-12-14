@@ -1,0 +1,35 @@
+# bat configuration - A cat clone with syntax highlighting
+# ~/.config/bat/config
+
+# Theme (Monokai Extended o TwoDark son populares)
+--theme="Monokai Extended"
+
+# Mostrar números de línea y cambios de git
+--style="numbers,changes,header,grid"
+
+# No paginar por defecto (usar menos memoria)
+--paging=never
+
+# Mapeo de extensiones personalizadas
+--map-syntax "*.conf:INI"
+--map-syntax ".ignore:Git Ignore"
+--map-syntax "*.ino:C++"
+--map-syntax "Jenkinsfile:Groovy"
+
+# Mostrar caracteres no imprimibles
+--show-all
+
+# Usar cursiva en comentarios (requiere terminal compatible)
+--italic-text=always
+
+# Tabs como 4 espacios
+--tabs=4
+
+# Colores para diferentes elementos
+# (los temas manejan esto, pero se puede personalizar)
+
+# Wrap automático de líneas largas
+--wrap=auto
+
+# Lenguaje por defecto si no se detecta
+# --language=txt
