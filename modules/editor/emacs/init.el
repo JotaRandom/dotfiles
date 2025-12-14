@@ -55,11 +55,34 @@
 (setq split-height-threshold nil)
 (setq split-width-threshold 160)
 
-;; ===== KEYBINDINGS =====
-;; Más como editores modernos
-(global-set-key (kbd "C-s") 'save-buffer)
-(global-set-key (kbd "C-f") 'isearch-forward)
+;; ===== KEYBINDINGS ESTILO NANO =====
+;; Ctrl+O = Guardar (WriteOut como nano)
+(global-set-key (kbd "C-o") 'save-buffer)
+
+;; Ctrl+X ya está usado en emacs, usar Ctrl+Q para salir
+(global-set-key (kbd "C-q") 'save-buffers-kill-terminal)
+
+;; Ctrl+K = Cortar línea (Kut - ya es default en emacs)
+;; (kill-line es el default de Ctrl+K en emacs)
+
+;; Ctrl+U = Deshacer en nano, pero en emacs es universal-argument
+;; Usar Ctrl+Y para pegar (yank - default emacs)
+(global-set-key (kbd "C-y") 'yank)
+
+;; Ctrl+W = Buscar (Where is como nano)
+(global-set-key (kbd "C-w") 'isearch-forward)
+
+;; Ctrl+\ = Buscar y reemplazar
+(global-set-key (kbd "C-\\") 'query-replace)
+
+;; Ctrl+G = Ayuda (Get help)
+(global-set-key (kbd "C-g") 'help-command)
+
+;; Ctrl+Z = Deshacer (más común que Ctrl+U)
 (global-set-key (kbd "C-z") 'undo)
+
+;; Ctrl+S = Guardar (adicional, más común)
+(global-set-key (kbd "C-s") 'save-buffer)
 
 ;; ===== MODELINE COMPACTO =====
 (setq-default mode-line-format

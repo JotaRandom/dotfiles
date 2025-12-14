@@ -1,5 +1,30 @@
-﻿#!/bin/tcsh
-# Configuración de C shell (tcsh)  ejemplo
-setenv EDITOR vi
-alias ll 'ls -l'
+﻿# ~/.tcshrc - TC Shell optimizado para ThinkPad L420 (1366x768)
 
+# ===== PROMPT COMPACTO =====
+set prompt = "%n@%m:%~%# "
+
+# ===== HISTORY =====
+set history = 5000
+set savehist = (5000 merge)
+set histfile = ~/.tcsh_history
+
+# ===== ALIASES =====
+alias .. 'cd ..'
+alias ... 'cd ../..'
+alias ls 'ls --color=auto -h'
+alias ll 'ls -la'
+alias la 'ls -A'
+alias grep 'grep --color=auto'
+
+# ===== EDITOR =====
+setenv EDITOR nvim
+setenv VISUAL nvim
+setenv PAGER less
+
+# ===== COMPLETIONS =====
+set autolist
+set complete = enhance
+set correct = cmd
+
+# ===== AUTO CD =====
+set autocd

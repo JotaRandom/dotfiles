@@ -1,3 +1,48 @@
+# Helix Editor Config - Optimizado para ThinkPad L420 (1366x768)
+# ~/.config/helix/config.toml
+
+theme = "monokai"
+
 [editor]
-tab_size = 2
-theme = "gruvbox"
+# Números de línea relativos
+line-number = "relative"
+cursorline = true
+mouse = true
+auto-save = true
+
+# Scroll optimizado
+scrolloff = 5
+scroll-lines = 1
+
+# No mostrar whitespace (ahorra espacio visual)
+whitespace.render = "none"
+
+# Cursor shape
+cursor-shape.insert = "bar"
+cursor-shape.normal = "block"
+cursor-shape.select = "underline"
+
+[editor.statusline]
+# Status line compacto para pantalla pequeña
+left = ["mode", "spinner", "file-name"]
+center = []
+right = ["diagnostics", "selections", "position", "file-encoding"]
+
+[editor.lsp]
+# LSP habilitado pero sin inline diagnostics (ahorra espacio vertical)
+display-messages = true
+display-inlay-hints = false
+
+[editor.file-picker]
+# Hidden files
+hidden = false
+
+[keys.normal]
+# Keybindings adicionales útiles
+# Guardar con Ctrl+s (como nano Ctrl+O)
+C-s = ":write"
+C-q = ":quit"
+
+[keys.insert]
+# Escape fácil
+"C-c" = "normal_mode"

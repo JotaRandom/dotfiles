@@ -83,27 +83,43 @@ set background=dark
 " Esquema de colores (si está disponible)
 silent! colorscheme monokai
 
-" ===== KEYMAPS =====
-" Leader
-let mapleader = " "
+" ===== KEYMAPS ESTILO NANO =====
+" Ctrl+O = Guardar (WriteOut como nano)
+nnoremap <C-o> :w<CR>
+inoremap <C-o> <Esc>:w<CR>a
 
-" Guardar
-nnoremap <leader>w :w<CR>
+" Ctrl+X = Salir (eXit como nano)
+nnoremap <C-x> :q<CR>
+inoremap <C-x> <Esc>:q<CR>
 
-" Salir
-nnoremap <leader>q :q<CR>
+" Ctrl+K = Cortar línea (Kut como nano)
+nnoremap <C-k> dd
+inoremap <C-k> <Esc>ddi
 
-" Navegación entre splits
+" Ctrl+U = Pegar (Uncut como nano)
+nnoremap <C-u> p
+inoremap <C-u> <Esc>pa
+
+" Ctrl+W = Buscar (Where is como nano)
+nnoremap <C-w> /
+inoremap <C-w> <Esc>/
+
+" Ctrl+\ = Buscar y reemplazar (como nano)
+nnoremap <C-\> :%s/
+inoremap <C-\> <Esc>:%s/
+
+" Ctrl+G = Ayuda (Get help como nano)
+nnoremap <C-g> :help<CR>
+inoremap <C-g> <Esc>:help<CR>
+
+" Alt+U = Deshacer (Undo)
+nnoremap <M-u> u
+inoremap <M-u> <Esc>u
+
+" Navegación entre splits (mantener útiles)
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-" Redimensionar splits (útil para 1366x768)
-nnoremap <M-h> :vertical resize -2<CR>
-nnoremap <M-l> :vertical resize +2<CR>
-nnoremap <M-k> :resize +2<CR>
-nnoremap <M-j> :resize -2<CR>
 
 " Limpiar highlight
 nnoremap <leader>h :noh<CR>

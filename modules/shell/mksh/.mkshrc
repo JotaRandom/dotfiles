@@ -1,3 +1,25 @@
-# Configuración de ejemplo de MirBSD Korn Shell
-export EDITOR=vi
-alias ll='ls -l'
+# ~/.mkshrc - MirBSD Korn Shell optimizado para ThinkPad L420 (1366x768)
+
+# ===== PROMPT COMPACTO =====
+PS1='$(whoami)@$(hostname):${PWD}$ '
+
+# ===== HISTORY =====
+HISTSIZE=5000
+HISTFILE=~/.mksh_history
+
+# ===== ALIASES =====
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ls='ls --color=auto -h 2>/dev/null || ls -h'
+alias ll='ls -la'
+alias la='ls -A'
+alias grep='grep --color=auto 2>/dev/null || grep'
+
+# ===== EDITOR =====
+export EDITOR=nvim
+export VISUAL=nvim
+
+# ===== FUNCIONES =====
+function mkcd {
+    mkdir -p "$1" && cd "$1"
+}

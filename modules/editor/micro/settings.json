@@ -1,5 +1,32 @@
+# Micro Editor Settings - Optimizado para ThinkPad L420 (1366x768)
+# ~/.config/micro/settings.json
+
 {
-  "tabsize": 2,
-  "backup": false,
-  "wrap": true
+    "autoindent": true,
+    "autosave": 0,
+    "backup": true,
+    "colorscheme": "monokai",
+    "cursorline": true,
+    "diffgutter": true,
+    "ignorecase": true,
+    "keepautoindent": true,
+    "matchbrace": true,
+    "mkparents": true,
+    "mouse": true,
+    "savecursor": true,
+    "saveundo": true,
+    "scrollbar": false,
+    "scrollmargin": 3,
+    "scrollspeed": 2,
+    "smartpaste": true,
+    "softwrap": false,
+    "statusformatl": "$(filename) $(modified)$(readonly)",
+    "statusformatr": "$(line)/$(lines) $(col) $(opt:filetype)",
+    "statusline": true,
+    "sucmd": "sudo",
+    "syntax": true,
+    "tabmovement": true,
+    "tabsize": 4,
+    "tabstospaces": true,
+    "useprimary": true
 }

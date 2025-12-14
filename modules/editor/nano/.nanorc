@@ -1,0 +1,82 @@
+# .nanorc - Nano optimizado para ThinkPad L420 (1366x768)
+# Keybindings estilo nano clásico (Ctrl+O, Ctrl+X, etc.)
+
+# ===== OPTIMIZACIONES PANTALLA 1366x768 =====
+# Sin líneas de ayuda en la parte inferior (ganar 2 líneas)
+set nohelp
+
+# Números de línea en columna limitada
+set linenumbers
+
+# ===== COMPORTAMIENTO =====
+# Auto-indent
+set autoindent
+
+# Tabs como espacios
+set tabsize 4
+set tabstospaces
+
+# Smooth scrolling
+set smooth
+
+# Mouse habilitado
+set mouse
+
+# ===== FUNCIONALIDADES ÚTILES =====
+# Backup automático
+set backup
+set backupdir "~/.nano/backups"
+
+# Suspend con Ctrl+Z
+set suspend
+
+# Cortar línea completa con Ctrl+K
+set cutfromcursor
+
+# Wrap largo de líneas
+set softwrap
+
+# ===== BÚSQUEDA =====
+# Case insensitive por defecto
+set casesensitive
+
+# Expresiones regulares
+set regexp
+
+# ===== VISUAL =====
+# Mostrar cursor siempre
+set constantshow
+
+# ===== SYNTAX HIGHLIGHTING =====
+# Incluir definiciones de sintaxis del sistema
+include "/usr/share/nano/*.nanorc"
+
+# ===== KEYBINDINGS (estilo nano clásico) =====
+# Estos son los defaults de nano, pero los documento:
+# Ctrl+O = Guardar (WriteOut)
+# Ctrl+X = Salir (eXit)
+# Ctrl+R = Insertar archivo (Read)
+# Ctrl+W = Buscar (Where is)
+# Ctrl+\ = Buscar y reemplazar
+# Ctrl+K = Cortar línea (Kut)
+# Ctrl+U = Pegar (Uncut)
+# Ctrl+J = Justificar
+# Ctrl+T = Spell check (To spell)
+# Ctrl+C = Posición del cursor
+# Ctrl+G = Ayuda (Get help)
+# Alt+U  = Deshacer (Undo)
+# Alt+E  = Rehacer (Redo)
+
+# Bind adicionales útiles
+# Ctrl+S como alternativa para guardar (común en otros editores)
+bind ^S writeout main
+
+# ===== COLORES (tema oscuro compacto) =====
+set titlecolor brightwhite,blue
+set statuscolor brightwhite,green
+set errorcolor brightwhite,red
+set selectedcolor brightwhite,magenta
+set stripecolor ,yellow
+set numbercolor cyan
+set keycolor cyan
+set functioncolor green

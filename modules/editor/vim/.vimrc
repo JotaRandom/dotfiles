@@ -78,15 +78,37 @@ endif
 set background=dark
 silent! colorscheme desert
 
-" ===== KEYMAPS =====
-let mapleader = " "
-nnoremap <leader>w :w<CR>
-nnoremap <leader>q :q<CR>
+" ===== KEYMAPS ESTILO NANO =====
+" Ctrl+O = Guardar (WriteOut)
+nnoremap <C-o> :w<CR>
+inoremap <C-o> <Esc>:w<CR>a
+
+" Ctrl+X = Salir (eXit)
+nnoremap <C-x> :q<CR>
+inoremap <C-x> <Esc>:q<CR>
+
+" Ctrl+K = Cortar línea (Kut)
+nnoremap <C-k> dd
+inoremap <C-k> <Esc>ddi
+
+" Ctrl+U = Pegar (Uncut)
+nnoremap <C-u> p
+inoremap <C-u> <Esc>pa
+
+" Ctrl+W = Buscar (Where is)
+nnoremap <C-w> /
+inoremap <C-w> <Esc>/
+
+" Ctrl+\ = Buscar y reemplazar
+nnoremap <C-\> :%s/
+
+" Ctrl+G = Ayuda
+nnoremap <C-g> :help<CR>
+
+" Navegación splits
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <leader>h :noh<CR>
 
 " ===== STATUSLINE COMPACTO =====
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
