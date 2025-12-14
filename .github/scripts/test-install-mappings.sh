@@ -318,7 +318,17 @@ while IFS= read -r mapping_key; do
       fi
 
       if [ -n "$mod_dir" ]; then
-        src="$mod_dir/$cmap"
+        # BUGFIX: Si cmap empieza con el nombre del módulo, eliminarlo para evitar duplicación
+        # Ejemplo: cmap="cargo/config" module="cargo" -> debe buscar "config" en mod_dir
+        search_path="$cmap"
+        first_component="${cmap%%/*}"  # Obtener primer componente antes de /
+        
+        if [ "$first_component" = "$module_override" ]; then
+          # Eliminar el primer componente que coincide con el módulo
+          search_path="${cmap#*/}"  # Eliminar "cargo/" dejando solo "config"
+        fi
+        
+        src="$mod_dir/$search_path"
         if [ -f "$src" ]; then
           found_paths=("$src")
         else
@@ -352,9 +362,17 @@ while IFS= read -r mapping_key; do
   fi
 
   if [ ${#found_paths[@]} -eq 0 ]; then
-    # No existe un archivo fuente para este mapeo; advertir pero no fallar
-    echo "NOTA: el mapeo '$key' apunta a '$val' pero no se encontró archivo fuente en modules; omitiendo." >&2
-    continue
+    # No existe un archivo fuente para este mapeo
+    # Distinguir entre archivos template (.example) y archivos realmente faltantes
+    if echo "$key" | grep -q '\.example$'; then
+      # Es un archivo template, esto es informativo pero aceptable
+      echo "OK: archivo de plantilla/ejemplo encontrado (permitido): $key" >&2
+      continue
+    else
+      # Archivo realmente faltante - advertir pero no fallar
+      echo "NOTA: el mapeo '$key' apunta a '$val' pero no se encontró archivo fuente en modules; omitiendo." >&2
+      continue
+    fi
   fi
 
   for src in "${found_paths[@]}"; do

@@ -5,17 +5,38 @@ default_action: dotify
 #########################
 # modules/shell
 #########################
-# Prompt and shell-specific configs (modules/shell/*)
-starship.toml: xdg:starship/starship.toml            # modules/shell/starship
-config.fish|fish: xdg:fish/config.fish              # modules/shell/fish
+
+## FixMe: Fix the install mappings for the shell modules that actually use the xdg locations
+
+# Shell-specific configs (modules/shell/*)
+starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
+config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
+config.toml|nushell: xdg:nushell/config.toml         # modules/shell/nushell
+profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
+
+# Dotfiles de shells específicas
+.bashrc|bash: home:.bashrc                            # modules/shell/bash
+.profile|bash: home:.profile                          # modules/shell/bash
+.zshrc|zsh: home:.zshrc                               # modules/shell/zsh
+.kshrc|ksh: home:.kshrc                               # modules/shell/ksh
+.mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
+.tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
+.elvishrc|elvish: home:.elvishrc                      # modules/shell/elvish
+.xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
+
+# Shell common files
+.inputrc|common: home:.inputrc                        # modules/shell/common (readline)
+.lesshst|common: xdg_state:less/lesshst              # modules/shell/common (less history)
+.lesskey|common: home:.lesskey                        # modules/shell/common (less key bindings)
+.dmrc|common: home:.dmrc                              # modules/shell/common (display manager)
 
 #########################
 # modules/cli-tools
 #########################
 # TMux and XMMS configs (modules/cli-tools/*)
-.tmux.conf: xdg:tmux/tmux.conf                       # modules/cli-tools/tmux
-.tmuxrc: xdg:tmux/tmux.conf                         # modules/cli-tools/tmux (alias for .tmux.conf)
-.xmms2rc: home:.xmms2rc                              # modules/cli-tools/xmms
+.tmux.conf|tmux: xdg:tmux/tmux.conf                  # modules/cli-tools/tmux
+.tmuxrc|tmux: xdg:tmux/tmux.conf                     # modules/cli-tools/tmux (alias for .tmux.conf)
+.xmms2rc|xmms: home:.xmms2rc                         # modules/cli-tools/xmms
 
 #########################
 # modules/browsers
@@ -71,28 +92,38 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 #########################
 # modules/pacman
 #########################
-makepkg.conf: xdg:pacman/makepkg.conf                # modules/pacman
-fortran.conf: xdg:pacman/fortran.conf                # modules/pacman
-rust.conf: xdg:pacman/rust.conf                      # modules/pacman
+makepkg.conf|pacman: xdg:pacman/makepkg.conf         # modules/pacman
+fortran.conf|pacman: xdg:pacman/fortran.conf         # modules/pacman
+rust.conf|pacman: xdg:pacman/rust.conf               # modules/pacman
 
 #########################
 # modules/dev-tools
 #########################
-# Git, SSH, cargo, npm related (modules/dev-tools/*)
-.gitconfig: xdg:git/config                            # modules/dev-tools/git
-.gitignore: xdg:git/ignore                           # modules/dev-tools/git
-.gitattributes: xdg:git/attributes                   # modules/dev-tools/git
-.git-credentials: xdg:git/credentials                # modules/dev-tools/git
-.gitk: xdg:git/gitk                                   # modules/dev-tools/git
-ssh/config.example: home:.ssh/config.example         # modules/dev-tools/ssh
+# Development tools configs (modules/dev-tools/*)
+
+# Git configuration
+.gitconfig|git: xdg:git/config                       # modules/dev-tools/git
+.gitignore|git: xdg:git/ignore                       # modules/dev-tools/git (global gitignore)
+.gitattributes|git: xdg:git/attributes               # modules/dev-tools/git
+.git-credentials|git: xdg:git/credentials            # modules/dev-tools/git (encrypted/template)
+.gitk|git: xdg:git/gitk                              # modules/dev-tools/git (gitk config)
+
+# Cargo (Rust package manager)
+cargo/config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
+
+# Gemini AI settings
+.gemini/settings.json|gemini: home:.gemini/settings.json  # modules/dev-tools/gemini
+.gemini.example: ignore                               # modules/dev-tools/gemini (example file)
+
+# Lazygit
+lazygit/config.yml|lazygit: xdg:lazygit/config.yml   # modules/dev-tools/lazygit
+# SSH
+ssh/config.example: home:.ssh/config.example         # modules/dev-tools/ssh (template)
 ssh/config: ignore                                   # modules/dev-tools/ssh (sensitive)
-lazygit/config.yml: xdg:lazygit/config.yml           # modules/dev-tools/lazygit
-cargo/config: xdg:cargo/config                       # modules/dev-tools/cargo
-.npmrc.example: home:.npmrc.example                  # modules/dev-tools/npm
+
+# NPM
+.npmrc.example: home:.npmrc.example                  # modules/dev-tools/npm (template)
 .npmrc: ignore                                       # modules/dev-tools/npm (sensitive)
-.gemini.example: xdg:gemini/.gemini.example          # modules/dev-tools/gemini (template - XDG location)
-.gemini: ignore                                      # modules/dev-tools/gemini (sensitive - contains API key)
-.gemini/settings.json: xdg:gemini/settings.json      # modules/dev-tools/gemini/.gemini/settings.json (Gemini Code Assist supports XDG)
 
 #########################
 # modules/editor
@@ -102,7 +133,7 @@ config.toml|helix: xdg:helix/config.toml             # modules/editor/helix
 config.toml|nushell: xdg:nushell/config.toml         # modules/editor/nushell (note: nushell is a shell, not editor)
 gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml # modules/editor/gedit
 init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
-init.vim: xdg:nvim/init.vim                          # modules/editor/nvim
+init.vim|nvim: xdg:nvim/init.vim                     # modules/editor/nvim
 kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
 kateconfig|kate: xdg:kate/kateconfig                 # modules/editor/kate
 settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
@@ -146,32 +177,6 @@ etc/X11/40-libinput.conf: ignore                       # System-level config (re
 etc/X11/70-wacom.conf: ignore                          # System-level config (requires root)
 usr/local/bin/*: ignore                                # System-level scripts (requires root)
 
-#########################
-# Dotfiles (home defaults)
-#########################
-# General user files; source canonical locations referenced in comments
-.bashrc: home:.bashrc                                 # modules/shell/bash/.bashrc
-.dmrc: home:.dmrc                                    # modules/shell/common/.dmrc
-.elvishrc: xdg:elvish/init.el                        # modules/shell/elvish
-.inputrc: xdg:readline/inputrc                       # modules/shell/common/.inputrc
-.kshrc: home:.kshrc                                  # modules/shell/ksh/.kshrc
-.latexmkrc: xdg:latexmk/latexmkrc                    # modules/editor/latex/.latexmkrc
-.lesshst: xdg_state:less/lesshst                     # modules/shell/common/.lesshst
-.lesskey: xdg:less/lesskey                            # modules/shell/common/.lesskey
-.mkshrc: home:.mkshrc                                # modules/shell/mksh/.mkshrc
-nanorc: xdg:nano/nanorc                              # modules/editor/nano/nanorc (canonical)
-.profile: home:.profile                              # modules/shell/bash/.profile
-.tcshrc: home:.tcshrc                                # modules/shell/tcsh/.tcshrc
-.twmrc: home:.twmrc                                  # modules/desktop/wm/twm/.twmrc
-.vimrc: xdg:vim/vimrc                                # modules/editor/vim/.vimrc
-.xonshrc: xdg:xonsh/rc.xsh                           # modules/shell/xonsh/.xonshrc
-.xinitrc: ignore                                     # modules/desktop/wm/x11/.xinitrc (manual setup - varies by WM/DE)
-.xserverrc: home:.xserverrc                          # modules/desktop/wm/x11/.xserverrc
-.Xmodmap: xdg:X11/Xmodmap                            # modules/desktop/wm/x11/.Xmodmap
-.Xresources: home:.Xresources                        # modules/desktop/wm/x11/.Xresources
-.zshrc: xdg:zsh/.zshrc                               # modules/shell/zsh/.zshrc
-
-#########################
 # Session / system (X11-specific)
 #########################
 .xsession: home:.xsession                            # session/X11
