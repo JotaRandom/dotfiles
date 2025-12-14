@@ -8,20 +8,21 @@ default_action: dotify
 
 ## FixMe: Fix the install mappings for the shell modules that actually use the xdg locations
 
-# Shell configurations
-.bashrc|bash: home:.bashrc                            # modules/shell/bash
-.bash_profile|bash: home:.bash_profile               # modules/shell/bash
-.zshrc|zsh: home:.zshrc                               # modules/shell/zsh
-.zprofile|zsh: home:.zprofile                         # modules/shell/zsh
+# Shell-specific configs (modules/shell/*)
+starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
 config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
-starship.toml|starship: xdg:starship.toml            # modules/shell/starship
+config.toml|nushell: xdg:nushell/config.toml         # modules/shell/nushell
+profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
+
+# Dotfiles de shells específicas
+.bashrc|bash: home:.bashrc                            # modules/shell/bash
+.profile|bash: home:.profile                          # modules/shell/bash
+.zshrc|zsh: home:.zshrc                               # modules/shell/zsh
 .kshrc|ksh: home:.kshrc                               # modules/shell/ksh
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
-rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
+.elvishrc|elvish: home:.elvishrc                      # modules/shell/elvish
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
-Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1 # modules/shell/pwsh
-config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
@@ -32,11 +33,10 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 #########################
 # modules/cli-tools
 #########################
-# TMux and XMMS configs
-.tmux.conf|tmux: home:.tmux.conf                     # modules/cli-tools/tmux
+# TMux and XMMS configs (modules/cli-tools/*)
+.tmux.conf|tmux: xdg:tmux/tmux.conf                  # modules/cli-tools/tmux
+.tmuxrc|tmux: xdg:tmux/tmux.conf                     # modules/cli-tools/tmux (alias for .tmux.conf)
 .xmms2rc|xmms: home:.xmms2rc                         # modules/cli-tools/xmms
-
-# Htop
 htoprc|htop: xdg:htop/htoprc                         # modules/cli-tools/htop (Windows Task Manager style)
 
 # Modern CLI tools
@@ -57,27 +57,49 @@ userChrome.css|firefox: ignore                        # modules/browsers/firefox
 user.js|firefox: ignore                               # modules/browsers/firefox (manual/profile - copy to Firefox profile directory)
 
 #########################
-# modules/desktop (DE & WM)
+# modules/desktop/de & wm
 #########################
-# Nota: Solo habilitar el .xinitrc del DE/WM que uses, dejar los demás en ignore
+# Desktop environments - cada uno con su xinitrc completo y optimizado
+# Mapear según el DE que uses (comentar/descomentar según necesidad)
 
-# Cinnamon Desktop (optimizado)
-.xinitrc|cinnamon: home:.xinitrc                      # modules/desktop/de/cinnamon
+# === Cinnamon Desktop === (optimizado - polkit-gnome, csd-power, nm-applet)
+.xinitrc|cinnamon: home:.xinitrc                      # modules/desktop/de/cinnamon (usar para Cinnamon)
+.dmrc|cinnamon: ignore                                # modules/desktop/de/cinnamon (no usado)
 
-# XFCE Desktop (optimizado)
-.xinitrc|xfce: ignore                                 # modules/desktop/de/xfce (cambiar a home:.xinitrc si usas)
+# === XFCE Desktop === (optimizado - xfce-polkit, xfce4-power-manager)
+.xinitrc|xfce: ignore                                 # modules/desktop/de/xfce (descomentar si usas XFCE: home:.xinitrc)
+.dmrc|xfce: ignore                                    # modules/desktop/de/xfce (no usado)
 
-# GNOME Desktop (minimalista)
-.xinitrc|gnome: ignore                                # modules/desktop/de/gnome (cambiar a home:.xinitrc si usas)
+# === GNOME Desktop === (minimalista - GNOME maneja servicios internamente)
+.xinitrc|gnome: ignore                                # modules/desktop/de/gnome (descomentar si usas GNOME: home:.xinitrc)
+.dmrc|gnome: ignore                                   # modules/desktop/de/gnome (no usado)
 
-# KDE Plasma (minimalista)
-.xinitrc|kde: ignore                                  # modules/desktop/de/kde (cambiar a home:.xinitrc si usas)
+# === KDE Plasma === (minimalista - KDE maneja servicios internamente)
+.xinitrc|kde: ignore                                  # modules/desktop/de/kde (descomentar si usas KDE: home:.xinitrc)
+.dmrc|kde: ignore                                     # modules/desktop/de/kde (no usado)
 
-# LXQt Desktop (optimizado)
-.xinitrc|lxqt: ignore                                 # modules/desktop/de/lxqt (cambiar a home:.xinitrc si usas)
+# === LXQt Desktop === (optimizado - lxqt-policykit-agent, nm-applet)
+.xinitrc|lxqt: ignore                                 # modules/desktop/de/lxqt (descomentar si usas LXQt: home:.xinitrc)
+.dmrc|lxqt: ignore                                    # modules/desktop/de/lxqt (no usado)
 
-# Window Managers (genérico para i3, awesome, bspwm, etc.)
-.xinitrc|x11: ignore                                  # modules/desktop/wm/x11 (cambiar a home:.xinitrc si usas)
+# === Window Managers Standalone === (genérico para i3, awesome, bspwm, dwm, etc.)
+.xinitrc|x11: ignore                                  # modules/desktop/wm/x11 (descomentar si usas WM standalone: home:.xinitrc)
+.Xmodmap|x11: home:.Xmodmap                           # modules/desktop/wm/x11 (keyboard mappings)
+.Xresources|x11: home:.Xresources                     # modules/desktop/wm/x11 (X11 resources)
+.xserverrc|x11: home:.xserverrc                       # modules/desktop/wm/x11 (X server config)
+.xsession|x11: home:.xsession                         # modules/desktop/wm/x11 (session script)
+.xsessionrc|x11: home:.xsessionrc                     # modules/desktop/wm/x11 (session config)
+
+#########################
+# modules/desktop
+#########################
+# Desktop environment specific files (modules/desktop/*)
+# (X11/Xsession related dotfiles are listed under Dotfiles section)
+# de-settings.conf|de: xdg:de/settings.conf
+.xinitrc|de: ignore                                   # Desktop-specific .xinitrc (varies by DE)
+.dmrc|de: ignore                                      # Desktop-specific .dmrc (varies by DE)
+.xinitrc|wm: ignore                                   # Window manager .xinitrc (manual setup)
+.Xdefaults|wm: ignore                                 # X11 defaults (deprecated, use .Xresources)
 
 #########################
 # modules/pacman
@@ -89,8 +111,10 @@ rust.conf|pacman: xdg:pacman/rust.conf               # modules/pacman
 #########################
 # modules/dev-tools
 #########################
+# Development tools configs (modules/dev-tools/*)
+
 # Git configuration
-.gitconfig|git: xdg:git/config                      # modules/dev-tools/git
+.gitconfig|git: xdg:git/config                       # modules/dev-tools/git
 .gitignore|git: xdg:git/ignore                       # modules/dev-tools/git (global gitignore)
 .gitattributes|git: xdg:git/attributes               # modules/dev-tools/git
 .git-credentials|git: xdg:git/credentials            # modules/dev-tools/git (encrypted/template)
@@ -105,7 +129,6 @@ cargo/config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
 
 # Lazygit
 lazygit/config.yml|lazygit: xdg:lazygit/config.yml   # modules/dev-tools/lazygit
-
 # SSH
 ssh/config.example: home:.ssh/config.example         # modules/dev-tools/ssh (template)
 ssh/config: ignore                                   # modules/dev-tools/ssh (sensitive)
@@ -130,50 +153,21 @@ tlp.conf|power-management: ignore                    # modules/system/power-mana
 trackpoint.sh|thinkpad: ignore                       # modules/system/thinkpad (manual review - device specific)
 trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (manual review - systemd service)
 
-# System-level configs (all require root, copy manually)
-etc/default/console-setup: ignore
-etc/default/grub: ignore
-etc/modprobe.d/10-audio.conf: ignore
-etc/modprobe.d/10-disable-pcspkr.conf: ignore
-etc/modprobe.d/20-power-save.conf: ignore
-etc/modprobe.d/30-thinkpad.conf: ignore
-etc/profile.d/system-info.sh: ignore
-etc/security/limits.d/99-resources.conf: ignore
-etc/sysctl.d/99-filesystem.conf: ignore
-etc/sysctl.d/99-kernel-hardening.conf: ignore
-etc/sysctl.d/99-network-security.conf: ignore
-etc/sysctl.d/99-reisub.conf: ignore
-etc/sysctl.d/99-swap.conf: ignore
-etc/thinkfan.conf: ignore
-etc/udev/rules.d/40-security-devices.rules: ignore
-etc/udev/rules.d/50-usb_power_save.rules: ignore
-etc/udev/rules.d/70-wifi-powersave.rules: ignore
-etc/udev/rules.d/80-bluetooth.rules: ignore
-etc/X11/00-keyboard.conf: ignore
-etc/X11/10-keyboard.conf: ignore
-etc/X11/20-intel.conf: ignore
-etc/X11/40-libinput.conf: ignore
-etc/X11/70-wacom.conf: ignore
-usr/local/bin/*: ignore
-
 #########################
 # modules/editor
 #########################
 # Editor configurations (modules/editor/*)
 config.toml|helix: xdg:helix/config.toml             # modules/editor/helix
+config.toml|nushell: xdg:nushell/config.toml         # modules/editor/nushell (note: nushell is a shell, not editor)
+gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml # modules/editor/gedit
 init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
 init.vim|nvim: xdg:nvim/init.vim                     # modules/editor/nvim
 kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
-katerc|kate: xdg:kate/katerc                         # modules/editor/kate
+kateconfig|kate: xdg:kate/kateconfig                 # modules/editor/kate
 settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
 settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
-.vimrc|vim: home:.vimrc                              # modules/editor/vim
-.nanorc|nano: home:.nanorc                           # modules/editor/nano
-
-# Gedit y Xed (usan gsettings, script para aplicar)
-gedit-settings.sh|gedit: ignore                      # modules/editor/gedit (aplicar con bash)
-xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
+config.json|micro: xdg:micro/config.json             # modules/editor/micro
 
 # Sublime Text
 Preferences.sublime-settings|sublime: xdg:sublime-text/Packages/User/Preferences.sublime-settings
@@ -188,15 +182,55 @@ alacritty.yml|alacritty: xdg:alacritty/alacritty.yml  # modules/term/alacritty
 kitty.conf|kitty: xdg:kitty/kitty.conf               # modules/term/kitty
 
 #########################
-# Misc (deprecated/runtime)
+# modules/system
 #########################
-.xsession-errors: ignore                             # runtime file, should not be symlinked
-.Xdefaults: ignore                                   # deprecated, use .Xresources instead
-thinkfan.conf: ignore                                # hardware config (requires root)
+# System-level configs, may require manual linking with sudo (all under etc/ should be ignored)
+etc/default/console-setup: ignore                      # Symlink manually: sudo ln -s <repo_path> /etc/default/console-setup
+etc/default/grub: ignore                               # System-level config (requires root)
+etc/modprobe.d/10-audio.conf: ignore                   # System-level config (requires root)
+etc/modprobe.d/10-disable-pcspkr.conf: ignore          # System-level config (requires root)
+etc/modprobe.d/20-power-save.conf: ignore              # System-level config (requires root)
+etc/modprobe.d/30-thinkpad.conf: ignore                # System-level config (requires root)
+etc/profile.d/system-info.sh: ignore                   # System-level config (requires root)
+etc/security/limits.d/99-resources.conf: ignore        # System-level config (requires root)
+etc/sysctl.d/99-filesystem.conf: ignore                # System-level config (requires root)
+etc/sysctl.d/99-kernel-hardening.conf: ignore          # System-level config (requires root)
+etc/sysctl.d/99-network-security.conf: ignore          # System-level config (requires root)
+etc/sysctl.d/99-reisub.conf: ignore                    # System-level config (requires root)
+etc/sysctl.d/99-swap.conf: ignore                      # System-level config (requires root)
+etc/thinkfan.conf: ignore                              # System-level config (requires root)
+etc/udev/rules.d/40-security-devices.rules: ignore      # System-level config (requires root)
+etc/udev/rules.d/50-usb_power_save.rules: ignore       # System-level config (requires root)
+etc/udev/rules.d/70-wifi-powersave.rules: ignore       # System-level config (requires root)
+etc/udev/rules.d/80-bluetooth.rules: ignore           # System-level config (requires root)
+etc/X11/00-keyboard.conf: ignore                       # System-level config (requires root)
+etc/X11/10-keyboard.conf: ignore                       # System-level config (requires root)
+etc/X11/20-intel.conf: ignore                          # System-level config (requires root)
+etc/X11/40-libinput.conf: ignore                       # System-level config (requires root)
+etc/X11/70-wacom.conf: ignore                          # System-level config (requires root)
+usr/local/bin/*: ignore                                # System-level scripts (requires root)
+
+# Session / system (X11-specific)
+#########################
+.xsession|x11: home:.xsession                       # modules/desktop/wm/x11 (para TWM, IceWM, FVWM)
+.xsessionrc|x11: home:.xsessionrc                    # modules/desktop/wm/x11 (configuración temprana)
+.Xsession|x11: home:.Xsession                        # modules/desktop/wm/x11 (variante de .xsession)
+.xsession-errors: ignore                             # session/X11 (runtime file, should not be symlinked)
+.Xdefaults: ignore                                   # session/X11 (deprecated, use .Xresources instead)
+
+#########################
+# Misc / other
+#########################
+profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1  # modules/shell/pwsh
+thinkfan.conf: ignore                                  # hardware/system configs (requires root, copy manually)
 
 #########################
 # Docs and templates (ignored)
 #########################
-README.md: ignore
-ATTRIBUTIONS.md: ignore
-config.example: ignore
+# Note: Wildcard patterns are not supported in YAML keys. Add specific file mappings as needed.
+README.md: ignore                                     # Documentation files
+ATTRIBUTIONS.md: ignore                               # Attribution documentation
+# Template/example files (copy manually and customize):
+config.example: ignore                                # Example config files (generic)
+# Note: Specific .example files are handled individually (e.g., ssh/config.example, .npmrc.example)
+
