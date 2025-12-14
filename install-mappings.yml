@@ -8,13 +8,7 @@ default_action: dotify
 
 ## FixMe: Fix the install mappings for the shell modules that actually use the xdg locations
 
-# Shell-specific configs (modules/shell/*)
-starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
-config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
-config.toml|nushell: xdg:nushell/config.toml         # modules/shell/nushell
-profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
-
-# Shells (Bash, Zsh, Fish, Ksh, Tcsh, etc.)
+# Shell configurations
 .bashrc|bash: home:.bashrc                            # modules/shell/bash
 .bash_profile|bash: home:.bash_profile               # modules/shell/bash
 .zshrc|zsh: home:.zshrc                               # modules/shell/zsh
@@ -28,8 +22,6 @@ rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
 Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1 # modules/shell/pwsh
 config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
-.elvishrc|elvish: home:.elvishrc                      # modules/shell/elvish
-.xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
@@ -40,10 +32,11 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 #########################
 # modules/cli-tools
 #########################
-# TMux and XMMS configs (modules/cli-tools/*)
-.tmux.conf|tmux: xdg:tmux/tmux.conf                  # modules/cli-tools/tmux
-.tmuxrc|tmux: xdg:tmux/tmux.conf                     # modules/cli-tools/tmux (alias for .tmux.conf)
+# TMux and XMMS configs (modules/cli-tools/*tmux
+.tmux.conf|tmux: home:.tmux.conf                     # modules/cli-tools/tmux
 .xmms2rc|xmms: home:.xmms2rc                         # modules/cli-tools/xmms
+
+# Htop
 htoprc|htop: xdg:htop/htoprc                         # modules/cli-tools/htop (Windows Task Manager style)
 
 # Modern CLI tools
@@ -51,7 +44,6 @@ fzf.bash|fzf: xdg:fzf/fzf.bash                       # modules/cli-tools/fzf (fu
 config|bat: xdg:bat/config                           # modules/cli-tools/bat (cat with syntax highlighting)
 ripgreprc|ripgrep: home:.ripgreprc                   # modules/cli-tools/ripgrep (better grep)
 ignore|fd: xdg:fd/ignore                             # modules/cli-tools/fd (better find)
-.tmux.conf|tmux: home:.tmux.conf                     # modules/cli-tools/tmux (terminal multiplexer)
 
 #########################
 # modules/browsers
