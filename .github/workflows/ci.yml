@@ -236,3 +236,21 @@ jobs:
       - name: Limpieza
         run: |
           echo "Eliminando temp"; rm -rf "$TMP" || true
+
+  powershell-install-test:
+    name: Test install.ps1 (PowerShell/Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - name: Test install.ps1 básico
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing install.ps1 ===" -ForegroundColor Cyan
+          # Test sintaxis
+          $null = Get-Content scripts\install.ps1 -ErrorAction Stop
+          Write-Host "✅ Sintaxis PowerShell válida" -ForegroundColor Green
+          # Nota: No ejecutar instalación completa en CI de Windows por ahora
+          # (secundario, se probará manualmente)

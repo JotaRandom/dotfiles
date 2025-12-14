@@ -260,7 +260,9 @@ foreach ($module in $Modules) {
         if ($conflicts.Count -gt 0) {
             $join = $conflicts -join "`n"
             Write-Host "Conflictos detectados para módulo ${module}:`n$join" -ForegroundColor Yellow
-            $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
+            # Timestamp con milisegundos para evitar colisiones
+            $timestamp = (Get-Date).ToString('yyyyMMdd_HHmmss_fff')
+            $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$timestamp\$module"
             Write-Host "Respaldando archivos conflictivos a: $backupDir" -ForegroundColor Cyan
             foreach ($c in $conflicts) {
                 $relPath = $c.Substring($env:USERPROFILE.Length).TrimStart('\')
@@ -326,7 +328,8 @@ foreach ($module in $Modules) {
             }
             if ($skip) { continue }
             if (Test-Path $dest) {
-                $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
+                $timestamp = (Get-Date).ToString('yyyyMMdd_HHmmss_fff')
+                $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$timestamp\$module"
                 $relPath = $dest.Substring($env:USERPROFILE.Length).TrimStart('\')
                 $destPath = Join-Path $backupDir $relPath
                 New-Item -ItemType Directory -Force -Path (Split-Path $destPath -Parent) | Out-Null
@@ -344,7 +347,8 @@ foreach ($module in $Modules) {
             $item = Get-Item -Path $d -Force -ErrorAction SilentlyContinue
             if ($item -and $item.LinkType -ne $null) { continue }
             # No es un enlace simbólico: respaldar y recrear
-            $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -UFormat %s)\$module"
+            $timestamp = (Get-Date).ToString('yyyyMMdd_HHmmss_fff')
+            $backupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$timestamp\$module"
             $rel = $d.Substring($env:USERPROFILE.Length).TrimStart('\')
             $destPath = Join-Path $backupDir $rel
             New-Item -ItemType Directory -Force -Path (Split-Path $destPath -Parent) | Out-Null

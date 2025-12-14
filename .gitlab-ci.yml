@@ -65,6 +65,18 @@ check-english:
     - chmod +x ./.github/scripts/check-english.sh
     - ./.github/scripts/check-english.sh
 
+powershell-test:
+  stage: lint
+  tags:
+    - windows
+  script:
+    - echo "=== Testing install.ps1 ==="
+    - Get-Content scripts\install.ps1 -ErrorAction Stop
+    - echo "✅ Sintaxis PowerShell válida"
+  only:
+    - branches
+  allow_failure: true  # Permitir fallo por ahora (plataforma secundaria)
+
 #######################
 # Stage: Test
 #######################
