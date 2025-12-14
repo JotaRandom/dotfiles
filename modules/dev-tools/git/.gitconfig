@@ -1,27 +1,94 @@
+# .gitconfig - Git optimizado para ThinkPad L420 (1366x768)
+
 [user]
-	# Datos por defecto del usuario. Puedes rellenarlos o sobreescribirlos en
-	# tu configuración local (~/.gitconfig) para mantener tu firma personal.
-	name = 
-	email = 
-	signingkey = 
-[commit]
-	# Firma GPG por defecto para commits (recomendado si firmas tus commits)
-	# gpgsign = true  # comentado para respetar el comportamiento por defecto de Git (ver docs)
+    # Configurar con tus datos
+    name = Tu Nombre
+    email = tu@email.com
+
 [core]
-	# Dejar las opciones por defecto de Git (Git 3.0) para minimizar deltas en migración.
-	# Editor, excludesfile, autocrlf no están configurados aquí intencionalmente.
+    editor = nvim
+    pager = less
+    autocrlf = input
+    whitespace = trailing-space,space-before-tab
+    
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
 [push]
-	# push.default seguirá los valores por defecto de Git (evitar sobrescribir para minimizar diferencias)
+    default = simple
+    autoSetupRemote = true
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[diff]
+    tool = vimdiff
+    colorMoved = zebra
+
 [color]
-	# Activar colores en la salida por defecto
-	ui = auto
+    ui = auto
+    branch = auto
+    diff = auto
+    status = auto
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+
+# ===== ALIASES ÚTILES PARA PRODUCTIVIDAD =====
 [alias]
-	# Alias comunes para ahorrar tecleo
-	st = status
-	ci = commit
-	br = branch
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+    # Status corto (importante para terminal pequeño)
+    s = status -sb
+    
+    # Log compacto en 1 línea
+    l = log --oneline --graph --decorate -20
+    lg = log --oneline --graph --decorate --all -20
+    
+    # Diff compacto
+    d = diff
+    ds = diff --staged
+    
+    # Branch
+    b = branch
+    ba = branch -a
+    
+    # Checkout
+    co = checkout
+    cob = checkout -b
+    
+    # Commit
+    c = commit
+    ca = commit -a
+    cm = commit -m
+    cam = commit -am
+    amend = commit --amend --no-edit
+    
+    # Push/Pull
+    p = push
+    pf = push --force-with-lease
+    pl = pull
+    
+    # Stash
+    st = stash
+    stp = stash pop
+    stl = stash list
+    
+    # Otros útiles
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    undo = reset --soft HEAD^
+    
+    # Ver cambios
+    changed = diff --name-only
+    contributors = shortlog -sn
+
+[help]
+    autocorrect = 1
+
+[credential]
+    helper = cache --timeout=3600
