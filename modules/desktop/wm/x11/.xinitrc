@@ -1,61 +1,79 @@
 #!/bin/sh
-# ~/.xinitrc - Script de inicio para Cinnamon vía startx
-# Útil como respaldo si LightDM falla
+# ~/.xinitrc - Inicio GENÉRICO para window managers standalone
+# Usar para: i3, awesome, bspwm, dwm, openbox, fluxbox, etc.
+# Este archivo debe editarse para especificar qué WM iniciar
 
 # ------------------------------------------------------------------
-# 1. Cargar configuraciones del sistema (Xresources, Xmodmap, etc.)
+# 1. Cargar configuraciones del sistema
 # ------------------------------------------------------------------
 [ -f /etc/X11/xinit/xinitrc ] && . /etc/X11/xinit/xinitrc
 [ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
 [ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
 # ------------------------------------------------------------------
-# 2. Configuraciones básicas de X (opcional pero recomendado)
+# 2. Configuraciones básicas de X
 # ------------------------------------------------------------------
-# Desactivar el pitido molesto
+# Desactivar pitido
 xset -b
 
-# Fondo de pantalla sólido (evita fondo negro parpadeante)
+# Fondo sólido (evita fondo negro)
 xsetroot -solid "#2d2d2d"
 
-# Ajustar tasa de repetición del teclado (opcional)
+# Repetición de teclado
 xset r rate 300 50
 
 # ------------------------------------------------------------------
-# 3. Iniciar servicios de fondo requeridos por Cinnamon
+# 3. Configuración de locale y teclado  
 # ------------------------------------------------------------------
-# Polkit (autenticación gráfica)
-if [ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
-    /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-elif [ -x /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 ]; then
-    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
-fi
-
-# Gestor de redes (NetworkManager applet)
-if command -v nm-applet >/dev/null; then
-    nm-applet --sm-disable &
-fi
-
-# Gestor de energía (opcional)
-if command -v xfce4-power-manager >/dev/null; then
-    xfce4-power-manager &
-elif command -v mate-power-manager >/dev/null; then
-    mate-power-manager &
-fi
-
-# Locale y codificación
 export LANG=es_CL.UTF-8
 export LC_ALL=es_CL.UTF-8
 export LANGUAGE=es_CL.UTF-8
 
-# Cargar teclado latinoamericano
+# Teclado latinoamericano
 setxkbmap latam
 
-# Cargar Xmodmap (refuerzo)
-# xmodmap ~/.Xmodmap &
+# ------------------------------------------------------------------
+# 4. Servicios básicos para window managers
+# ------------------------------------------------------------------
+# Polkit (autenticación gráfica)
+if [ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
+    /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+fi
+
+# NetworkManager applet (gestión de redes)
+if command -v nm-applet >/dev/null 2>&1; then
+    nm-applet &
+fi
+
+# Compositor (opcional - descomentar si se usa)
+# if command -v picom >/dev/null 2>&1; then
+#     picom -b &
+# fi
+
+# Wallpaper (opcional - descomentar y ajustar)
+# if command -v feh >/dev/null 2>&1; then
+#     feh --bg-scale ~/Pictures/wallpaper.jpg &
+# fi
 
 # ------------------------------------------------------------------
-# 4. Iniciar Cinnamon
+# 5. Iniciar Window Manager
 # ------------------------------------------------------------------
-# Usa 'exec' para reemplazar el proceso xinit y evitar cierre prematuro
-exec cinnamon-session
+# Descomentar/editar el WM que deseas usar:
+
+# i3 window manager
+exec i3
+
+# Awesome window manager
+# exec awesome
+
+# bspwm
+# exec bspwm
+
+# dwm
+# exec dwm
+
+# Openbox
+# exec openbox-session
+
+# Fluxbox
+# exec startfluxbox

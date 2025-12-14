@@ -108,7 +108,7 @@ if ! ./scripts/install.sh "${MOD_LIST[@]}"; then
   exit 1
 fi
 
-# Give installer a second to settle and produce symlinks if it forks background processes
+# Dar un segundo al instalador para que termine y produzca symlinks si hace fork de procesos en background
 sleep 1
 
 # calcular rutas base XDG tal como lo hace el instalador
@@ -120,7 +120,138 @@ XDG_CACHE_HOME="${XDG_CACHE_HOME:-$TARGET/.cache}"
 errors=0
 # Leer mapeos: extraer solo las líneas que contienen ':' para obtener las claves (evitar líneas de listas YAML que empiezan con '-')
 # Usamos awk para eliminar comentarios y espacios y quedarnos solo con claves antes de ':'
-map_keys=$(awk '{ line=$0; sub(/\r$/,"",line); sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(line ~ /^-/) next; if(index(line,":")>0){ key=line; sub(/:.*/,"",key); sub(/[[:space:]]*$/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
+map_keys=$(awk '{ line=$0; sub(/\r$/,"",line); sub(/^[[:space:]]*/,"",line); sub(/#.*$/,"",line); if(line ~ /^-/) next; if(index(line,":")>0){ key=line; sub(/:.*/, "",key); sub(/[[:space:]]*$/,"",key); print key } }' "$MAP_FILE" | sed '/^[[:space:]]*$/d' | sort -u)
+
+# Función para resolver canonical path (compatible con install.sh)
+readlink_canonical() {
+  local target_path="$1"
+  
+  if [ -z "$target_path" ]; then
+    printf '%s' "$target_path"
+    return 0
+  fi
+  
+  if command -v readlink >/dev/null 2>&1; then
+    if readlink -f /dev/null >/dev/null 2>&1; then
+      local resolved
+      resolved=$(readlink -f "$target_path" 2>/dev/null)
+      if [ -n "$resolved" ]; then
+        printf '%s' "$resolved"
+        return 0
+      fi
+    fi
+  fi
+  
+  local current_path="$target_path"
+  local max_links=40
+  local link_count=0
+  
+  while [ -L "$current_path" ] && [ $link_count -lt $max_links ]; do
+    local link_target
+    link_target=$(readlink "$current_path" 2>/dev/null || echo "")
+    if [ -z "$link_target" ]; then
+      break
+    fi
+    if [ "${link_target#/}" = "$link_target" ]; then
+      current_path="$(dirname -- "$current_path")/$link_target"
+    else
+      current_path="$link_target"
+    fi
+    current_path=$(cd "$(dirname -- "$current_path")" 2>/dev/null && printf '%s/%s' "$(pwd -P)" "$(basename -- "$current_path")" 2>/dev/null || echo "$current_path")
+    link_count=$((link_count + 1))
+  done
+  
+  local dir_name file_name
+  if [ -d "$current_path" ]; then
+    dir_name="$current_path"
+    file_name=""
+  else
+    dir_name="$(dirname -- "$current_path")"
+    file_name="$(basename -- "$current_path")"
+  fi
+  
+  local canonical_dir
+  if [ -d "$dir_name" ]; then
+    canonical_dir=$(cd "$dir_name" && pwd -P 2>/dev/null)
+    if [ -z "$canonical_dir" ]; then
+      printf '%s' "$target_path"
+      return 0
+    fi
+  else
+    printf '%s' "$target_path"
+    return 0
+  fi
+  
+  if [ -n "$file_name" ]; then
+    printf '%s/%s' "$canonical_dir" "$file_name"
+  else
+    printf '%s' "$canonical_dir"
+  fi
+}
+
+# Función para resolver una especificación de mapeo a ruta completa
+resolve_mapping_spec() {
+  local spec="$1"
+  local path=""
+  
+  case "$spec" in
+    xdg:*) path="$XDG_CONFIG_HOME/${spec#xdg:}" ;;
+    xdg_state:*) path="$XDG_STATE_HOME/${spec#xdg_state:}" ;;
+    xdg_data:*) path="$XDG_DATA_HOME/${spec#xdg_data:}" ;;
+    xdg_cache:*) path="$XDG_CACHE_HOME/${spec#xdg_cache:}" ;;
+    home:*) path="$TARGET/${spec#home:}" ;;
+    *) path="$TARGET/$spec" ;;
+  esac
+  
+  printf '%s' "$path"
+}
+
+# Función para verificar un symlink individual
+verify_symlink() {
+  local expected="$1"
+  local src="$2"
+  local mapping_key="$3"
+  
+  # Verificar existencia
+  if [ ! -e "$expected" ]; then
+    echo "ERROR: el destino esperado no existe para el mapeo '$mapping_key': $expected (origen: $src)" >&2
+    return 1
+  fi
+  
+  if [ ! -L "$expected" ]; then
+    echo "ERROR: el destino esperado no es un enlace simbólico para el mapeo '$mapping_key': $expected (origen: $src)" >&2
+    return 1
+  fi
+  
+  # Verificar objetivo del enlace
+  local targ srcf
+  targ=$(readlink_canonical "$expected")
+  srcf=$(readlink_canonical "$src")
+  
+  if [ "$targ" = "$srcf" ]; then
+    echo "OK: $expected -> $src"
+    return 0
+  fi
+  
+  # Verificar si es copia saneada
+  local SAN_PREFIX="$TARGET/.dotfiles_sanitized"
+  if [[ "$targ" == "$SAN_PREFIX"* ]]; then
+    if [ ! -f "$targ" ]; then
+      echo "ERROR: no existe el archivo saneado esperado: $targ (origen: $src)" >&2
+      return 1
+    fi
+    # Verificar que el archivo saneado no contiene CRLF
+    if grep -q $'\r' "$targ" 2>/dev/null; then
+      echo "ERROR: el archivo saneado aún contiene CRLF: $targ" >&2
+      return 1
+    fi
+    echo "OK: $expected -> $targ (copia saneada de $src)"
+    return 0
+  fi
+  
+  echo "ERROR: discrepancia en el objetivo del enlace para el mapeo '$mapping_key'. Se esperaba <$srcf>, pero se encontró <$targ>. (dest: $expected)" >&2
+  return 1
+}
 
 get_map_val(){
   # devuelve el valor de mapeo para una clave dada (puede devolver lista o único valor)
@@ -175,7 +306,7 @@ while IFS= read -r mapping_key; do
     module_override="$(echo "$cmap" | cut -d'|' -f2)"
     cmap="$(echo "$cmap" | cut -d'|' -f1)"
   fi
-  # if key has a slash, treat as relative path
+  # si la clave tiene una barra, tratarla como ruta relativa
   if echo "$cmap" | grep -q '/' ; then
     # buscar por módulo la ruta relativa
     if [ -n "$module_override" ]; then
@@ -197,11 +328,11 @@ while IFS= read -r mapping_key; do
         found_paths=()
       fi
     else
-      # search all modules
+      # buscar en todos los módulos
       mapfile -t found_paths < <(find "$MODULES_DIR" -type f -path "*/$cmap" -print || true)
     fi
   else
-    # basename-only; try to locate under modules
+    # solo nombre base; intentar localizar bajo modules
     if [ -n "$module_override" ]; then
       # Resolver directorio del módulo (puede estar anidado)
       if [ -d "$MODULES_DIR/$module_override" ]; then
@@ -227,75 +358,31 @@ while IFS= read -r mapping_key; do
   fi
 
   for src in "${found_paths[@]}"; do
-    # calcular la ruta de destino esperada desde el valor del mapeo
-    case "$val" in
-      xdg:*) expected="$XDG_CONFIG_HOME/${val#xdg:}" ;;
-      xdg_state:*) expected="$XDG_STATE_HOME/${val#xdg_state:}" ;;
-      xdg_data:*) expected="$XDG_DATA_HOME/${val#xdg_data:}" ;;
-      xdg_cache:*) expected="$XDG_CACHE_HOME/${val#xdg_cache:}" ;;
-      home:*) expected="$TARGET/${val#home:}" ;;
-      *) expected="$TARGET/$val" ;;
-    esac
-    # check existence
-    if [ ! -e "$expected" ]; then
-      echo "ERROR: el destino esperado no existe para el mapeo '$key': $expected (origen: $src)" >&2
-      errors=$((errors+1))
-      continue
-    fi
-    if [ ! -L "$expected" ]; then
-      echo "ERROR: el destino esperado no es un enlace simbólico para el mapeo '$key': $expected (origen: $src)" >&2
-      errors=$((errors+1))
-      continue
-    fi
-    # Verificar que el objetivo del enlace simbólico apunta al archivo fuente en el módulo
-    # Usar función compatible con sistemas sin readlink -f
-    readlink_canonical() {
-      local path="$1"
-      if command -v readlink >/dev/null 2>&1 && readlink -f /dev/null >/dev/null 2>&1; then
-        readlink -f "$path" 2>/dev/null || echo "$path"
-      else
-        # Alternativa compatible: usar cd y pwd -P
-        if [ -d "$path" ]; then
-          (cd "$path" && pwd -P) 2>/dev/null || echo "$path"
-        else
-          local dir file
-          dir=$(dirname -- "$path")
-          file=$(basename -- "$path")
-          if [ -d "$dir" ]; then
-            printf '%s/%s' "$(cd "$dir" && pwd -P)" "$file" 2>/dev/null || echo "$path"
-          else
-            echo "$path"
-          fi
+    # Si el valor contiene comas, es un mapeo múltiple
+    if [[ "$val" == *,* ]]; then
+      # Procesar cada destino
+      IFS=',' read -ra DEST_SPECS <<< "$val"
+      for spec in "${DEST_SPECS[@]}"; do
+        # Eliminar espacios al inicio/final
+        spec_trimmed="$(echo "$spec" | sed -e 's/^\s*//' -e 's/\s*$//')"
+        
+        # Resolver spec a ruta completa usando helper
+        expected=$(resolve_mapping_spec "$spec_trimmed")
+        
+        # Verificar este destino usando función helper
+        if ! verify_symlink "$expected" "$src" "$key"; then
+          errors=$((errors+1))
         fi
-      fi
-    }
-    
-    targ=$(readlink_canonical "$expected")
-    srcf=$(readlink_canonical "$src")
-    if [ "$targ" = "$srcf" ]; then
-      echo "OK: $expected -> $src"
-      continue
-    fi
-    # Si no es un enlace simbólico directo al repositorio, el instalador pudo haber creado una copia
-    # solo-LF saneada en $TARGET/.dotfiles_sanitized — aceptarla también, pero validarla.
-    SAN_PREFIX="$TARGET/.dotfiles_sanitized"
-    if [[ "$targ" == "$SAN_PREFIX"* ]]; then
-      if [ ! -f "$targ" ]; then
-        echo "ERROR: no existe el archivo saneado esperado: $targ (origen: $src)" >&2
+      done
+    else
+      # Mapeo simple (un solo destino)
+      expected=$(resolve_mapping_spec "$val")
+      
+      # Verificar usando función helper
+      if ! verify_symlink "$expected" "$src" "$key"; then
         errors=$((errors+1))
-        continue
       fi
-      # Verify sanitized file contains no CRLF
-      if grep -q $'\r' "$targ" 2>/dev/null || head -c 1 -q "$targ" | od -An -t x1 | grep -q '0d'; then
-        echo "ERROR: el archivo saneado aún contiene CRLF: $targ" >&2
-        errors=$((errors+1))
-        continue
-      fi
-      echo "OK: $expected -> $targ (copia saneada de $src)"
-      continue
     fi
-    echo "ERROR: discrepancia en el objetivo del enlace para el mapeo '$key'. Se esperaba <$srcf>, pero se encontró <$targ>. (dest: $expected)" >&2
-    errors=$((errors+1)) 
   done
 
 done < <(printf '%s\n' "$map_keys")

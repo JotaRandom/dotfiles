@@ -29,6 +29,35 @@ userChrome.css|firefox: ignore                        # modules/browsers/firefox
 user.js|firefox: ignore                               # modules/browsers/firefox (manual/profile - copy to Firefox profile directory)
 
 #########################
+# modules/desktop/de & wm
+#########################
+# Desktop environments - cada uno con su xinitrc completo y optimizado
+# Mapear según el DE que uses (comentar/descomentar según necesidad)
+
+# === Cinnamon Desktop === (optimizado - polkit-gnome, csd-power, nm-applet)
+.xinitrc|cinnamon: home:.xinitrc                      # modules/desktop/de/cinnamon (usar para Cinnamon)
+.dmrc|cinnamon: ignore                                # modules/desktop/de/cinnamon (no usado)
+
+# === XFCE Desktop === (optimizado - xfce-polkit, xfce4-power-manager)
+.xinitrc|xfce: ignore                                 # modules/desktop/de/xfce (descomentar si usas XFCE: home:.xinitrc)
+.dmrc|xfce: ignore                                    # modules/desktop/de/xfce (no usado)
+
+# === GNOME Desktop === (minimalista - GNOME maneja servicios internamente)
+.xinitrc|gnome: ignore                                # modules/desktop/de/gnome (descomentar si usas GNOME: home:.xinitrc)
+.dmrc|gnome: ignore                                   # modules/desktop/de/gnome (no usado)
+
+# === KDE Plasma === (minimalista - KDE maneja servicios internamente)
+.xinitrc|kde: ignore                                  # modules/desktop/de/kde (descomentar si usas KDE: home:.xinitrc)
+.dmrc|kde: ignore                                     # modules/desktop/de/kde (no usado)
+
+# === LXQt Desktop === (optimizado - lxqt-policykit-agent, nm-applet)
+.xinitrc|lxqt: ignore                                 # modules/desktop/de/lxqt (descomentar si usas LXQt: home:.xinitrc)
+.dmrc|lxqt: ignore                                    # modules/desktop/de/lxqt (no usado)
+
+# === Window Managers Standalone === (genérico para i3, awesome, bspwm, dwm, etc.)
+.xinitrc|x11: ignore                                  # modules/desktop/wm/x11 (descomentar si usas WM standalone: home:.xinitrc)
+
+#########################
 # modules/desktop
 #########################
 # Desktop environment specific files (modules/desktop/*)
@@ -166,3 +195,4 @@ ATTRIBUTIONS.md: ignore                               # Attribution documentatio
 # Template/example files (copy manually and customize):
 config.example: ignore                                # Example config files (generic)
 # Note: Specific .example files are handled individually (e.g., ssh/config.example, .npmrc.example)
+

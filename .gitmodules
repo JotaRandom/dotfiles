@@ -7,9 +7,6 @@
 [submodule "distros/PKGBUILD/xapp-symbolic-icons-git"]
 	path = distros/PKGBUILD/xapp-symbolic-icons-git
 	url = ssh://aur@aur.archlinux.org/xapp-symbolic-icons-git.git
-[submodule "distros/PKGBUILD/xapp-symbolic-icons"]
-	path = distros/PKGBUILD/xapp-symbolic-icons
-	url = ssh://aur@aur.archlinux.org/xapp-symbolic-icons.git
 [submodule "distros/PKGBUILD/xfce-theme-greybird-git"]
 	path = distros/PKGBUILD/xfce-theme-greybird-git
 	url = ssh://aur@aur.archlinux.org/xfce-theme-greybird-git.git
