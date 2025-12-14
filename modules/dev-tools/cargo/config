@@ -1,6 +1,28 @@
 [build]
 target-dir = "target"
+
 [term]
 quiet = false
 
+# Privilegiar librerías del sistema sobre versiones vendored
+[env]
+# Para crates que usan system-deps: nunca buildar internamente, usar siempre pkg-config
+SYSTEM_DEPS_BUILD_INTERNAL = "never"
+
+# Deshabilitar features "bundled" por defecto en crates que las tienen
+# (requiere que cada crate específico no tenga bundled en default-features)
+
+[net]
+# Usar git-fetch-with-cli para mejor integración con sistema
+git-fetch-with-cli = true
+
+[profile.release]
+# Optimizaciones que favorecen uso de librerías del sistema
+lto = "thin"
+opt-level = 2
+
 # Ejemplo de configuración de cargo — plantilla segura
+# Nota: Para que esto funcione efectivamente:
+# 1. Asegúrate de tener pkg-config instalado
+# 2. Evita features "bundled" en Cargo.toml de tus proyectos
+# 3. Instala las versiones -dev de las librerías que necesites desde pacman
