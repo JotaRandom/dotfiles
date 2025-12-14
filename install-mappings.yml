@@ -125,6 +125,18 @@ ssh/config: ignore                                   # modules/dev-tools/ssh (se
 .npmrc.example: home:.npmrc.example                  # modules/dev-tools/npm (template)
 .npmrc: ignore                                       # modules/dev-tools/npm (sensitive)
 
+# Python Development
+pyproject.toml|python: ignore                        # modules/dev-tools/python (template - copy to projects)
+
+#########################
+# modules/system
+#########################
+# Fontconfig (fontconfig-ultimate style)
+fonts.conf|fontconfig: xdg:fontconfig/fonts.conf     # modules/system/fontconfig
+
+# Power Management (TLP for ThinkPad)
+tlp.conf|power-management: ignore                    # modules/system/power-management (needs root - copy manually)
+
 #########################
 # modules/editor
 #########################
