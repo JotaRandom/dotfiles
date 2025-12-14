@@ -11,7 +11,6 @@ default_action: dotify
 # Shell-specific configs (modules/shell/*)
 starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
 config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
-config.toml|nushell: xdg:nushell/config.toml         # modules/shell/nushell
 profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
 
 # Dotfiles de shells específicas
@@ -221,15 +220,3 @@ thinkfan.conf: ignore                                  # hardware/system configs
 README.md: ignore
 ATTRIBUTIONS.md: ignore
 config.example: ignore
-
-
-#########################
-# Docs and templates (ignored)
-#########################
-# Note: Wildcard patterns are not supported in YAML keys. Add specific file mappings as needed.
-README.md: ignore                                     # Documentation files
-ATTRIBUTIONS.md: ignore                               # Attribution documentation
-# Template/example files (copy manually and customize):
-config.example: ignore                                # Example config files (generic)
-# Note: Specific .example files are handled individually (e.g., ssh/config.example, .npmrc.example)
-
