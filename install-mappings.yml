@@ -141,6 +141,11 @@ settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
 config.json|micro: xdg:micro/config.json             # modules/editor/micro
 
+# Sublime Text
+Preferences.sublime-settings|sublime: xdg:sublime-text/Packages/User/Preferences.sublime-settings
+Default (Windows).sublime-keymap|sublime: xdg:sublime-text/Packages/User/Default (Windows).sublime-keymap
+Package Control.sublime-settings|sublime: xdg:sublime-text/Packages/User/Package Control.sublime-settings
+
 #########################
 # modules/term
 #########################

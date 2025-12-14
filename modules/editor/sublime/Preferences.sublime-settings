@@ -1,0 +1,80 @@
+{
+	// Configuración general
+	"theme": "Adaptive.sublime-theme",
+	"color_scheme": "Monokai.sublime-color-scheme",
+	"font_face": "Cascadia Code",
+	"font_size": 11,
+	"line_padding_top": 1,
+	"line_padding_bottom": 1,
+	
+	// Interfaz
+	"show_encoding": true,
+	"show_line_endings": true,
+	"show_full_path": true,
+	"highlight_modified_tabs": true,
+	"bold_folder_labels": true,
+	
+	// Edición
+	"tab_size": 4,
+	"translate_tabs_to_spaces": false,
+	"detect_indentation": true,
+	"trim_trailing_white_space_on_save": true,
+	"ensure_newline_at_eof_on_save": true,
+	"default_encoding": "UTF-8",
+	"default_line_ending": "unix",
+	
+	// Navegación
+	"scroll_past_end": true,
+	"highlight_line": true,
+	"caret_extra_width": 1,
+	"vintage_start_in_command_mode": false,
+	
+	// Archivos
+	"hot_exit": true,
+	"remember_open_files": true,
+	"open_files_in_new_window": false,
+	"close_windows_when_empty": false,
+	
+	// Carpetas ignoradas
+	"folder_exclude_patterns":
+	[
+		".git",
+		".svn",
+		"__pycache__",
+		"node_modules",
+		".venv",
+		"venv",
+		"build",
+		"dist",
+		".cache"
+	],
+	
+	// Archivos ignorados
+	"file_exclude_patterns":
+	[
+		"*.pyc",
+		"*.pyo",
+		"*.exe",
+		"*.dll",
+		"*.obj",
+		"*.o",
+		"*.a",
+		"*.lib",
+		"*.so",
+		"*.dylib",
+		"*.class",
+		"*.pdb",
+		"*.min.js",
+		"*.min.css"
+	],
+	
+	// Locale español Chile
+	"dictionary": "Packages/Language - Spanish/Spanish.dic",
+	
+	// Otros
+	"auto_complete_commit_on_tab": true,
+	"auto_match_enabled": true,
+	"word_wrap": "auto",
+	"rulers": [80, 120],
+	"save_on_focus_lost": false
+}

@@ -1,0 +1,142 @@
+# GitLab CI/CD Pipeline para dotfiles
+# Similar a GitHub Actions pero adaptado para GitLab
+
+stages:
+  - lint
+  - test
+  - validate
+
+# Template para cache de apt
+.apt_cache: &apt_cache
+  cache:
+    key: apt-cache
+    paths:
+      - apt-cache/
+
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
+#######################
+# Stage: Lint
+#######################
+
+shell-lint:
+  stage: lint
+  image: ubuntu:latest
+  before_script:
+    - mkdir -p apt-cache
+    - apt-get update
+    - apt-get install -y shellcheck
+  script:
+    # Verificar sintaxis bash
+    - for f in ./scripts/*.sh; do bash -n "$f"; done
+    # Ejecutar shellcheck
+    - for f in ./scripts/*.sh; do shellcheck "$f" || true; done
+  <<: *apt_cache
+
+check-executables:
+  stage: lint
+  image: alpine/git
+  script:
+    - apk add --no-cache bash
+    - |
+      fail=0
+      files=$(git ls-files || true)
+      if [ -n "$files" ]; then
+        for f in $files; do
+          if [ -f "$f" ]; then
+            if head -n1 "$f" | grep -q '^#!'; then
+              mode=$(git ls-files --stage "$f" | awk '{print $1}')
+              if [ "$mode" != "100755" ]; then
+                echo "$f tiene shebang pero no es ejecutable"
+                fail=1
+              fi
+            fi
+          fi
+        done
+      fi
+      if [ "$fail" -eq 1 ]; then exit 1; fi
+
+check-english:
+  stage: lint
+  image: alpine/git
+  script:
+    - apk add --no-cache bash
+    - chmod +x ./.github/scripts/check-english.sh
+    - ./.github/scripts/check-english.sh
+
+#######################
+# Stage: Test
+#######################
+
+test-mappings:
+  stage: test
+  image: ubuntu:latest
+  before_script:
+    - mkdir -p apt-cache
+    - apt-get update
+    - apt-get install -y git-lfs rsync
+  script:
+    - chmod +x ./.github/scripts/test-install-mappings.sh
+    - echo "=== Ejecutando test-install-mappings.sh ==="
+    - ./.github/scripts/test-install-mappings.sh 2>&1 | tee /tmp/test-mappings.log
+    # Verificar NOTAs
+    - |
+      if grep -q "^NOTA:" /tmp/test-mappings.log; then
+        echo "⚠️ Se encontraron NOTAs:"
+        grep "^NOTA:" /tmp/test-mappings.log || true
+        nota_count=$(grep -c "^NOTA:" /tmp/test-mappings.log || echo "0")
+        echo "Total de NOTAs: $nota_count"
+        if [ "$nota_count" -gt 5 ]; then
+          echo "❌ ERROR: Demasiadas NOTAs ($nota_count)"
+          exit 1
+        else
+          echo "✅ NOTAs aceptables"
+        fi
+      else
+        echo "✅ No se encontraron NOTAs"
+      fi
+  <<: *apt_cache
+
+install-test:
+  stage: test
+  image: ubuntu:latest
+  before_script:
+    - mkdir -p apt-cache
+    - apt-get update
+    - apt-get install -y git-lfs rsync
+  script:
+    - TMP=$(mktemp -d)
+    - echo "Testing installer against: $TMP"
+    - chmod +x ./scripts/install.sh
+    - TARGET="$TMP" ./scripts/install.sh 2>&1 | head -100
+    - echo "Verificando instalación..."
+    - ls -la "$TMP" | head -20
+    - find "$TMP" -type l | head -10
+  <<: *apt_cache
+  after_script:
+    - rm -rf "$TMP" || true
+
+#######################
+# Stage: Validate
+#######################
+
+validate-module-files:
+  stage: validate
+  image: ubuntu:latest
+  script:
+    - chmod +x ./.github/scripts/check-mappings.sh
+    - ./.github/scripts/check-mappings.sh
+
+# Job solo para tags/releases
+validate-release:
+  stage: validate
+  image: ubuntu:latest
+  only:
+    - tags
+  script:
+    - echo "Validando release $CI_COMMIT_TAG"
+    - chmod +x ./scripts/install.sh
+    - TMP=$(mktemp -d)
+    - TARGET="$TMP" ./scripts/install.sh
+    - echo "✅ Release validado"
