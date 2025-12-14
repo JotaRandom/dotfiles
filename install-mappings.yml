@@ -51,6 +51,7 @@ fzf.bash|fzf: xdg:fzf/fzf.bash                       # modules/cli-tools/fzf (fu
 config|bat: xdg:bat/config                           # modules/cli-tools/bat (cat with syntax highlighting)
 ripgreprc|ripgrep: home:.ripgreprc                   # modules/cli-tools/ripgrep (better grep)
 ignore|fd: xdg:fd/ignore                             # modules/cli-tools/fd (better find)
+.tmux.conf|tmux: home:.tmux.conf                     # modules/cli-tools/tmux (terminal multiplexer)
 
 #########################
 # modules/browsers
@@ -95,6 +96,13 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 #########################
 # modules/desktop
 #########################
+# Desktop Environment xinitrc files
+.xinitrc|cinnamon: home:.xinitrc                     # modules/desktop/de/cinnamon
+.xinitrc|gnome: home:.xinitrc                        # modules/desktop/de/gnome
+.xinitrc|kde: home:.xinitrc                          # modules/desktop/de/kde
+.xinitrc|lxqt: home:.xinitrc                         # modules/desktop/de/lxqt
+.xinitrc|xfce: home:.xinitrc                         # modules/desktop/de/xfce
+.xinitrc|x11: home:.xinitrc                          # modules/desktop/wm/x11 (generic WM)
 # Desktop environment specific files (modules/desktop/*)
 # (X11/Xsession related dotfiles are listed under Dotfiles section)
 # de-settings.conf|de: xdg:de/settings.conf
