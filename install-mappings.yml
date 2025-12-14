@@ -145,8 +145,8 @@ fonts.conf|fontconfig: xdg:fontconfig/fonts.conf     # modules/system/fontconfig
 tlp.conf|power-management: ignore                    # modules/system/power-management (needs root - copy manually)
 
 # ThinkPad specific (TrackPoint config)
-trackpoint.sh|thinkpad: xdg:thinkpad/trackpoint.sh   # modules/system/thinkpad (TrackPoint sensitivity)
-trackpoint-config.service|thinkpad: xdg:systemd/user/trackpoint-config.service # modules/system/thinkpad (systemd service)
+trackpoint.sh|thinkpad: ignore                       # modules/system/thinkpad (manual review - device specific)
+trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (manual review - systemd service)
 
 #########################
 # modules/editor
