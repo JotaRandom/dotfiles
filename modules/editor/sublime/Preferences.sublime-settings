@@ -3,9 +3,14 @@
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Monokai.sublime-color-scheme",
 	"font_face": "Cascadia Code",
-	"font_size": 11,
-	"line_padding_top": 1,
-	"line_padding_bottom": 1,
+	"font_size": 9,  // Optimizado para 1366x768
+	"line_padding_top": 0,  // Reducido para ganar espacio
+	"line_padding_bottom": 0,
+	
+	// UI compacta para pantalla pequeña
+	"mini_diff": false,  // Sin diff en gutter (ganar espacio)
+	"minimap_scroll_to_clicked_text": false,
+	"show_minimap": false,  // OFF para ganar espacio horizontal (~120px)
 	
 	// Interfaz
 	"show_encoding": true,
