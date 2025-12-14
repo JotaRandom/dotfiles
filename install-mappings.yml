@@ -14,13 +14,20 @@ config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
 config.toml|nushell: xdg:nushell/config.toml         # modules/shell/nushell
 profile.ps1|pwsh: xdg:powershell/profile.ps1         # modules/shell/pwsh
 
-# Dotfiles de shells específicas
+# Shells (Bash, Zsh, Fish, Ksh, Tcsh, etc.)
 .bashrc|bash: home:.bashrc                            # modules/shell/bash
-.profile|bash: home:.profile                          # modules/shell/bash
+.bash_profile|bash: home:.bash_profile               # modules/shell/bash
 .zshrc|zsh: home:.zshrc                               # modules/shell/zsh
+.zprofile|zsh: home:.zprofile                         # modules/shell/zsh
+config.fish|fish: xdg:fish/config.fish               # modules/shell/fish
+starship.toml|starship: xdg:starship.toml            # modules/shell/starship
 .kshrc|ksh: home:.kshrc                               # modules/shell/ksh
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
+rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
+.xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
+Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profile.ps1 # modules/shell/pwsh
+config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 .elvishrc|elvish: home:.elvishrc                      # modules/shell/elvish
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
 
@@ -153,16 +160,19 @@ trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (
 #########################
 # Editor configurations (modules/editor/*)
 config.toml|helix: xdg:helix/config.toml             # modules/editor/helix
-config.toml|nushell: xdg:nushell/config.toml         # modules/editor/nushell (note: nushell is a shell, not editor)
-gedit-settings.xml|gedit: xdg:gedit/gedit-settings.xml # modules/editor/gedit
 init.el|emacs: xdg:emacs/init.el                     # modules/editor/emacs
 init.vim|nvim: xdg:nvim/init.vim                     # modules/editor/nvim
 kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
-kateconfig|kate: xdg:kate/kateconfig                 # modules/editor/kate
+katerc|kate: xdg:kate/katerc                         # modules/editor/kate
 settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
 settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
-config.json|micro: xdg:micro/config.json             # modules/editor/micro
+.vimrc|vim: home:.vimrc                              # modules/editor/vim
+.nanorc|nano: home:.nanorc                           # modules/editor/nano
+
+# Gedit y Xed (usan gsettings, script para aplicar)
+gedit-settings.sh|gedit: ignore                      # modules/editor/gedit (aplicar con bash)
+xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
 
 # Sublime Text
 Preferences.sublime-settings|sublime: xdg:sublime-text/Packages/User/Preferences.sublime-settings
