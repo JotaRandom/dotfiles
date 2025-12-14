@@ -1,0 +1,71 @@
+# Kate Editor Config - Optimizado para ThinkPad L420 (1366x768)
+# ~/.config/katerc
+
+[General]
+Days Meta Infos=30
+Save Meta Infos=true
+Show Full Path in Title=true
+Show Menu Bar=true
+Show Status Bar=true
+Show Tab Bar=true
+
+[KTextEditor Renderer]
+# Fuente pequeña para pantalla 1366x768
+Font=Monospace,9,-1,5,50,0,0,0,0,0
+Line Height Multiplier=1
+Show Indentation Lines=true
+Show Whole Bracket Expression=true
+Word Wrap Marker=false
+
+[KTextEditor View]
+# Optimizaciones visuales
+Allow Mark Menu=true
+Auto Brackets=true
+Auto Center Lines=0
+Auto Completion=true
+Bookmark Menu Sorting=0
+Default Mark Type=1
+Dynamic Word Wrap=true
+Dynamic Word Wrap Align Indent=80
+Dynamic Word Wrap At Static Marker=false
+Dynamic Word Wrap Indicators=1
+Fold First Line=false
+Folding Bar=true
+Folding Preview=true
+Icon Bar=true
+Input Mode=0
+Keyword Completion=true
+Line Modification=true
+Line Numbers=true
+Maximum Search History Size=100
+Mouse Paste At Cursor Position=false
+Persistent Selection=false
+Scroll Bar Marks=false
+Scroll Bar Mini Map All=true
+Scroll Bar Mini Map Width=60
+Scroll Bar MiniMap=true
+Scroll Bar Preview=true
+Scroll Past End=false
+Search/Replace Flags=140
+Show Documentation With Completion=true
+Show Focus Frame Around Editor=true
+Show Folding Icons On Hover Only=true
+Show Line Count=false
+Show Scrollbars=0
+Show Word Count=false
+Smart Copy Cut=true
+Text Drag And Drop=true
+User Sets Of Chars To Enclose Selection=
+Vi Input Mode Steal Keys=false
+Vi Relative Line Numbers=false
+Word Completion=true
+Word Completion Minimal Word Length=3
+Word Completion Remove Tail=true
+
+[MainWindow]
+# Sin statusbar para ganar espacio
+StatusBar=Disabled
+ToolBarsMovable=Disabled
+
+[UiSettings]
+ColorScheme=Monokai

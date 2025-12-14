@@ -1,3 +1,56 @@
-; Kakoune basic config
-set global default-reg 'a'
-set-option global tabstop 2
+# Kakoune Config - Optimizado para ThinkPad L420 (1366x768)
+# ~/.config/kak/kakrc
+
+# ===== UI OPTIMIZADA =====
+# Números de línea relativos
+add-highlighter global/ number-lines -relative -hlcursor
+
+# Resaltar paréntesis
+add-highlighter global/ show-matching
+
+# Wrap de líneas
+add-highlighter global/ wrap -word
+
+# ===== OPCIONES =====
+# Tabs
+set-option global tabstop 4
+set-option global indentwidth 4
+
+# Scroll offset
+set-option global scrolloff 3,3
+
+# UI minimalista para pantalla pequeña
+set-option global ui_options terminal_status_on_top=false
+
+# ===== TEMA =====
+colorscheme default
+
+# ===== KEYBINDINGS ESTILO NANO =====
+# Ctrl+O = Guardar (WriteOut)
+map global normal <c-o> ':write<ret>' -docstring 'Guardar'
+
+# Ctrl+Q = Salir (reemplaza Ctrl+X que usa kakoune)
+map global normal <c-q> ':quit<ret>' -docstring 'Salir'
+
+# Ctrl+W = Buscar (Where is)
+map global normal <c-w> '/' -docstring 'Buscar'
+
+# Ctrl+K = Cortar línea
+map global normal <c-k> 'xd' -docstring 'Cortar línea'
+
+# Ctrl+U = Pegar
+map global normal <c-u> 'p' -docstring 'Pegar'
+
+# ===== CLIPBOARD =====
+# Usar system clipboard
+set-option global ui_options terminal_set_title=false
+
+# ===== PERFORMANCE =====
+# Reducir idle timeout para ThinkPad
+set-option global idle_timeout 100
+
+# ===== AUTO-PAIRS =====
+# Auto-cerrar paréntesis
+hook global InsertChar \( %{ exec -draft h<a-i>(c)<esc>i))<esc> }
+hook global InsertChar \[ %{ exec -draft h<a-i>[c]<esc>i]]<esc> }
+hook global InsertChar \{ %{ exec -draft h<a-i>{c}<esc>i}}<esc> }

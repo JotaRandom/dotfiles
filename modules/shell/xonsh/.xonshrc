@@ -1,5 +1,45 @@
-# Configuración de Xonsh (ejemplo)
-# Configuración mínima de xonsh
+# ~/.xonshrc - Xonsh Shell optimizado para ThinkPad L420 (1366x768)
 
-aliases['ll'] = 'ls -al'
-env['EDITOR'] = 'nvim'
+# ===== PROMPT COMPACTO =====
+# Prompt de 1 línea estilo bash
+$PROMPT = '{GREEN}{user}@{hostname}{RESET}:{BLUE}{cwd}{RESET}$ '
+
+# ===== HISTORY =====
+# Reducido para ThinkPad
+$XONSH_HISTORY_SIZE = (5000, 'commands')
+
+# ===== ALIASES =====
+aliases['..'] = 'cd ..'
+aliases['...'] = 'cd ../..'
+aliases['....'] = 'cd ../../..'
+
+aliases['ls'] = 'ls --color=auto -h'
+aliases['ll'] = 'ls -la'
+aliases['la'] = 'ls -A'
+
+aliases['grep'] = 'grep --color=auto'
+
+# ===== EDITOR =====
+$EDITOR = 'nvim'
+$VISUAL = 'nvim'
+$PAGER = 'less'
+
+# ===== FUNCIONES =====
+def _mkcd(args):
+    """Crear directorio y entrar"""
+    import os
+    if args:
+        dir_path = args[0]
+        os.makedirs(dir_path, exist_ok=True)
+        cd @(dir_path)
+
+aliases['mkcd'] = _mkcd
+
+# ===== COMPLETIONS =====
+# Auto-completado mejorado
+$COMPLETIONS_CONFIRM = True
+$COMPLETIONS_MENU_ROWS = 5
+
+# ===== PERFORMANCE =====
+# Prompt más rápido
+$PROMPT_REFRESH_INTERVAL = 0.5
