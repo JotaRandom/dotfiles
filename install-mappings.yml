@@ -78,9 +78,6 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 
 # Window Managers (genérico para i3, awesome, bspwm, etc.)
 .xinitrc|x11: ignore                                  # modules/desktop/wm/x11 (cambiar a home:.xinitrc si usas)
-.xsession|x11: home:.xsession                        # modules/desktop/wm/x11 (para display managers)
-.xsessionrc|x11: home:.xsessionrc                    # modules/desktop/wm/x11 (configuración temprana)
-.Xsession|x11: home:.Xsession                        # modules/desktop/wm/x11 (variante de .xsession)
 
 #########################
 # modules/pacman
@@ -93,7 +90,7 @@ rust.conf|pacman: xdg:pacman/rust.conf               # modules/pacman
 # modules/dev-tools
 #########################
 # Git configuration
-.gitconfig|git: home:.gitconfig                      # modules/dev-tools/git
+.gitconfig|git: xdg:git/config                      # modules/dev-tools/git
 .gitignore|git: xdg:git/ignore                       # modules/dev-tools/git (global gitignore)
 .gitattributes|git: xdg:git/attributes               # modules/dev-tools/git
 .git-credentials|git: xdg:git/credentials            # modules/dev-tools/git (encrypted/template)
