@@ -1,0 +1,96 @@
+! XTerm Config - CMD Windows 95/98 Style para ThinkPad L420
+! Path: ~/.Xresources
+! Apply: xrdb -merge ~/.Xresources
+
+! ===== GENERAL XTERM =====
+XTerm*termName: xterm-256color
+XTerm*locale: true
+XTerm*utf8: true
+
+! ===== COLORS - CMD Windows 95/98 =====
+! Background negro como CMD
+XTerm*background: #000000
+! Texto gris claro como CMD
+XTerm*foreground: #C0C0C0
+
+! Cursor blanco cuadrado (CMD style)
+XTerm*cursorColor: #FFFFFF
+XTerm*cursorBlink: true
+XTerm*cursorUnderline: false
+
+! ===== PALETTE CMD WINDOWS 95/98 =====
+! Colores DOS/CMD clásicos
+XTerm*color0:  #000000
+XTerm*color1:  #800000
+XTerm*color2:  #008000
+XTerm*color3:  #808000
+XTerm*color4:  #000080
+XTerm*color5:  #800080
+XTerm*color6:  #008080
+XTerm*color7:  #C0C0C0
+XTerm*color8:  #808080
+XTerm*color9:  #FF0000
+XTerm*color10: #00FF00
+XTerm*color11: #FFFF00
+XTerm*color12: #0000FF
+XTerm*color13: #FF00FF
+XTerm*color14: #00FFFF
+XTerm*color15: #FFFFFF
+
+! ===== FONT - Bitmap style CMD =====
+! Terminal Classic (bitmap) 9pt para 1366x768
+XTerm*faceName: Terminal:pixelsize=9:antialias=false
+XTerm*faceSize: 9
+! Fallback a fuente monospace
+XTerm*font: -misc-fixed-medium-r-normal--13-*-*-*-*-*-iso10646-1
+
+! Bold usando same font (CMD no tiene bold)
+XTerm*boldMode: false
+XTerm*allowBoldFonts: false
+
+! ===== SCROLLING =====
+XTerm*saveLines: 5000
+XTerm*scrollBar: false
+XTerm*scrollTtyOutput: false
+XTerm*scrollKey: true
+
+! ===== GEOMETRY - CMD Windows 95 size =====
+! 80x25 era el tamaño CMD clásico, pero adaptamos a 1366x768
+XTerm*geometry: 100x30
+
+! ===== BELL =====
+XTerm*visualBell: false
+XTerm*bellIsUrgent: false
+
+! ===== SELECTION =====
+XTerm*selectToClipboard: true
+XTerm*trimSelection: true
+
+! ===== MISC =====
+XTerm*internalBorder: 2
+XTerm*borderWidth: 0
+
+! Alt+Enter = Fullscreen
+XTerm*fullscreen: never
+XTerm*disallowedWindowOps: 20,21,SetXprop
+
+! ===== VT100 Widget =====
+XTerm*vt100.geometry: 100x30
+XTerm*vt100.metaSendsEscape: true
+XTerm*vt100.backarrowKey: false
+XTerm*vt100.ttyModes: erase ^?
+
+! ===== RENDERING =====
+! Sin antialiasing para look más retro/pixelado
+XTerm*renderFont: true
+XTerm*scaleHeight: 1.0
+
+! ===== PERFORMANCE (ThinkPad L420) =====
+XTerm*fastScroll: true
+XTerm*jumpScroll: true
+XTerm*multiScroll: true
+
+! ===== POINTER =====
+XTerm*pointerColor: #FFFFFF
+XTerm*pointerColorBackground: #000000
+XTerm*pointerShape: xterm

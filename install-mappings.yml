@@ -208,6 +208,8 @@ gnome-terminal-settings.sh|gnome-terminal: ignore    # modules/term/gnome-termin
 Profile.profile|konsole: xdg_data:konsole/Profile.profile # modules/term/konsole (KDE)
 terminalrc|xfce4-terminal: xdg:xfce4/terminal/terminalrc # modules/term/xfce4-terminal
 tilix.json|tilix: xdg:tilix/tilix.json               # modules/term/tilix
+.Xresources|xterm: home:.Xresources                  # modules/term/xterm (CMD Win95/98 style)
+foot.ini|foot: xdg:foot/foot.ini                     # modules/term/foot (Wayland CMD Win95/98)
 
 #########################
 # modules/system
