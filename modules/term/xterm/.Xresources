@@ -1,96 +1,169 @@
-! XTerm Config - CMD Windows 95/98 Style para ThinkPad L420
-! Path: ~/.Xresources
+! .Xresources - Unified Config: xterm CMD + X11 Apps Win95 Style
+! Path: ~/.Xresources (shared by term/xterm and desktop/wm/x11)
 ! Apply: xrdb -merge ~/.Xresources
 
-! ===== GENERAL XTERM =====
-XTerm*termName: xterm-256color
-XTerm*locale: true
-XTerm*utf8: true
+! ==============================================================
+! GLOBAL X11 - Windows 95 Style
+! ==============================================================
+*background:              #C0C0C0        ! Win95 gray
+*foreground:              #000000        ! Black text
+*borderColor:             #808080        ! Gray border
+*highlightBackground:     #000080        ! Win95 blue
+*highlightForeground:     #FFFFFF        ! White text
 
-! ===== COLORS - CMD Windows 95/98 =====
-! Background negro como CMD
-XTerm*background: #000000
-! Texto gris claro como CMD
-XTerm*foreground: #C0C0C0
+! 3D Shadows (Xaw widgets, TWM)
+*topShadowColor:          #DFDFDF        ! Light
+*bottomShadowColor:       #808080        ! Shadow
+*shadowWidth:             2
+*highlightThickness:      2
+*threeD:                  true
 
-! Cursor blanco cuadrado (CMD style)
-XTerm*cursorColor: #FFFFFF
-XTerm*cursorBlink: true
-XTerm*cursorUnderline: false
+! Global font
+*font:                    -misc-fixed-medium-r-normal--13-*
+*faceName:                Sans:pixelsize=9
 
-! ===== PALETTE CMD WINDOWS 95/98 =====
-! Colores DOS/CMD clásicos
-XTerm*color0:  #000000
-XTerm*color1:  #800000
-XTerm*color2:  #008000
-XTerm*color3:  #808000
-XTerm*color4:  #000080
-XTerm*color5:  #800080
-XTerm*color6:  #008080
-XTerm*color7:  #C0C0C0
-XTerm*color8:  #808080
-XTerm*color9:  #FF0000
-XTerm*color10: #00FF00
-XTerm*color11: #FFFF00
-XTerm*color12: #0000FF
-XTerm*color13: #FF00FF
-XTerm*color14: #00FFFF
-XTerm*color15: #FFFFFF
+! ==============================================================
+! XTERM - CMD Windows 95/98 Style (OVERRIDES global)
+! ==============================================================
+xterm*termName:           xterm-256color
+xterm*locale:             true
+xterm*utf8:               2
 
-! ===== FONT - Bitmap style CMD =====
-! Terminal Classic (bitmap) 9pt para 1366x768
-XTerm*faceName: Terminal:pixelsize=9:antialias=false
-XTerm*faceSize: 9
-! Fallback a fuente monospace
-XTerm*font: -misc-fixed-medium-r-normal--13-*-*-*-*-*-iso10646-1
+! CMD Colors
+xterm*background:         #000000        ! Black like CMD
+xterm*foreground:         #C0C0C0        ! Gray like CMD
+xterm*cursorColor:        #FFFFFF        ! White cursor
+xterm*cursorBlink:        true
 
-! Bold usando same font (CMD no tiene bold)
-XTerm*boldMode: false
-XTerm*allowBoldFonts: false
+! CMD DOS Palette (16 colors)
+xterm*color0:  #000000
+xterm*color1:  #800000
+xterm*color2:  #008000
+xterm*color3:  #808000
+xterm*color4:  #000080
+xterm*color5:  #800080
+xterm*color6:  #008080
+xterm*color7:  #C0C0C0
+xterm*color8:  #808080
+xterm*color9:  #FF0000
+xterm*color10: #00FF00
+xterm*color11: #FFFF00
+xterm*color12: #0000FF
+xterm*color13: #FF00FF
+xterm*color14: #00FFFF
+xterm*color15: #FFFFFF
 
-! ===== SCROLLING =====
-XTerm*saveLines: 5000
-XTerm*scrollBar: false
-XTerm*scrollTtyOutput: false
-XTerm*scrollKey: true
+! Font - Terminal bitmap style
+xterm*faceName:           Terminal:pixelsize=9:antialias=false
+xterm*faceSize:           9
+xterm*font:               -misc-fixed-medium-r-normal--13-*
+xterm*boldMode:           false
+xterm*allowBoldFonts:     false
 
-! ===== GEOMETRY - CMD Windows 95 size =====
-! 80x25 era el tamaño CMD clásico, pero adaptamos a 1366x768
-XTerm*geometry: 100x30
+! Scrolling
+xterm*saveLines:          5000
+xterm*scrollBar:          false
+xterm*scrollTtyOutput:    false
+xterm*scrollKey:          true
 
-! ===== BELL =====
-XTerm*visualBell: false
-XTerm*bellIsUrgent: false
+! Geometry
+xterm*geometry:           100x30
+xterm*vt100.geometry:     100x30
 
-! ===== SELECTION =====
-XTerm*selectToClipboard: true
-XTerm*trimSelection: true
+! Misc
+xterm*internalBorder:     2
+xterm*borderWidth:        0
+xterm*metaSendsEscape:    true
+xterm*selectToClipboard:  true
+xterm*trimSelection:      true
 
-! ===== MISC =====
-XTerm*internalBorder: 2
-XTerm*borderWidth: 0
+! Performance
+xterm*fastScroll:         true
+xterm*jumpScroll:         true
+xterm*multiScroll:        true
 
-! Alt+Enter = Fullscreen
-XTerm*fullscreen: never
-XTerm*disallowedWindowOps: 20,21,SetXprop
+! ==============================================================
+! TWM - Windows 95 Style
+! ==============================================================
+Twm*TitleBackground:      #000080        ! Win95 blue
+Twm*TitleForeground:      #FFFFFF
+Twm*TitleFont:            -misc-fixed-bold-r-normal--13-*
 
-! ===== VT100 Widget =====
-XTerm*vt100.geometry: 100x30
-XTerm*vt100.metaSendsEscape: true
-XTerm*vt100.backarrowKey: false
-XTerm*vt100.ttyModes: erase ^?
+Twm*InactiveTitleBackground: #808080
+Twm*InactiveTitleForeground: #C0C0C0
 
-! ===== RENDERING =====
-! Sin antialiasing para look más retro/pixelado
-XTerm*renderFont: true
-XTerm*scaleHeight: 1.0
+Twm*BorderWidth:          3
+Twm*TitlePadding:         4
 
-! ===== PERFORMANCE (ThinkPad L420) =====
-XTerm*fastScroll: true
-XTerm*jumpScroll: true
-XTerm*multiScroll: true
+Twm*ButtonBackground:     #C0C0C0
+Twm*ButtonForeground:     #000000
 
-! ===== POINTER =====
-XTerm*pointerColor: #FFFFFF
-XTerm*pointerColorBackground: #000000
-XTerm*pointerShape: xterm
+Twm*MenuBackground:       #C0C0C0
+Twm*MenuForeground:       #000000
+Twm*MenuBorderWidth:      1
+Twm*MenuShadowColor:      #808080
+
+Twm*IconBackground:       #C0C0C0
+Twm*IconBorderColor:      #808080
+Twm*IconManagerBackground: #C0C0C0
+Twm*IconManagerForeground: #000000
+
+Twm*UsePPosition:         on
+Twm*RandomPlacement:      off
+Twm*NoTitle:              off
+
+! ==============================================================
+! XAW WIDGETS - Windows 95 Style
+! ==============================================================
+*borderWidth:             1
+
+! Buttons
+*Command*shapeStyle:      Rectangle
+*Command*highlightThickness: 1
+*Command*topShadowContrast: 20
+*Command*bottomShadowContrast: 40
+
+! Labels
+*Label*foreground:        #000000
+
+! Lists and Text areas (white bg for readability)
+*List*background:         #FFFFFF
+*List*foreground:         #000000
+*Text*background:         #FFFFFF
+*Text*foreground:         #000000
+
+! ==============================================================
+! X11 APPS - Specific tweaks
+! ==============================================================
+xclock*analog:            false
+xclock*padding:           4
+xclock*update:            1
+
+xcalc*buttonBorderWidth:  1
+
+xload*label:              Load:
+
+xbiff*width:              50
+xbiff*height:             30
+xbiff*foreground:         #FF0000
+
+xeyes*foreground:         #000000
+xfontsel*foreground:      #000000
+xman*foreground:          #000000
+
+! ==============================================================
+! KEYBOARD TRANSLATIONS (DOS compatibility)
+! ==============================================================
+*VT100*translations: #override \
+    <Key>Insert: string(0x1b) string("[2~") \n\
+    <Key>Home:   string(0x1b) string("[H") \n\
+    <Key>End:    string(0x1b) string("[F")
+
+! ==============================================================
+! LOCALE SUPPORT (ñ, áéíóú, ¿¡)
+! ==============================================================
+*locale:                  true
+*inputMethod:             none
+
+! Force UTF-8
+xterm*eightBitOutput:     true
