@@ -1,0 +1,29 @@
+# eza (modern ls) config
+# Optimizado para ThinkPad L420 (1366x768)
+# Path: ~/.config/eza/config or use aliases in shell
+
+# Por defecto usa estas opciones
+# Usa esto en tus aliases de shell:
+
+# Básico
+# alias ls='eza --icons --group-directories-first'
+# alias ll='eza --icons --group-directories-first -l'
+# alias la='eza --icons --group-directories-first -la'
+# alias lt='eza --icons --group-directories-first --tree --level=2'
+
+# Optimizado para 1366x768 (más compacto)
+--group-directories-first
+--icons
+--git
+--color=auto
+--group
+--header
+--modified
+--created
+--time-style=relative
+
+# Grid view compacto (mejor para pantalla pequeña)
+--grid
+
+# Git integration (útil para dev)
+--git-repos

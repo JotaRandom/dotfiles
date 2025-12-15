@@ -46,6 +46,8 @@ fzf.bash|fzf: xdg:fzf/fzf.bash                       # modules/cli-tools/fzf (fu
 config|bat: xdg:bat/config                           # modules/cli-tools/bat (cat with syntax highlighting)
 ripgreprc|ripgrep: home:.ripgreprc                   # modules/cli-tools/ripgrep (better grep)
 ignore|fd: xdg:fd/ignore                             # modules/cli-tools/fd (better find)
+config|eza: xdg:eza/config                           # modules/cli-tools/eza (modern ls)
+dust.conf|dust: xdg:dust/dust.conf                   # modules/cli-tools/dust (modern du)
 
 #########################
 # modules/browsers
@@ -154,6 +156,9 @@ tlp.conf|power-management: ignore                    # modules/system/power-mana
 # ThinkPad specific (TrackPoint config)
 trackpoint.sh|thinkpad: ignore                       # modules/system/thinkpad (manual review - device specific)
 trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (manual review - systemd service)
+
+# Logind (systemd power management)
+logind.conf|logind: ignore                           # modules/system/logind (needs root - copy to /etc/systemd/logind.conf)
 
 #########################
 # modules/editor
