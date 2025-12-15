@@ -23,8 +23,11 @@ Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profi
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
 rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
+.elvishrc|elvish: ignore                              # modules/shell/elvish (deprecated, use rc.elv)
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
 config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
+config.toml|nushell: ignore                           # modules/shell/nushell (deprecated, use config.nu)
+profile.ps1|pwsh: ignore                              # modules/shell/pwsh (deprecated, use Microsoft.PowerShell_profile.ps1)
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
@@ -120,6 +123,9 @@ WindowMaker|windowmaker: home:GNUstep/Defaults/WindowMaker  # modules/desktop/wm
 .xinitrc|windowmaker: ignore                         # modules/desktop/wm/windowmaker
 wlmaker.plist|wlmaker: xdg:wlmaker/wlmaker.plist     # modules/desktop/wm/wlmaker (Wayland)
 
+# Window Managers - Classic
+.twmrc|twm: home:.twmrc                              # modules/desktop/wm/twm
+
 #########################
 # modules/pacman
 #########################
@@ -144,17 +150,18 @@ cargo/config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
 
 # Gemini AI settings
 .gemini/settings.json|gemini: home:.gemini/settings.json  # modules/dev-tools/gemini
-.gemini.example: ignore                               # modules/dev-tools/gemini (example file)
+.gemini.example|gemini: ignore                            # modules/dev-tools/gemini (example file)
 
 # Lazygit
-lazygit/config.yml|lazygit: xdg:lazygit/config.yml   # modules/dev-tools/lazygit
+config.yml|lazygit: xdg:lazygit/config.yml                # modules/dev-tools/lazygit
+
 # SSH
-ssh/config.example: home:.ssh/config.example         # modules/dev-tools/ssh (template)
-ssh/config: ignore                                   # modules/dev-tools/ssh (sensitive)
+config.example|ssh: home:.ssh/config.example              # modules/dev-tools/ssh (template)
+config|ssh: ignore                                        # modules/dev-tools/ssh (sensitive)
 
 # NPM
-.npmrc.example: home:.npmrc.example                  # modules/dev-tools/npm (template)
-.npmrc: ignore                                       # modules/dev-tools/npm (sensitive)
+.npmrc.example|npm: home:.npmrc.example                   # modules/dev-tools/npm (template)
+.npmrc|npm: ignore                                        # modules/dev-tools/npm (sensitive)
 
 # Python Development
 pyproject.toml|python: ignore                        # modules/dev-tools/python (template - copy to projects)
@@ -174,6 +181,31 @@ trackpoint-config.service|thinkpad: ignore           # modules/system/thinkpad (
 
 # Logind (systemd power management)
 logind.conf|logind: ignore                           # modules/system/logind (needs root - copy to /etc/systemd/logind.conf)
+
+# System /etc configs (all need root)
+thinkfan.conf|etc: ignore                            # modules/system/etc (needs root)
+console-setup|etc: ignore                            # modules/system/etc/default (needs root)
+grub|etc: ignore                                     # modules/system/etc/default (needs root)
+10-audio.conf|etc: ignore                            # modules/system/etc/modprobe.d (needs root)
+10-disable-pcspkr.conf|etc: ignore                   # modules/system/etc/modprobe.d (needs root)
+20-power-save.conf|etc: ignore                       # modules/system/etc/modprobe.d (needs root)
+30-thinkpad.conf|etc: ignore                         # modules/system/etc/modprobe.d (needs root)
+system-info.sh|etc: ignore                           # modules/system/etc/profile.d (needs root)
+99-resources.conf|etc: ignore                        # modules/system/etc/security/limits.d (needs root)
+99-filesystem.conf|etc: ignore                       # modules/system/etc/sysctl.d (needs root)
+99-kernel-hardening.conf|etc: ignore                 # modules/system/etc/sysctl.d (needs root)
+99-network-security.conf|etc: ignore                 # modules/system/etc/sysctl.d (needs root)
+99-reisub.conf|etc: ignore                           # modules/system/etc/sysctl.d (needs root)
+99-swap.conf|etc: ignore                             # modules/system/etc/sysctl.d (needs root)
+40-security-devices.rules|etc: ignore                # modules/system/etc/udev/rules.d (needs root)
+50-usb_power_save.rules|etc: ignore                  # modules/system/etc/udev/rules.d (needs root)
+70-wifi-powersave.rules|etc: ignore                  # modules/system/etc/udev/rules.d (needs root)
+80-bluetooth.rules|etc: ignore                       # modules/system/etc/udev/rules.d (needs root)
+00-keyboard.conf|etc: ignore                         # modules/system/etc/X11/xorg.conf.d (needs root)
+10-keyboard.conf|etc: ignore                         # modules/system/etc/X11/xorg.conf.d (needs root)
+20-intel.conf|etc: ignore                            # modules/system/etc/X11/xorg.conf.d (needs root)
+40-libinput.conf|etc: ignore                         # modules/system/etc/X11/xorg.conf.d (needs root)
+70-wacom.conf|etc: ignore                            # modules/system/etc/X11/xorg.conf.d (needs root)
 
 #########################
 # modules/editor
@@ -197,6 +229,9 @@ xed-settings.sh|xed: ignore                          # modules/editor/xed (aplic
 Preferences.sublime-settings|sublime: xdg:sublime-text/Packages/User/Preferences.sublime-settings
 Default (Windows).sublime-keymap|sublime: xdg:sublime-text/Packages/User/Default (Windows).sublime-keymap
 Package Control.sublime-settings|sublime: xdg:sublime-text/Packages/User/Package Control.sublime-settings
+
+# LaTeX
+.latexmkrc|latex: home:.latexmkrc                     # modules/editor/latex
 
 #########################
 # modules/term
