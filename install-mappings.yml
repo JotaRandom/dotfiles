@@ -115,6 +115,11 @@ rc.xml|openbox: xdg:openbox/rc.xml                   # modules/desktop/wm/openbo
 config|sway: xdg:sway/config                        # modules/desktop/wm/sway (Wayland)
 hyprland.conf|hyprland: xdg:hypr/hyprland.conf       # modules/desktop/wm/hyprland (Wayland)
 
+# Window Managers - NeXTSTEP Style
+WindowMaker|windowmaker: home:GNUstep/Defaults/WindowMaker  # modules/desktop/wm/windowmaker
+.xinitrc|windowmaker: ignore                         # modules/desktop/wm/windowmaker
+wlmaker.plist|wlmaker: xdg:wlmaker/wlmaker.plist     # modules/desktop/wm/wlmaker (Wayland)
+
 #########################
 # modules/pacman
 #########################

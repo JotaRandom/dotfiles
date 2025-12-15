@@ -1,0 +1,127 @@
+{
+  /* WindowMaker Config - NeXTSTEP Style para ThinkPad L420 */
+  /* Path: ~/GNUstep/Defaults/WindowMaker */
+  
+  /* ===== APPEARANCE - NeXTSTEP ===== */
+  WorkspaceBack = (
+    mpixmap,
+    "/usr/share/WindowMaker/Backgrounds/BlueImage.jpg",
+    center
+  );
+  
+  /* Colores NeXTSTEP - Grises oscuros */
+  WindowTitleForeground = "#FFFFFF";
+  WindowTitleBackground = "#404040";
+  
+  /* Focused window - NeXT blue */
+  FTitleBack = (solid, "#1A4B6E");
+  FTitleColor = "#FFFFFF";
+  
+  /* Unfocused window */
+  UTitleBack = (solid, "#404040");
+  UTitleColor = "#CCCCCC";
+  
+  /* Menu colors NeXTSTEP */
+  MenuTitleColor = "#FFFFFF";
+  MenuTitleBack = (solid, "#1A4B6E");
+  MenuTextColor = "#000000";
+  MenuTextBack = (solid, "#C0C0C0");
+  
+  /* ===== FONTS - 9pt para 1366x768 ===== */
+  WindowTitleFont = "Sans:pixelsize=9:bold";
+  MenuTitleFont = "Sans:pixelsize=9:bold";
+  MenuTextFont = "Sans:pixelsize=9";
+  IconTitleFont = "Sans:pixelsize=9";
+  ClipTitleFont = "Sans:pixelsize=9";
+  DisplayFont = "Sans:pixelsize=9";
+  LargeDisplayFont = "Sans:pixelsize=12";
+  
+  /* ===== WINDOW STYLE NeXTSTEP ===== */
+  NewStyle = {
+    base = {
+      BorderWidth = 1;
+      HandleWidth = 1;
+      CornerRadius = 0;  /* Sin redondeo, NeXT es cuadrado */
+    };
+  };
+  
+  /* ===== DOCK - NeXTSTEP Vertical a la derecha ===== */
+  Dock = {
+    Position = "1345,10";  /* Derecha en 1366x768 */
+    Autoraise = YES;
+    AutoraiseLowered = YES;
+    AutoAttractIcons = YES;
+    CollapseCommand = NO;
+    AutoCollapse = NO;
+    Lowered = NO;
+  };
+  
+  /* ===== CLIP - NeXTSTEP ===== */
+  Clip = {
+    AutoRaiseLower = YES;
+    AutoAttractIcons = YES;
+    Autocollapse = NO;
+    Collapsed = NO;
+    Lowered = NO;
+    OmnipresentCommand = "";
+  };
+  
+  /* ===== WORKSPACES NeXTSTEP ===== */
+  WorkspaceCount = 4;
+  WorkspaceNameDisplayPosition = "center";
+  
+  /* ===== WINDOW BEHAVIOR ===== */
+  FocusMode = "ClickToFocus";  /* NeXT style */
+  AutoFocus = NO;
+  RaiseDelay = 0;
+  CirculateRaise = YES;
+  
+  /* ===== ICON BEHAVIOR ===== */
+  IconPosition = "blv";  /* Bottom left vertical */
+  IconSize = 64;
+  IconificationStyle = "Zoom";  /* NeXT zoom animation */
+  
+  /* ===== PERFORMANCE (ThinkPad L420) ===== */
+  DisableAnimations = NO;  /* Keep NeXT animations, son ligeras */
+  DisableBlinking = YES;
+  UseSaveUnders = NO;
+  OpaqueMove = YES;
+  OpaqueResize = NO;
+  
+  /* ===== SUPERFLUOUS ===== */
+  SuperfluousKey = "None";
+  
+  /* ===== MENU ===== */
+  MenuScrollSpeed = "fast";
+  
+  /* ===== WINDOW PLACEMENT ===== */
+  WindowPlacement = "cascade";
+  
+  /* ===== BALLOON HELP ===== */
+  BalloonDelay = 1000;
+  
+  /* ===== MOUSE ===== */
+  DisableMiniwindows = NO;
+  EdgeResistance = 30;
+  ResizeIncrement = 32;
+  
+  /* ===== APPEARANCE TWEAKS ===== */
+  WidgetColor = (solid, "#1A4B6E");  /* NeXT blue */
+  IconBack = (solid, "#404040");
+  
+  /* ===== WINDOW ATTRIBUTES ===== */
+  WinTitleHeight = 18;  /* Compacto para 1366x768 */
+  MenuTitleHeight = 18;
+  
+  /* ===== DEFAULTS ===== */
+  DisableDithering = YES;
+  
+  /* ===== ADVANCE OPTIONS ===== */
+  DontLinkWorkspaces = NO;
+  SingleClickLaunch = NO;  /* Double click como NeXT */
+  StrictWindozeCycle = YES;
+  SwitchPanelOnlyOpen = NO;
+  
+  /* ===== KEYBINDINGS NeXTSTEP style ===== */
+  /* Use wm defaults, no custom needed */
+}

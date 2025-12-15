@@ -1,0 +1,119 @@
+# wlmaker Config - NeXTSTEP Style (Wayland) para ThinkPad L420
+# Path: ~/.config/wlmaker/wlmaker.plist
+# wlmaker es WindowMaker para Wayland
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- ===== APPEARANCE - NeXTSTEP ===== -->
+  
+  <!-- Background color NeXTSTEP -->
+  <key>WorkspaceBack</key>
+  <string>#2F4F4F</string>
+  
+  <!-- Window colors -->
+  <key>FocusedTitleBackground</key>
+  <string>#1A4B6E</string>
+  
+  <key>FocusedTitleForeground</key>
+  <string>#FFFFFF</string>
+  
+  <key>UnfocusedTitleBackground</key>
+  <string>#404040</string>
+  
+  <key>UnfocusedTitleForeground</key>
+  <string>#CCCCCC</string>
+  
+  <!-- Menu colors NeXTSTEP -->
+  <key>MenuTitleBackground</key>
+  <string>#1A4B6E</string>
+  
+  <key>MenuTitleForeground</key>
+  <string>#FFFFFF</string>
+  
+  <key>MenuBackground</key>
+  <string>#C0C0C0</string>
+  
+  <key>MenuForeground</key>
+  <string>#000000</string>
+  
+  <!-- ===== FONTS - 9pt para 1366x768 ===== -->
+  <key>TitleFont</key>
+  <string>Sans 9 Bold</string>
+  
+  <key>MenuFont</key>
+  <string>Sans 9</string>
+  
+  <key>IconFont</key>
+  <string>Sans 9</string>
+  
+  <!-- ===== DOCK - NeXTSTEP Vertical ===== -->
+  <key>DockPosition</key>
+  <string>right</string>
+  
+  <key>DockAutoRaise</key>
+  <true/>
+  
+  <key>DockAutoLower</key>
+  <true/>
+  
+  <!-- ===== CLIP - NeXTSTEP ===== -->
+  <key>ClipAutoRaise</key>
+  <true/>
+  
+  <key>ClipAutoCollapse</key>
+  <false/>
+  
+  <!-- ===== WORKSPACES ===== -->
+  <key>WorkspaceCount</key>
+  <integer>4</integer>
+  
+  <!-- ===== WINDOW BEHAVIOR ===== -->
+  <key>FocusMode</key>
+  <string>click</string>
+  
+  <key>RaiseOnFocus</key>
+  <true/>
+  
+  <!-- ===== ICON BEHAVIOR ===== -->
+  <key>IconSize</key>
+  <integer>64</integer>
+  
+  <key>IconPosition</key>
+  <string>bottom-left</string>
+  
+  <!-- ===== WINDOW PLACEMENT ===== -->
+  <key>WindowPlacement</key>
+  <string>cascade</string>
+  
+  <!-- ===== PERFORMANCE (ThinkPad L420) ===== -->
+  <key>OpaqueMove</key>
+  <true/>
+  
+  <key>OpaqueResize</key>
+  <false/>
+  
+  <key>DisableAnimations</key>
+  <false/>  <!-- Keep NeXT animations -->
+  
+  <!-- ===== WINDOW ATTRIBUTES ===== -->
+  <key>TitleHeight</key>
+  <integer>18</integer>
+  
+  <key>BorderWidth</key>
+  <integer>1</integer>
+  
+  <!-- ===== MOUSE ===== -->
+  <key>EdgeResistance</key>
+  <integer>30</integer>
+  
+  <key>DoubleClickTime</key>
+  <integer>250</integer>
+  
+  <!-- ===== MISC ===== -->
+  <key>BalloonDelay</key>
+  <integer>1000</integer>
+  
+</dict>
+</plist>

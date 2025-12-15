@@ -665,6 +665,8 @@ MODULES=(
   "modules/desktop/wm/openbox"
   "modules/desktop/wm/sway"
   "modules/desktop/wm/twm"
+  "modules/desktop/wm/windowmaker"
+  "modules/desktop/wm/wlmaker"
   "modules/desktop/wm/x11"
   "modules/dev-tools/cargo"
   "modules/dev-tools/gemini"
