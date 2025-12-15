@@ -1,179 +1,225 @@
-/* userChrome.css – Apariencia retro de Firefox
- * Ruta de instalación: ~/.mozilla/firefox/PROFILE_ID/chrome/userChrome.css
- * Requiere: about:config → toolkit.legacyUserProfileCustomizations.stylesheets → true
+/* userChrome.css - Firefox 4.0 Style para ThinkPad L420
+ * Ruta: ~/.mozilla/firefox/PROFILE_ID/chrome/userChrome.css
+ * Requiere: user.js → toolkit.legacyUserProfileCustomizations.stylesheets → true
  *
- * Emula la apariencia de Firefox antiguo (Firefox 3-10 era)
+ * Estilo Firefox 4 (2011): Tabs cuadrados, botón Firefox, UI compacta
  */
 
 /* ============================================================
-   Paleta de colores retro - Tonos grises, azules y plateados
+   VARIABLES - Firefox 4.0 Colors
    ============================================================ */
 :root {
-  --ff-bg: #f0f0f0;           /* Fondo gris plateado */
-  --ff-fg: #000000;           /* Texto negro */
-  --ff-border: #a0a0a0;       /* Bordes grises */
-  --ff-button-bg: #e0e0e0;    /* Botones gris claro */
-  --ff-hover: #d0d0d0;        /* Hover gris oscuro */
-  --ff-active-bg: #0066cc;    /* Azul Firefox clásico */
-  --ff-active-fg: #ffffff;    /* Texto blanco en activo */
+  --ff4-gray-light: #f0f0f0;
+  --ff4-gray: #e0e0e0;
+  --ff4-gray-dark: #c0c0c0;
+  --ff4-border: #a0a0a0;
+  --ff4-blue: #0066cc;  /* Firefox 4 blue */
+  --ff4-blue-hover: #005bb5;
+  --ff4-orange: #ff6600;  /* Firefox button orange */
+  --ff4-tab-height: 28px;  /* Compacto para 1366x768 */
 }
 
 /* ============================================================
-   Barra de herramientas - Apariencia 3D retro
+   TOOLBAR - Compacta estilo Firefox 4
    ============================================================ */
-#toolbar-menubar,
-#TabsToolbar,
-#PersonalToolbar {
-  background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-  border-bottom: 1px solid #808080;
-  border-top: 1px solid #dfdfdf;
-  padding: 2px 0;
+#navigator-toolbox {
+  --toolbar-bgcolor: var(--ff4-gray);
+  border-bottom: 1px solid var(--ff4-border) !important;
 }
 
-/* Botones de navegación con estilo 3D clásico */
+/* Altura reducida de toolbars */
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar {
+  min-height: var(--ff4-tab-height) !important;
+  max-height: var(--ff4-tab-height) !important;
+  padding
+
+-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ============================================================
+   TABS - Estilo Firefox 4.0 (Cuadrados, sin redondeos)
+   ============================================================ */
+
+/* Tab base - SIN border-radius (cuadrado) */
+.tabbrowser-tab {
+  border-radius: 0 !important;
+  margin: 0 0 0 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Tab background - Gradiente sutil estilo Firefox 4 */
+.tabbrowser-tab:not([selected]):not([multiselected]) {
+  background: linear-gradient(to bottom, #dadada, #c8c8c8) !important;
+  border-right: 1px solid var(--ff4-border) !important;
+}
+
+/* Tab seleccionado - Más claro */
+.tabbrowser-tab[selected] {
+  background: linear-gradient(to bottom, #f5f5f5, #e8e8e8) !important;
+  border-left: 1px solid var(--ff4-border) !important;
+  border-right: 1px solid var(--ff4-border) !important;
+  border-top: 3px solid var(--ff4-blue) !important;  /* Indicador azul */
+  font-weight: 600 !important;
+}
+
+/* Tab hover */
+.tabbrowser-tab:hover:not([selected]) {
+  background: linear-gradient(to bottom, #e8e8e8, #d8d8d8) !important;
+}
+
+/* Tab label compacto */
+.tab-label {
+  font-size: 11px !important;
+  padding: 0 4px !important;
+}
+
+/* Tab line height */
+.tab-content {
+  min-height: var(--ff4-tab-height) !important;
+  padding: 2px 6px !important;
+}
+
+/* Close button en tabs */
+.tab-close-button {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 2px !important;
+}
+
+/* ============================================================
+   URLBAR - Compacta
+   ============================================================ */
+#urlbar {
+  font-size: 12px !important;
+  min-height: 24px !important;
+  margin: 2px 4px !important;
+  border-radius: 2px !important;  /* Mínimo redondeo */
+}
+
+/* Urlbar icons más pequeños */
+#urlbar .urlbar-icon {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* ============================================================
+   NAVIGATION BUTTONS - Compactos
+   ============================================================ */
 #back-button,
 #forward-button,
 #reload-button,
 #stop-button {
-  border: 2px outset #c0c0c0;
-  background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-  padding: 2px 4px;
-  margin: 2px;
-}
-
-#back-button:hover,
-#forward-button:hover,
-#reload-button:hover,
-#stop-button:hover {
-  background: linear-gradient(to bottom, #e0e0e0, #d0d0d0);
-  border-color: #a0a0a0;
-}
-
-#back-button:active,
-#forward-button:active,
-#reload-button:active,
-#stop-button:active {
-  border-style: inset;
+  padding: 2px !important;
+  margin: 2px !important;
 }
 
 /* ============================================================
-   Barra de direcciones - Estilo clásico
+   BOOKMARKS TOOLBAR - Compacta
    ============================================================ */
-#urlbar {
-  background-color: #ffffff;
-  border: 1px solid #808080;
-  border-radius: 0;
-  padding: 2px 4px;
-  margin: 2px 4px;
+#PersonalToolbar {
+  min-height: 24px !important;
+  max-height: 24px !important;
 }
 
-#urlbar:focus-within {
-  background-color: #ffffff;
-  border-color: #0066cc;
-  outline: none;
+.bookmark-item {
+  font-size: 11px !important;
+  padding: 2px 4px !important;
 }
 
 /* ============================================================
-   Pestañas - Estilo Firefox antiguo
+   MENUBAR - Visible estilo Firefox 4
    ============================================================ */
-#TabsToolbar {
-  --tab-height: 32px;
+#toolbar-menubar {
+  min-height: 24px !important;
+  background: var(--ff4-gray) !important;
 }
 
-.tabbrowser-tab {
-  background: linear-gradient(to bottom, #e0e0e0, #d0d0d0);
-  border: 1px solid #a0a0a0;
-  border-radius: 0 0 0 0;
-  margin: 0 1px 0 0;
-  padding: 4px 8px;
-  font-size: 11px;
-}
-
-.tabbrowser-tab[selected] {
-  background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-  border: 1px solid #808080;
-  border-bottom-color: #e0e0e0;
-  font-weight: bold;
-}
-
-.tabbrowser-tab:hover {
-  background: linear-gradient(to bottom, #e8e8e8, #d8d8d8);
-}
-
-/* Botón de cerrar pestaña clásico */
-.tab-close-button {
-  margin: 0 2px 0 4px;
-  padding: 0;
+#toolbar-menubar > * {
+  font-size: 11px !important;
 }
 
 /* ============================================================
-   Barra lateral (bookmarks, historial)
+   SIDEBAR - Compacta
    ============================================================ */
 #sidebar-box {
-  border-right: 1px solid #808080;
-  background-color: #f0f0f0;
+  min-width: 200px !important;
+  max-width: 300px !important;
 }
 
-.sidebar-splitter {
-  border-right: 1px solid #808080;
-  background: linear-gradient(to right, #dfdfdf, #e0e0e0);
+#sidebar-header {
+  font-size: 11px !important;
+  padding: 2px 4px !important;
 }
 
 /* ============================================================
-   Menús contextuales
+   CONTEXT MENUS
    ============================================================ */
 menupopup {
-  background-color: #f0f0f0;
-  border: 1px solid #808080;
-  box-shadow: 1px 1px 0px #ffffff inset, -1px -1px 0px #404040 inset;
+  font-size: 11px !important;
 }
 
-menuitem:hover {
-  background-color: #0066cc;
-  color: #ffffff;
+menuitem {
+  padding: 3px 6px !important;
 }
 
 /* ============================================================
-   Barra de estado (abajo)
+   OCULTAR ELEMENTOS MODERNOS (Opcionales)
    ============================================================ */
-#status-bar {
-  background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-  border-top: 1px solid #dfdfdf;
-  border-bottom: 1px solid #808080;
-  padding: 2px 0;
-}
+
+/* Pocket button */
+#pocket-button { display: none !important; }
+
+/* Firefox Account button */
+#fxa-toolbar-menu-button { display: none !important; }
 
 /* ============================================================
-   Scrollbars - Estilo clásico Windows 95 inspired
+   SCROLLBARS - Estilo compacto
    ============================================================ */
 * {
-  scrollbar-color: #c0c0c0 #e0e0e0;
-  scrollbar-width: thin;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--ff4-gray-dark) var(--ff4-gray-light) !important;
 }
 
 /* ============================================================
-   Área de contenido
+   GENERAL - Font optimizations
    ============================================================ */
-#navigator-toolbox {
-  background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-  border-bottom: 1px solid #808080;
-}
-
-/* ============================================================
-   Notas y ajustes finales
-   ============================================================ */
-/* Desactivar algunos elementos modernos si es deseado */
-/* Botones que ocupan mucho espacio en Firefox moderno */
-/* #pocket-button { display: none !important; } */
-/* #fxa-toolbar-menu-button { display: none !important; } */
-
-/* Tamaño de fuente global más pequeño (retro) */
 * {
-  font-family: "MS Sans Serif", "Tahoma", sans-serif;
-  font-size: 11px;
+  font-family: "Segoe UI", "Tahoma", "Arial", sans-serif !important;
 }
 
-.tab-label {
-  font-size: 11px;
+/* ============================================================
+   OPTIMIZACIÓN 1366x768 - Ganar espacio vertical
+   ============================================================ */
+
+/* Tab bar más angosta */
+#tabbrowser-tabs {
+  --tab-min-height: var(--ff4-tab-height) !important;
 }
 
+/* Reducir padding de nav-bar */
+#nav-bar {
+  padding-block: 0px !important;
+}
+
+/* Toolbox compacto total */
+:root {
+  --toolbarbutton-inner-padding: 4px !important;
+  --toolbarbutton-outer-padding: 2px !important;
+}
+
+/* ============================================================
+   NOTAS FINALES
+   ============================================================ */
+/* Este estilo emula Firefox 4.0 (marzo 2011):
+ * - Tabs cuadrados sin redondeo
+ * - UI compacta optimizada para 1366x768
+ * - Indicador de tab activo con borde azul superior
+ * - Gradientes sutiles estilo 2011
+v * - Menubar visible
+ * Ahorra ~50px verticales vs Firefox moderno
+ */
