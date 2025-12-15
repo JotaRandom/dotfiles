@@ -23,11 +23,8 @@ Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profi
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
 rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
-.elvishrc|elvish: ignore                              # modules/shell/elvish (deprecated, use rc.elv)
 .xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
 config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
-config.toml|nushell: ignore                           # modules/shell/nushell (deprecated, use config.nu)
-profile.ps1|pwsh: ignore                              # modules/shell/pwsh (deprecated, use Microsoft.PowerShell_profile.ps1)
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)

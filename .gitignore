@@ -11,3 +11,9 @@ scripts/cleanup_temp_scripts.sh
 
 # Local REISUB config (contains hardware-specific key combo settings)
 .reisub.local
+
+# Test logs
+test-output.txt
+test-results.log
+test-final.log
+*.test.log
