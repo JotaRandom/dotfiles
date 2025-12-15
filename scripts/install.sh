@@ -695,7 +695,11 @@ MODULES=(
   "modules/shell/xonsh"
   "modules/shell/zsh"
   "modules/term/alacritty"
+  "modules/term/gnome-terminal"
   "modules/term/kitty"
+  "modules/term/konsole"
+  "modules/term/tilix"
+  "modules/term/xfce4-terminal"
 )
 
 if [[ $# -gt 0 ]]; then

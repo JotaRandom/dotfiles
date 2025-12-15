@@ -1,0 +1,114 @@
+{
+  "schema-version": 1,
+  "terminal-title": "${title}",
+  "terminal-title-style": "small",
+  "theme-variant": "dark",
+  "accelerators-enabled": false,
+  
+  "profiles": {
+    "default": {
+      "visible-name": "ThinkPad L420",
+      "font": "Monospace 9",
+      "use-system-font": false,
+      
+      "foreground-color": "#FFFFFF",
+      "background-color": "#2C2C2C",
+      "cursor-foreground-color": "#2C2C2C",
+      "cursor-background-color": "#FFFFFF",
+      "bold-color": "#FFFFFF",
+      "bold-is-bright": false,
+      
+      "palette": [
+        "#2C2C2C",
+        "#CC0000",
+        "#4E9A06",
+        "#C4A000",
+        "#3465A4",
+        "#75507B",
+        "#06989A",
+        "#D3D7CF",
+        "#555753",
+        "#EF2929",
+        "#8AE234",
+        "#FCE94F",
+        "#729FCF",
+        "#AD7FA8",
+        "#34E2E2",
+        "#EEEEEC"
+      ],
+      
+      "scrollback-lines": 5000,
+      "scrollback-unlimited": false,
+      "scroll-on-output": false,
+      "scroll-on-keystroke": true,
+      
+      "cursor-blink-mode": "on",
+      "cursor-shape": "block",
+      
+      "audible-bell": false,
+      "visual-bell": false,
+      
+      "default-size-columns": 100,
+      "default-size-rows": 30,
+      
+      "use-theme-colors": false,
+      "use-custom-command": false,
+      "login-shell": true,
+      
+      "exit-action": "close",
+      "copy-on-select": true,
+      "strip-trailing-space": true,
+      
+      "allow-bold": true,
+      "rewrap-on-resize": true
+    }
+  },
+  
+  "keybindings": {
+    "win-switch-to-next-session": "disabled",
+    "win-switch-to-previous-session": "disabled",
+    "terminal-copy": "<Ctrl><Shift>c",
+    "terminal-paste": "<Ctrl><Shift>v",
+    "terminal-find": "<Ctrl><Shift>f",
+    "terminal-zoom-in": "<Ctrl>plus",
+    "terminal-zoom-out": "<Ctrl>minus",
+    "terminal-zoom-normal": "<Ctrl>0"
+  },
+  
+  "new-window-inherit-state": false,
+  "control-scroll-zoom": true,
+  "warn-vte-config-issue": false,
+  
+  "window-style": "normal",
+  "window-save-state": true,
+  
+  "sidebar-on-right": false,
+  "terminal-bell": "none",
+  
+  "paste-strip-first-char": true,
+  "paste-advanced-default": true,
+  
+  "session-name": "${title}",
+  "unsafe-paste-alert": false,
+  
+  "use-tabs": true,
+  "tab-position": "top",
+  "new-tab-position": "end",
+  "close-with-last-child": true,
+  
+  "auto-hide-mouse": false,
+  "draw-margin": 80,
+  
+  "custom-hyperlinks": [],
+  "enable-sixel": false,
+  
+  "middle-click-close-tab": true,
+  "control-click-title-bar": "maximize",
+  
+  "badge-text": "",
+  "background-image": "",
+  
+  "quake-specific-monitor": 0,
+  "quake-height-percent": 50,
+  "quake-keep-on-top": true
+}

@@ -1,0 +1,43 @@
+# XFCE4 Terminal config - Optimizado para ThinkPad L420 (1366x768)
+# Path: ~/.config/xfce4/terminal/terminalrc
+
+[Configuration]
+FontName=Monospace 9
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBellUrgent=FALSE
+MiscBordersDefault=TRUE
+MiscCursorBlinks=TRUE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+MiscDefaultGeometry=100x30
+MiscInheritGeometry=FALSE
+MiscMenubarDefault=FALSE
+MiscMouseAutohide=FALSE
+MiscMouseWheelZoom=TRUE
+MiscToolbarDefault=FALSE
+MiscConfirmClose=TRUE
+MiscCycleTabs=TRUE
+MiscTabCloseButtons=TRUE
+MiscTabCloseMiddleClick=TRUE
+MiscTabPosition=GTK_POS_TOP
+MiscHighlightUrls=TRUE
+MiscMiddleClickOpensUri=FALSE
+MiscCopyOnSelect=TRUE
+MiscShowRelaunchDialog=TRUE
+MiscRewrapOnResize=TRUE
+MiscUseShiftArrowsToScroll=FALSE
+MiscSlimTabs=TRUE
+MiscNewTabAdjacent=FALSE
+MiscSearchDialogOpacity=100
+MiscShowUnsafePasteDialog=FALSE
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+ScrollingLines=5000
+ScrollingOnOutput=FALSE
+ScrollingOnKeystroke=TRUE
+ColorForeground=#ffffff
+ColorBackground=#2c2c2c
+ColorCursor=#ffffff
+ColorBold=#ffffff
+ColorBoldUseDefault=FALSE
+ColorPalette=#2c2c2c;#cc0000;#4e9a06;#c4a000;#3465a4;#75507b;#06989a;#d3d7cf;#555753;#ef2929;#8ae234;#fce94f;#729fcf;#ad7fa8;#34e2e2;#eeeeec
+TabActivityColor=#8ae234

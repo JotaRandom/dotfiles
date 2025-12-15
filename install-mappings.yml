@@ -189,6 +189,10 @@ Package Control.sublime-settings|sublime: xdg:sublime-text/Packages/User/Package
 # Terminal emulator configs (modules/term/*)
 alacritty.yml|alacritty: xdg:alacritty/alacritty.yml  # modules/term/alacritty
 kitty.conf|kitty: xdg:kitty/kitty.conf               # modules/term/kitty
+gnome-terminal-settings.sh|gnome-terminal: ignore    # modules/term/gnome-terminal (aplicar con bash)
+Profile.profile|konsole: xdg_data:konsole/Profile.profile # modules/term/konsole (KDE)
+terminalrc|xfce4-terminal: xdg:xfce4/terminal/terminalrc # modules/term/xfce4-terminal
+tilix.json|tilix: xdg:tilix/tilix.json               # modules/term/tilix
 
 #########################
 # modules/system
