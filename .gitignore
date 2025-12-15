@@ -14,6 +14,4 @@ scripts/cleanup_temp_scripts.sh
 
 # Test logs
 test-output.txt
-test-results.log
-test-final.log
-*.test.log
+*.log
