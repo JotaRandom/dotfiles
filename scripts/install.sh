@@ -368,10 +368,21 @@ install_module() {
       fi
     done
     for mapped in "${!_MAPPED_NAMES[@]}"; do
-      # excluir cualquier ocurrencia del nombre base mapeado en cualquier parte del árbol del módulo
-      EXCLUDE_ARGS+=(--exclude "**/${mapped}")
-      # excluir también cualquier ocurrencia a nivel superior
-      EXCLUDE_ARGS+=(--exclude "/${mapped}")
+      # SOLO excluir si NO existe un mapeo específico por módulo para este archivo en el módulo actual
+      # Si existe un mapeo "archivo|módulo" donde módulo == BASENAME, NO excluir
+      local has_module_specific_mapping=0
+      # Verificar si existe mapeo "$mapped|$BASENAME" en _MAPPER_MODULE
+      if [[ -n "${_MAPPER_MODULE[$mapped|$BASENAME]:-}" ]]; then
+        has_module_specific_mapping=1
+      fi
+      
+      # Solo excluir si no hay mapeo específico para este módulo
+      if [[ $has_module_specific_mapping -eq 0 ]]; then
+        # excluir cualquier ocurrencia del nombre base mapeado en cualquier parte del árbol del módulo
+        EXCLUDE_ARGS+=(--exclude "**/${mapped}")
+        # excluir también cualquier ocurrencia a nivel superior
+        EXCLUDE_ARGS+=(--exclude "/${mapped}")
+      fi
     done
     # Si DEFAULT_ACTION es 'dotify', identificar entradas top-level que deberíamos dotificar
     local DOTIFY_BASENAMES=()
