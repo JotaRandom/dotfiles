@@ -89,10 +89,10 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 # === Window Managers Standalone === (genérico para i3, awesome, bspwm, dwm, etc.)
 .xinitrc|x11: ignore                                  # modules/desktop/wm/x11 (descomentar si usas WM standalone: home:.xinitrc)
 .Xmodmap|x11: home:.Xmodmap                           # modules/desktop/wm/x11 (keyboard mappings)
-.Xresources|x11: home:.Xresources                     # modules/desktop/wm/x11 (X11 resources)
 .xserverrc|x11: home:.xserverrc                       # modules/desktop/wm/x11 (X server config)
 .xsession|x11: home:.xsession                         # modules/desktop/wm/x11 (session script)
 .xsessionrc|x11: home:.xsessionrc                     # modules/desktop/wm/x11 (session config)
+
 
 #########################
 # modules/desktop
