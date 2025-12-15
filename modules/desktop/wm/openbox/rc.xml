@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!-- Openbox config - Windows 95 Style para ThinkPad L420 -->
+<!-- Path: ~/.config/openbox/rc.xml -->
+
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+
+<resistance>
+  <strength>10</strength>
+  <screen_edge_strength>20</screen_edge_strength>
+</resistance>
+
+<focus>
+  <focusNew>yes</focusNew>
+  <followMouse>no</followMouse>  <!-- Click to focus como Win95 -->
+  <focusLast>yes</focusLast>
+  <underMouse>no</underMouse>
+  <focusDelay>0</focusDelay>
+  <raiseOnFocus>yes</raiseOnFocus>
+</focus>
+
+<placement>
+  <policy>Smart</policy>
+  <center>yes</center>
+  <monitor>Any</monitor>
+</placement>
+
+<theme>
+  <name>Win95</name>  <!-- Necesita tema Win95 instalado -->
+  <titleLayout>NLIMC</titleLayout>
+  
+  <!-- FONTS - 9pt para 1366x768 -->
+  <font place="ActiveWindow">
+    <name>Sans</name>
+    <size>9</size>
+    <weight>Bold</weight>
+    <slant>Normal</slant>
+  </font>
+  <font place="InactiveWindow">
+    <name>Sans</name>
+    <size>9</size>
+    <weight>Normal</weight>
+    <slant>Normal</slant>
+  </font>
+  <font place="MenuHeader">
+    <name>Sans</name>
+    <size>9</size>
+    <weight>Bold</weight>
+    <slant>Normal</slant>
+  </font>
+  <font place="MenuItem">
+    <name>Sans</name>
+    <size>9</size>
+    <weight>Normal</weight>
+    <slant>Normal</slant>
+  </font>
+  
+  <keepBorder>yes</keepBorder>
+  <animateIconify>no</animateIconify>  <!-- Performance L420 -->
+</theme>
+
+<desktops>
+  <number>4</number>
+  <firstdesk>1</firstdesk>
+  <names>
+    <name>Desktop 1</name>
+    <name>Desktop 2</name>
+    <name>Desktop 3</name>
+    <name>Desktop 4</name>
+  </names>
+  <popupTime>0</popupTime>
+</desktops>
+
+<resize>
+  <drawContents>yes</drawContents>
+  <popupShow>Nonpixel</popupShow>
+  <popupPosition>Center</popupPosition>
+</resize>
+
+<!-- KEYBINDINGS WIN95 STYLE -->
+<keyboard>
+  <chainQuitKey>C-g</chainQuitKey>
+  
+  <!-- Win key = Start Menu -->
+  <keybind key="Super_L">
+    <action name="ShowMenu"><menu>root-menu</menu></action>
+  </keybind>
+  
+  <!-- Alt+F4 = Close como Win95 -->
+  <keybind key="A-F4">
+    <action name="Close"/>
+  </keybind>
+  
+  <!-- Alt+Tab = Switch -->
+  <keybind key="A-Tab">
+    <action name="NextWindow"/>
+  </keybind>
+</keyboard>
+
+<mouse>
+  <dragThreshold>3</dragThreshold>
+  <doubleClickTime>200</doubleClickTime>
+  
+  <context name="Frame">
+    <mousebind button="A-Left" action="Drag">
+      <action name="Move"/>
+    </mousebind>
+    <mousebind button="A-Right" action="Drag">
+      <action name="Resize"/>
+    </mousebind>
+  </context>
+  
+  <context name="Titlebar">
+    <mousebind button="Left" action="Press">
+      <action name="Focus"/>
+      <action name="Raise"/>
+    </mousebind>
+    <mousebind button="Left" action="Drag">
+      <action name="Move"/>
+    </mousebind>
+    <mousebind button="Left" action="DoubleClick">
+      <action name="ToggleMaximize"/>
+    </mousebind>
+  </context>
+  
+  <context name="Root">
+    <mousebind button="Right" action="Press">
+      <action name="ShowMenu"><menu>root-menu</menu></action>
+    </mousebind>
+  </context>
+</mouse>
+
+<menu>
+  <!-- Menu files -->
+  <file>menu.xml</file>
+  <hideDelay>200</hideDelay>
+</menu>
+
+<applications>
+  <!-- Force Windows 95 style para todas las ventanas -->
+  <application class="*">
+    <decor>yes</decor>
+    <shade>no</shade>
+    <position force="no"/>
+    <focus>yes</focus>
+  </application>
+</applications>
+
+</openbox_config>

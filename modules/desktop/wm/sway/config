@@ -1,0 +1,154 @@
+# Sway Config - Windows 95 Style (Wayland) para ThinkPad L420
+# Path: ~/.config/sway/config
+
+# ===== VARIABLES WIN95 =====
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+
+# Terminal
+set $term alacritty
+
+# Launcher (dmenu style Win95)
+set $menu dmenu_path | dmenu -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF' | xargs swaymsg exec --
+
+# ===== COLORES WINDOWS 95 =====
+# class                 border  backgr. text    indicator child_border
+client.focused          #000080 #000080 #FFFFFF #000080   #000080
+client.focused_inactive #808080 #C0C0C0 #000000 #808080   #808080
+client.unfocused        #C0C0C0 #C0C0C0 #000000 #C0C0C0   #C0C0C0
+client.urgent           #FF0000 #FF0000 #FFFFFF #FF0000   #FF0000
+
+# ===== OUTPUT (Pantalla) =====
+output * bg #008080 solid_color  # Teal Win95
+
+# Optimizado para ThinkPad L420
+output eDP-1 {
+    resolution 1366x768
+    scale 1
+}
+
+# ===== INPUT =====
+input "type:keyboard" {
+    xkb_layout "us"
+    xkb_variant ""
+}
+
+input "type:touchpad" {
+    tap enabled
+    natural_scroll disabled  # Como Win95
+}
+
+# ===== BORDERS WIN95 3D STYLE =====
+default_border normal 2
+default_floating_border normal 2
+hide_edge_borders none
+titlebar_border_thickness 2
+titlebar_padding 2 1
+
+# ===== FONTS - 9pt para 1366x768 =====
+font pango:Sans 9
+
+# ===== KEY BINDINGS WIN95 STYLE =====
+# Start menu (Win key)
+bindsym $mod+space exec $menu
+
+# Terminal
+bindsym $mod+Return exec $term
+
+# Close window (Alt+F4 como Win95)
+bindsym Mod1+F4 kill
+
+# Reload config
+bindsym $mod+Shift+c reload
+
+# Exit sway (Shutdown menu)
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Shutdown?' \
+    -b 'Logout' 'swaymsg exit' \
+    -b 'Shutdown' 'systemctl poweroff'
+
+# ===== WINDOW NAVIGATION =====
+# Alt+Tab style
+bindsym Mod1+Tab focus right
+bindsym Mod1+Shift+Tab focus left
+
+# Move windows
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# ===== WORKSPACES (Desktops) =====
+set $ws1 "1: Desktop"
+set $ws2 "2: Desktop"
+set $ws3 "3: Desktop"
+set $ws4 "4: Desktop"
+
+# Switch workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+
+# Move to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+
+# ===== LAYOUT =====
+bindsym $mod+b splith
+bindsym $mod+v splitv
+bindsym $mod+f fullscreen
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# ===== FLOATING =====
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Ctrl+space focus mode_toggle
+
+# ===== RESIZE MODE =====
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# ===== STATUSBAR WIN95 TASKBAR STYLE =====
+bar {
+    position bottom
+    status_command while date +'%d/%m/%Y %H:%M'; do sleep 1; done
+    
+    colors {
+        background #C0C0C0
+        statusline #000000
+        separator #808080
+        
+        focused_workspace  #000080 #000080 #FFFFFF
+        active_workspace   #808080 #808080 #FFFFFF
+        inactive_workspace #C0C0C0 #C0C0C0 #000000
+        urgent_workspace   #FF0000 #FF0000 #FFFFFF
+    }
+    
+    font pango:Sans 9
+    height 24
+}
+
+# ===== PERFORMANCE (ThinkPad L420) =====
+# Sin animaciones
+# Sway ya es eficiente por defecto
+
+# ===== IDLE & POWER =====
+exec swayidle -w \
+    timeout 600 'swaymsg "output * dpms off"' \
+    resume 'swaymsg "output * dpms on"'
+
+include /etc/sway/config.d/*

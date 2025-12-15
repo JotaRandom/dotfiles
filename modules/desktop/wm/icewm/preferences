@@ -1,0 +1,67 @@
+# IceWM Config - Windows 95 Style para ThinkPad L420
+# Path: ~/.icewm/preferences
+
+# ===== THEME - Windows 95 =====
+# IceWM tiene tema win95 built-in
+Theme="win95/default.theme"
+
+# ===== TASKBAR - Estilo Win95 =====
+TaskBarAtTop=0  # Abajo como Win95
+TaskBarAutoHide=0
+TaskBarShowClock=1
+TaskBarShowMailboxStatus=0
+TaskBarShowCPUStatus=0
+TaskBarShowNetStatus=0
+TaskBarShowWorkspaces=1
+TaskBarShowWindows=1
+TaskBarShowStartMenu=1
+TaskBarShowAllWindows=0
+TaskBarShowTransientWindows=0
+TaskBarDoubleHeight=0
+
+# Clock format Win95 style
+TimeFormat="%H:%M"
+DateFormat="%d/%m/%Y"
+
+# ===== WINDOW BEHAVIOR =====
+FocusMode=1  # Click to focus como Win95
+RaiseOnFocus=1
+AutoRaise=0
+RaiseOnClickClient=1
+FocusOnClickClient=1
+
+# ===== WORKSPACES =====
+WorkspaceNames="Desktop 1", "Desktop 2", "Desktop 3", "Desktop 4"
+
+# ===== FONTS - 9pt para 1366x768 =====
+TitleFontNameXft="Sans:size=9:bold"
+MenuFontNameXft="Sans:size=9"
+StatusFontNameXft="Sans:size=9"
+QuickSwitchFontNameXft="Sans:size=9"
+NormalTaskBarFontNameXft="Sans:size=9"
+ActiveTaskBarFontNameXft="Sans:size=9:bold"
+ToolButtonFontNameXft="Sans:size=9"
+ClockFontNameXft="Sans:size=9"
+
+# ===== MENU - Start Menu estilo Win95 =====
+ShowMenuButtonIcon=1
+
+# ===== PERFORMANCE (ThinkPad L420) =====
+# Sin efectos fancy
+MoveByClickingOnTitleBar=1
+OpaqueMove=1
+OpaqueResize=0
+
+# ===== COLORS - Win95 Gray =====
+# Usa tema win95, pero podemos forzar
+DesktopBackgroundColor="#008080"  # Teal Win95
+
+# ===== BORDERS - Win95 3D =====
+BorderSizeX=2
+BorderSizeY=2
+TitleBarHeight=20  # Compacto para 1366x768
+
+# ===== OTROS =====
+EdgeSwitch=0
+SnapMove=1
+SnapDistance=8

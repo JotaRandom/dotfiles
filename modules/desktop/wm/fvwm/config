@@ -1,0 +1,95 @@
+# FVWM Config - Windows 95 Style para ThinkPad L420
+# Path: ~/.fvwm/config
+
+# ===== COLORES WINDOWS 95 =====
+Colorset 0 fg black, bg #C0C0C0, hi #FFFFFF, sh #808080  # Win95 gray
+Colorset 1 fg white, bg #000080, hi #4080C0, sh #000040  # Win95 blue
+Colorset 2 fg black, bg #008080, hi #00A0A0, sh #004040  # Win95 teal (desktop)
+
+# ===== FONTS - 9pt para 1366x768 =====
+DefaultFont "xft:Sans:size=9"
+
+# ===== ESTILO WINDOWS 95 =====
+Style "*" \
+    BorderWidth 2, HandleWidth 2, \
+    MWMBorder, FirmBorder, \
+    TitleAtTop, \
+    Font "xft:Sans:size=9:bold", \
+    Colorset 0, HilightColorset 1
+
+# ===== DECORACIONES WIN95 3D =====
+ButtonStyle All -- UseTitleStyle
+TitleStyle AllActive -- Raised
+TitleStyle AllInactive -- Sunk
+BorderStyle -- HiddenHandles NoInset Raised
+
+# ===== MENU "START" ESTILO WIN95 =====
+DestroyMenu StartMenu
+AddToMenu StartMenu "Start Menu" Title
++ "Programs%programs.png%" Popup Programs
++ "Documents%documents.png%" Popup Documents  
++ "" Nop
++ "Settings%settings.png%" Popup Settings
++ "Find%find.png%" Exec exec find-dialog
++ "Help%help.png%" Exec exec xterm -e man fvwm
++ "Run...%run.png%" Exec exec dmenu_run
++ "" Nop
++ "Shutdown%shutdown.png%" Popup QuitMenu
+
+DestroyMenu QuitMenu
+AddToMenu QuitMenu "Shutdown" Title
++ "Logout" Quit
++ "Restart FVWM" Restart
++ "Shutdown" Exec exec shutdown -h now
+
+# ===== BARRA DE TAREAS WIN95 (TASKBAR) =====
+# Simular taskbar con FvwmButtons
+DestroyModuleConfig FvwmTaskBar: *
+*FvwmTaskBar: Geometry 1366x24-0-0
+*FvwmTaskBar: Colorset 0
+*FvwmTaskBar: Font "xft:Sans:size=9"
+*FvwmTaskBar: Frame 1
+*FvwmTaskBar: Rows 1
+
+# Botón Start
+*FvwmTaskBar: (1x1, Title "Start", Action 'Menu StartMenu', Colorset 0)
+# Reloj Win95
+*FvwmTaskBar: (1x1, Swallow FvwmClock 'Module FvwmClock')
+
+Style FvwmTaskBar NoTitle, Sticky, WindowListSkip, \
+                 StaysOnBottom, FixedPosition, FixedSize
+
+# ===== RELOJ =====
+DestroyModuleConfig FvwmClock: *
+*FvwmClock: Geometry 60x24
+*FvwmClock: Colorset 0
+*FvwmClock: Font "xft:Sans:size=9"
+*FvwmClock: Format "%H:%M"
+
+# ===== PAGER (Escritorios) =====
+DesktopSize 2x2
+DeskTopName 0 Desktop
+
+# ===== KEY BINDINGS WIN95 STYLE =====
+Key Super_L A A Menu StartMenu
+Key F1 A M Exec exec xterm
+Key F2 A M Exec exec dmenu_run
+
+# ===== MOUSE BINDINGS =====
+Mouse 1 R A Menu StartMenu
+Mouse 3 R A WindowList
+
+# ===== STARTUP =====
+DestroyFunc StartFunction
+AddToFunc StartFunction
++ I Module FvwmTaskBar
++ I Exec exec xsetroot -solid "#008080"
+
+# ===== WINDOW BEHAVIOR =====
+ClickTime 350
+MoveThreshold 3
+Style "*" SloppyFocus, MouseFocusClickRaises
+
+# ===== OPTIMIZACIONES L420 =====
+OpaqueMoveSize unlimited
+Style "*" ResizeOpaque
