@@ -39,6 +39,7 @@ kateconfig text eol=lf
 *.el text eol=lf
 .xcolors/* text eol=lf
 pop-zram text eol=lf
+*.py text eol=lf
 
 # Archivos binarios (imágenes, fuentes/audio/archivos)
 *.png binary

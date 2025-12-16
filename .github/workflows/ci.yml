@@ -7,24 +7,33 @@ on:
     branches: [ main ]
 
 jobs:
-  shell-lint:
-    name: Bash lint y comprobación de sintaxis
+  python-lint-and-test:
+    name: Verificación Python - Lint y Tests
     runs-on: ubuntu-latest
     steps:
-      # NO fallar automáticamente el paso de checkout si los submódulos usan SSH y no son accesibles
-      # En su lugar intentaremos obtener submódulos más tarde y continuar si no pueden obtenerse.
       - uses: actions/checkout@v4
         with:
           lfs: true
-          # avoid automatic failure from actions/checkout when submodule fetch needs SSH
           submodules: false
-      - name: Instalar shellcheck
+      
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Instalar dependencias Python
         run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
-      - name: Comprobación de sintaxis Bash
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: Verificar sintaxis Python
         run: |
-          for f in ./scripts/*.sh; do bash -n "$f"; done
+          python -m py_compile scripts/install.py
+          python -m py_compile .github/scripts/check-english.py
+          python -m py_compile .github/scripts/check-mappings.py
+          python -m py_compile .github/scripts/test_install.py
+          python -m py_compile .github/scripts/test_sanitize.py
+      
       - name: Comprobar bit ejecutable en archivos con shebang
         run: |
           set -e
@@ -44,30 +53,10 @@ jobs:
             done
           fi
           if [ "$fail" -eq 1 ]; then exit 1; fi
-      - name: Ejecutar shellcheck
-        run: |
-          for f in ./scripts/*.sh; do shellcheck "$f" || true; done
+      
       - name: Verificar no reintroducción de texto en inglés (i18n)
         run: |
-          chmod +x ./.github/scripts/check-english.sh
-          ./.github/scripts/check-english.sh
-
-  powershell-lint:
-    name: Análisis de PowerShell
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-          submodules: false
-      - name: Instalar PSScriptAnalyzer
-        shell: pwsh
-        run: |
-          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
-      - name: Analizar scripts PowerShell
-        shell: pwsh
-        run: |
-          Invoke-ScriptAnalyzer -Path scripts\*.ps1 -Recurse
+          python .github/scripts/check-english.py
 
   lfs-and-submodule-check:
     name: LFS y submódulos
@@ -77,6 +66,7 @@ jobs:
         with:
           lfs: true
           submodules: false
+      
       - name: Detectar submódulos en .gitmodules (sin acceso de red)
         run: |
           # Intencionalmente NO intentamos obtener o actualizar submódulos desde CI.
@@ -97,46 +87,59 @@ jobs:
             echo ".gitmodules not present"
             echo "SUBMODULES_PRESENT=false" >> $GITHUB_ENV
           fi
+      
       - name: Validar submódulos
         if: env.SUBMODULES_PRESENT == 'true'
         run: |
           git submodule status --recursive
+      
       - name: Omitir validación de submódulos (no disponible)
         if: env.SUBMODULES_PRESENT == 'false'
         run: |
           echo "Submódulos no disponibles en este runner (probablemente URLs SSH-only). Omitiendo validación."
+      
       - name: Comprobar assets rastreados por LFS
         run: |
           git lfs ls-files || true
+      
       - name: Comprobar que .gitattributes incluya assets/**
         run: |
           grep -E '^assets/\*\* filter=lfs' .gitattributes
 
-  install-test:
-    name: Verificar módulos con install.sh
+  python-install-test:
+    name: Verificación de Instalación Python
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
           submodules: false
+      
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Instalar dependencias Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
       - name: Instalar herramientas (git-lfs)
         run: |
           sudo apt-get update
           # git-lfs es usado por el repo; rsync se requiere para que el instalador copie módulos
           sudo apt-get install -y git-lfs rsync || true
+      
       - name: Verificar instalador y mapeos
         run: |
           set -e
           TMP=$(mktemp -d)
           echo "Testing installer against temp target: $TMP"
-          # Asegurar que el instalador sea ejecutable
-          chmod +x ./scripts/install.sh || true
-          chmod +x ./.github/scripts/test-install-mappings.sh
           
           # Ejecutar test y capturar salida
-          echo "=== Ejecutando test-install-mappings.sh ==="
-          ./.github/scripts/test-install-mappings.sh 2>&1 | tee /tmp/test-mappings.log
+          echo "=== Ejecutando test_install.py ==="
+          python .github/scripts/test_install.py 2>&1 | tee /tmp/test-mappings.log
           
           # Verificar que no haya NOTAs críticas (solo permitir las de archivos opcionales conocidos)
           echo ""
@@ -184,7 +187,7 @@ jobs:
                 }
               ' | tr '\n' '|' | sed 's/|$//' || true)
               esc=$(printf '%s' "$pats" | sed -E 's/([^a-zA-Z0-9_\-\.\/|])/\\\\\1/g' || true)
-              ALLOWED="^$(printf '%s' "$esc" | sed 's/|/\$|^/g')$|^\\..+"
+              ALLOWED="^$(printf '%s' "$esc" | sed 's/|/\$|^/g')$|^\..+"
             fi
           fi
           if [ -z "$ALLOWED" ]; then
@@ -207,50 +210,25 @@ jobs:
             echo "Se detectaron archivos en la raíz de módulos que podrían contaminar \$HOME. Agrega un mapeo en install-mappings.yml o renombra/cambia el archivo raíz a un dotfile." >&2
             exit 1
           fi
+      
       - name: Forzar cobertura de mapeo para archivos raíz de módulos
         run: |
-          set -e
-          chmod +x ./.github/scripts/check-mappings.sh
-          ./.github/scripts/check-mappings.sh
-      - name: Ejecutar install.sh contra TARGET y verificar que los mapeos crean symlinks
+          python .github/scripts/check-mappings.py
+      
+      - name: Ejecutar test completo de instalación
         run: |
-          set -euo pipefail
-          chmod +x ./.github/scripts/test-install-mappings.sh
-          ./.github/scripts/test-install-mappings.sh
-      - name: Verificar que install.sh falla apropiadamente como root
+          python .github/scripts/test_install.py
+      
+      - name: Verificar comportamiento del instalador con permisos
         run: |
-          set -e
-          # El instalador no debería ejecutarse como root (aunque técnicamente podría funcionar,
-          # es una mala práctica y puede causar problemas de permisos)
+          # Verificar que el instalador maneja correctamente los permisos
+          # (El instalador Python verifica que no se ejecute como root)
           if [ "$(id -u)" = "0" ]; then
             echo "Advertencia: Los tests se están ejecutando como root. Esto no es recomendado." >&2
           else
-            # Simular ejecución como root usando sudo (si está disponible)
-            # Nota: En CI esto puede no funcionar si sudo requiere contraseña
-            if command -v sudo >/dev/null 2>&1; then
-              # Verificar que el script detecta y advierte sobre ejecución como root
-              # (si el script tiene esa verificación)
-              echo "Verificando comportamiento con permisos elevados..."
-            fi
+            echo "✅ Tests ejecutándose como usuario normal (no root)"
           fi
+      
       - name: Limpieza
         run: |
-          echo "Eliminando temp"; rm -rf "$TMP" || true
-
-  powershell-install-test:
-    name: Test install.ps1 (PowerShell/Windows)
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-          submodules: false
-      - name: Test install.ps1 básico
-        shell: pwsh
-        run: |
-          Write-Host "=== Testing install.ps1 ===" -ForegroundColor Cyan
-          # Test sintaxis
-          $null = Get-Content scripts\install.ps1 -ErrorAction Stop
-          Write-Host "✅ Sintaxis PowerShell válida" -ForegroundColor Green
-          # Nota: No ejecutar instalación completa en CI de Windows por ahora
-          # (secundario, se probará manualmente)
+          echo "Limpieza completada"

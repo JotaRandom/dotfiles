@@ -1,27 +1,79 @@
-## ~/.nanorc — configuración compacta y comentada (español)
+# nanorc - Nano con look de Editor DOS para ThinkPad L420 (1366x768)
+# Configuración estilo MS-DOS Edit / Norton Editor
 
-include "/usr/share/nano/*.nanorc"    # cargar sintaxis y reglas del sistema
+# ===== ASPECTO DOS =====
+# Sin ayuda inferior (más espacio para edición)
+set nohelp
 
-# Colores: formato <atributos>,<fg>,<bg>
-set titlecolor    bold,white,blue     # barra superior
-set statuscolor   bold,white,blue     # barra inferior
-set promptcolor   bold,cyan,blue      # prompt
-set keycolor      cyan                # atajos
-set functioncolor white               # nombres de funciones
-set selectedcolor black,cyan          # selección
-set errorcolor    bold,red,black      # errores
+# Números de línea (como en Edit de DOS 6.22)
+set linenumbers
 
-# Comportamiento de edición
-set linenumbers                         # mostrar números de línea
-set constantshow                        # mostrar Line/Col siempre
-set stateflags                          # mostrar [Modified]
-set minibar                             # minibarra compacta
-set indicator                           # indicador de posición
-set nonewlines                          # no añadir línea final automáticamente
-set tabsize 8                           # ancho de tabulación (8)
-set tabstospaces                        # convertir tabs a espacios
-set autoindent                          # autoindentación en nuevas líneas
-set cutfromcursor                       # ^K corta desde cursor
-set mouse                               # soporte de ratón (terminal)
+# Título compacto
+set titlecolor brightwhite,blue
 
-# Nota: conservar este fichero compacto; ajustes finos en /usr/share/nano/*.nanorc
+# Barra de estado (como DOS Edit)
+set statuscolor black,cyan
+set errorcolor brightwhite,red
+set selectedcolor black,brightwhite
+
+# ===== COMPORTAMIENTO CLÁSICO =====
+# Auto-indent
+set autoindent
+
+# Tabs de 4 espacios
+set tabsize 4
+set tabstospaces
+
+# Smooth scrolling
+set smooth
+
+# Mouse habilitado
+set mouse
+
+# ===== FUNCIONALIDADES =====
+# Backup automático
+set backup
+set backupdir "~/.nano/backups"
+
+# Suspend con Ctrl+Z
+set suspend
+
+# Cortar desde cursor
+set cutfromcursor
+
+# Wrap suave de líneas
+set softwrap
+
+# ===== BÚSQUEDA =====
+# Case sensitive por defecto (como DOS Edit)
+set casesensitive
+
+# Expresiones regulares
+set regexp
+
+# ===== VISUAL =====
+# Mostrar posición del cursor siempre
+set constantshow
+
+# Colores números de línea (estilo Turbo Pascal)
+set numbercolor yellow,blue
+set keycolor brightcyan
+set functioncolor brightgreen
+
+# ===== SYNTAX HIGHLIGHTING =====
+# Incluir sintaxis del sistema
+include "/usr/share/nano/*.nanorc"
+
+# ===== KEYBINDINGS ESTILO DOS =====
+# Ctrl+O = Guardar (WriteOut)
+# Ctrl+X = Salir (eXit)
+# Ctrl+R = Insertar archivo (Read)
+# Ctrl+W = Buscar (Where is)
+# Ctrl+\ = Buscar y reemplazar
+# Ctrl+K = Cortar línea
+# Ctrl+U = Pegar
+# Alt+U  = Deshacer
+# Alt+E  = Rehacer
+
+# Ctrl+S como guardar (común en DOS)
+bind ^S writeout main

@@ -12,6 +12,14 @@ scripts/cleanup_temp_scripts.sh
 # Local REISUB config (contains hardware-specific key combo settings)
 .reisub.local
 
-# Test logs
+# Python cache
+__pycache__ 
+
+# Test logs and outputs (but allow test_*.py files)
 test-output.txt
+error_*.txt
+debug_*.txt
 *.log
+test_*.txt
+test_*.log
+*_results.txt

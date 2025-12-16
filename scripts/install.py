@@ -1,0 +1,844 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Instalador de dotfiles en Python 3.13+
+
+"""
+Instalador de dotfiles con soporte multiplataforma.
+
+Instala archivos de configuración desde modules/ según install-mappings.yml.
+Soporta dotificación automática, XDG paths, y múltiples destinos.
+"""
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+import os
+import io
+
+# Configurar encoding para Windows
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Add scripts directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+
+def check_and_install_pyyaml():
+    """Verifica que PyYAML esté instalado, lo instala automáticamente si falta."""
+    try:
+        import yaml
+        return True
+    except ImportError:
+        # Instalar automáticamente sin preguntar (como el script original)
+        print("⚠ PyYAML no está instalado. Instalando automáticamente...")
+        try:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pyyaml'],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print("✓ PyYAML instalado exitosamente")
+            return True
+        except subprocess.CalledProcessError:
+            print("✗ ERROR: No se pudo instalar PyYAML automáticamente")
+            print("  Por favor ejecuta: pip install pyyaml")
+            return False
+
+
+def check_and_install_git_lfs():
+    """Verifica que git-lfs esté instalado, ofrece instalación si falta."""
+    try:
+        subprocess.check_call(['git', 'lfs', 'version'],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("\n⚠ git-lfs no está instalado")
+        print("  git-lfs es necesario para algunos submódulos con assets grandes")
+        
+        # Verificar si estamos en terminal interactiva
+        if not sys.stdin.isatty():
+            print("  Modo no interactivo detectado. Omitiendo instalación de git-lfs")
+            print("  Por favor instala git-lfs manualmente más tarde")
+            return False
+        
+        response = input("  ¿Deseas intentar instalar git-lfs ahora? (s/n): ").strip().lower()
+        if response not in ('s', 'si', 'y', 'yes'):
+            print("  Omitiendo instalación de git-lfs")
+            return False
+        
+        # Intentar instalación según plataforma
+        import platform
+        system = platform.system()
+        
+        try:
+            if system == 'Linux':
+                # Detectar herramientas de escalado de privilegios disponibles
+                # Orden de preferencia: doas, sudo-rs, sudo, run0
+                priv_tools = []
+                for tool in ['doas', 'sudo-rs', 'sudo', 'run0']:
+                    if subprocess.run(['which', tool], capture_output=True).returncode == 0:
+                        priv_tools.append(tool)
+                
+                # Detectar package managers disponibles
+                pkg_managers = [
+                    (['apt', 'install', '-y', 'git-lfs'], 'apt'),
+                    (['pacman', '-S', '--noconfirm', 'git-lfs'], 'pacman'),
+                    (['dnf', 'install', '-y', 'git-lfs'], 'dnf'),
+                    (['yum', 'install', '-y', 'git-lfs'], 'yum'),
+                    (['zypper', 'install', '-y', 'git-lfs'], 'zypper'),
+                ]
+                
+                for cmd, mgr in pkg_managers:
+                    # Verificar si el package manager existe
+                    if subprocess.run(['which', cmd[0]], capture_output=True).returncode != 0:
+                        continue
+                    
+                    # Intentar con herramienta de privilegios si hay alguna
+                    if priv_tools:
+                        for priv_tool in priv_tools:
+                            try:
+                                subprocess.check_call([priv_tool] + cmd)
+                                print(f"✓ git-lfs instalado exitosamente (usando {priv_tool})")
+                                return True
+                            except subprocess.CalledProcessError:
+                                continue
+                    else:
+                        # Intentar sin escalado (root o package manager sin privilegios)
+                        try:
+                            subprocess.check_call(cmd)
+                            print("✓ git-lfs instalado exitosamente")
+                            return True
+                        except subprocess.CalledProcessError:
+                            continue
+                
+                print("  ✗ No se pudo instalar git-lfs automáticamente")
+                print("  Por favor instala git-lfs manualmente con tu package manager")
+                return False
+                
+            elif system == 'Darwin':  # macOS
+                # brew no requiere privilegios especiales
+                try:
+                    subprocess.check_call(['brew', 'install', 'git-lfs'])
+                    print("✓ git-lfs instalado exitosamente")
+                    return True
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    print("  ✗ No se pudo instalar con brew. Instálalo manualmente")
+                    return False
+            elif system == 'Windows':
+                print("  En Windows, descarga git-lfs desde: https://git-lfs.github.com/")
+                return False
+            
+            print("  No se pudo instalar git-lfs automáticamente")
+            return False
+        
+        except subprocess.CalledProcessError:
+            print("  ✗ La instalación de git-lfs falló")
+            return False
+
+
+from dotfiles_installer.config import DotfilesConfig
+from dotfiles_installer.mapper import FileMapper
+from dotfiles_installer.symlink import SymlinkManager
+from dotfiles_installer.attributes import fix_attributes
+from dotfiles_installer.sanitize import sanitize_crlf_if_needed
+
+
+def install_module(module_path: Path, config: DotfilesConfig, 
+                   mapper: FileMapper, symlink_mgr: SymlinkManager,
+                   fix_eol: bool = False, fix_attribs: bool = False,
+                   allow_backup: bool = True):
+    """
+    Instala un módulo individual creando symlinks para sus archivos.
+    
+    Args:
+        module_path: Ruta al directorio del módulo
+        config: Objeto de configuración
+        mapper: Mapeador de archivos para resolución de destinos
+        symlink_mgr: Gestor de symlinks para crear enlaces
+        fix_eol: Si True, sanitiza CRLF a LF en archivos candidatos
+        fix_attribs: Si True, establece permisos ejecutables en scripts
+        allow_backup: Si True, crea backups de archivos existentes
+    """
+    if not module_path.exists() or not module_path.is_dir():
+        print(f"⚠ Módulo no encontrado: {module_path}")
+        return
+    
+    module_name = module_path.name
+    print(f"\n{'='*60}")
+    print(f"Instalando módulo: {module_name}")
+    print(f"{'='*60}")
+    
+    # Encontrar todos los archivos en el módulo
+    files_processed = 0
+    symlinks_created = 0
+    
+    # Detectar si el módulo tiene subdirectorios que deben incluirse en la ruta
+    # Por ejemplo: modules/dev-tools/cargo/config debe pasar "cargo/config" al mapper
+    # Verificar si hay subdirectorio con mismo nombre que el módulo
+    has_subdir_with_module_name = (module_path / module_name).is_dir()
+    
+    for file_path in module_path.rglob('*'):
+        if not file_path.is_file():
+            continue
+        
+        # Saltar README, LICENSE y documentación
+        if file_path.name.upper().startswith(('README', 'LICENSE')):
+            continue
+        
+        # Obtener ruta relativa desde la raíz del módulo
+        rel_path = file_path.relative_to(module_path)
+        
+        # Si hay un subdirectorio con nombre del módulo y el archivo está dentro,
+        # usar la ruta completa con el subdirectorio
+        mapping_key = str(rel_path).replace('\\', '/')
+        
+        # Resolver destino(s) para este archivo
+        destinations, is_explicit, action = mapper.resolve_destination(mapping_key, module_name)
+        
+        files_processed += 1
+        
+        # Manejar archivos a ignorar
+        if not destinations or action == 'ignore':
+            print(f"  → Ignorando: {rel_path}")
+            continue
+        
+        # Sanitizar CRLF solo si se solicitó con --fix-eol
+        if fix_eol:
+            source_to_link = sanitize_crlf_if_needed(file_path, config.target)
+        else:
+            source_to_link = file_path
+        
+        # Crear symlink(s) para cada destino
+        for dest in destinations:
+            if symlink_mgr.create_symlink(source_to_link, dest, module_name, allow_backup=allow_backup):
+                symlinks_created += 1
+                
+                # Establecer permisos ejecutables si se solicito
+                if fix_attribs:
+                    fix_attributes(source_to_link, verbose=True)
+        
+        files_processed += 1
+    
+    print(f"\n✓ Módulo '{module_name}' instalado:")
+    print(f"  Archivos procesados: {files_processed}")
+    print(f"  Symlinks creados: {symlinks_created}")
+
+
+def main():
+    """Main entry point for dotfiles installer."""
+    # Check dependencies first
+    print("Verificando dependencias...")
+    if not check_and_install_pyyaml():
+        return 1
+    
+    check_and_install_git_lfs()  # Non-fatal if fails
+    print()
+    
+    # Parser principal con subcomandos
+    parser = argparse.ArgumentParser(
+        description='''
+Instalador de dotfiles con gestión de backups integrada.
+
+Crea symlinks de archivos de configuración desde modules/ hacia $HOME,
+con backups automáticos, sanitización de archivos, y gestión completa de backups.
+        '''.strip(),
+        epilog='''
+Ejemplos de uso:
+
+  # Instalar TODOS los módulos (uso más común)
+  python install.py install
+  
+  # Instalar módulos específicos
+  python install.py install modules/shell/bash modules/editors/vim
+  
+  # Instalar con sanitización CRLF y permisos ejecutables
+  python install.py install --fix-eol --fix-attributes modules/shell/bash
+  
+  # Listar backups disponibles
+  python install.py backup-list
+  
+  # Restaurar el último backup
+  python install.py backup-restore --latest
+  
+  # Limpiar backups antiguos (mantener últimos 5)
+  python install.py backup-clean 5
+  
+  # Actualizar submódulos (PKGBUILDs)
+  python install.py update-submodules
+  
+  # Inspeccionar mappings (debuggear YAML)
+  python install.py inspect-mappings
+  
+  # Configurar Git hooks personalizados
+  python install.py setup-githooks
+
+Para ayuda de cada subcomando: python install.py <subcomando> --help
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    subparsers = parser.add_subparsers(
+        dest='command',
+        help='Subcomandos disponibles (usa <subcomando> --help para detalles)'
+    )
+    
+    # Subcomando: install (default)
+    install_parser = subparsers.add_parser(
+        'install',
+        help='Instalar módulos creando symlinks',
+        description='''
+Instala módulos de dotfiles creando symlinks desde modules/ hacia $HOME.
+
+Los archivos existentes se respaldan automáticamente en ~/.dotfiles_backup/
+(deshabilitable con --no-backup). Soporta sanitización de finales de línea
+y configuración automática de permisos ejecutables.
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Instalar TODOS los módulos (caso más común - sin argumentos)
+  python install.py install
+  
+  # Instalar módulos específicos
+  python install.py install modules/shell/bash modules/editors/vim
+  
+  # Instalar sin crear backups (testing)
+  python install.py install --no-backup modules/shell/bash
+  
+  # Sanitizar CRLF a LF en archivos de configuración
+  python install.py install --fix-eol modules/shell/bash
+  
+  # Establecer permisos ejecutables en scripts (.sh, shebangs)
+  python install.py install --fix-attributes modules/bin
+  
+  # Combinar opciones
+  python install.py install --fix-eol --fix-attributes --no-backup modules/shell/bash
+  
+  # Preview (ver qué se haría sin hacer cambios)
+  python install.py install --dry-run modules/shell/bash
+
+Los archivos se mapean según install-mappings.yml
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    install_parser.add_argument(
+        'modules',
+        nargs='*',
+        help='Módulos a instalar (ej: modules/shell/bash). Si se omite, instala todos'
+    )
+    install_parser.add_argument(
+        '--target',
+        default=None,
+        help='Directorio destino (default: $HOME). Útil para testing con directorios temporales'
+    )
+    install_parser.add_argument(
+        '--fix-eol',
+        action='store_true',
+        help='Sanitizar finales de línea: CRLF → LF en archivos de configuración (opcional)'
+    )
+    install_parser.add_argument(
+        '--fix-attributes', '--fix-attribs', '--fix-exec',
+        action='store_true',
+        dest='fix_attribs',
+        help='Establecer permisos ejecutables (+x) en scripts con shebang o extensión .sh (Unix)'
+    )
+    install_parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Mostrar lo que se haría sin hacer cambios reales (preview)'
+    )
+    install_parser.add_argument(
+        '--no-backup',
+        action='store_true',
+        help='NO crear backups de archivos existentes (no recomendado excepto para testing/CI)'
+    )
+    
+    # Subcomando: backup-list
+    list_parser = subparsers.add_parser(
+        'backup-list',
+        help='Listar todos los backups disponibles',
+        description='''
+Lista todos los backups creados por el instalador.
+
+Muestra timestamp, fecha, módulos instalados y número de archivos
+de cada backup disponible en ~/.dotfiles_backup/
+        '''.strip(),
+        epilog='''
+Ejemplo:
+
+  python install.py backup-list
+
+Salida mostrará todos los backups ordenados por fecha (más reciente primero).
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    # Subcomando: backup-restore
+    restore_parser = subparsers.add_parser(
+        'backup-restore',
+        help='Restaurar archivos desde un backup',
+        description='''
+Restaura archivos desde un backup específico o el más reciente.
+
+Copia los archivos respaldados desde ~/.dotfiles_backup/ de vuelta
+a sus ubicaciones originales, sobrescribiendo los archivos actuales.
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Restaurar el backup más reciente
+  python install.py backup-restore --latest
+  
+  # Restaurar backup específico (usa timestamp de backup-list)
+  python install.py backup-restore --timestamp 2025-12-16_00-45-30
+  
+  # Preview: ver qué se restauraría sin hacer cambios
+  python install.py backup-restore --latest --dry-run
+
+Usa 'backup-list' primero para ver backups disponibles.
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    restore_parser.add_argument(
+        '--timestamp',
+        help='Timestamp del backup a restaurar (formato: YYYY-MM-DD_HH-MM-SS)'
+    )
+    restore_parser.add_argument(
+        '--latest',
+        action='store_true',
+        help='Restaurar el backup más reciente (recomendado)'
+    )
+    restore_parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Mostrar qué se restauraría sin hacer cambios reales (preview)'
+    )
+    
+    # Subcomando: backup-clean
+    clean_parser = subparsers.add_parser(
+        'backup-clean',
+        help='Limpiar backups antiguos',
+        description='''
+Elimina backups antiguos manteniendo solo los N más recientes.
+
+Útil para liberar espacio en disco eliminando backups viejos
+mientras se preservan los más recientes como red de seguridad.
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Mantener solo los 5 backups más recientes
+  python install.py backup-clean 5
+  
+  # Mantener solo el último backup
+  python install.py backup-clean 1
+  
+  # Eliminar todos los backups (mantener 0)
+  python install.py backup-clean 0
+  
+  # Preview: ver qué se eliminaría sin hacer cambios
+  python install.py backup-clean 5 --dry-run
+
+Los backups se ordenan por timestamp y se mantienen los más recientes.
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    clean_parser.add_argument(
+        'keep',
+        type=int,
+        help='Número de backups más recientes a mantener (N >= 0)'
+    )
+    clean_parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Mostrar qué se eliminaría sin hacer cambios reales (preview)'
+    )
+    
+    # Subcomando: update-submodules
+    submodules_parser = subparsers.add_parser(
+        'update-submodules',
+        help='Actualizar submódulos git del repositorio',
+        description='''
+Actualiza submódulos git del repositorio.
+
+Por defecto actualiza submódulos en distros/PKGBUILD/ (paquetes de Arch).
+También puede actualizar submódulos del repositorio principal (.gitmodules).
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Actualizar todos los PKGBUILDs
+  python install.py update-submodules
+  
+  # Actualizar PKGBUILD específico
+  python install.py update-submodules --package google-chrome
+  
+  # Actualizar submódulos del repositorio principal
+  python install.py update-submodules --repo
+  
+  # Actualizar recursivamente
+  python install.py update-submodules --repo --recursive
+  
+  # Actualizar sin auto-commit (para revisar primero)
+  python install.py update-submodules --no-commit
+
+Los submódulos se actualizan con git fetch + pull (ff-only o merge).
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    submodules_parser.add_argument(
+        '--package',
+        help='Actualizar solo este paquete en distros/PKGBUILD/'
+    )
+    submodules_parser.add_argument(
+        '--repo',
+        action='store_true',
+        help='Actualizar submódulos del repositorio principal (con git submodule)'
+    )
+    submodules_parser.add_argument(
+        '--recursive',
+        action='store_true',
+        help='Actualizar submódulos recursivamente (solo con --repo)'
+    )
+    submodules_parser.add_argument(
+        '--no-commit',
+        action='store_true',
+        help='No hacer commit automático de cambios'
+    )
+    submodules_parser.add_argument(
+        '--target-dir',
+        type=Path,
+        default=None,
+        help='Directorio personalizado con submódulos (default: distros/PKGBUILD)'
+    )
+    
+    # Subcomando: inspect-mappings
+    inspect_parser = subparsers.add_parser(
+        'inspect-mappings',
+        help='Inspeccionar y analizar install-mappings.yml',
+        description='''
+Inspecciona install-mappings.yml y genera un reporte detallado.
+
+Muestra estadísticas, distribución de mappings globales vs por módulo,
+y tipos de acciones (link, ignore, etc).
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Inspeccionar mappings (resumen)
+  python install.py inspect-mappings
+  
+  # Ver todos los mappings (verbose)
+  python install.py inspect-mappings --verbose
+  
+  # Guardar reporte en archivo
+  python install.py inspect-mappings --output reporte.txt
+  
+  # Verbose + guardar
+  python install.py inspect-mappings --verbose --output mappings_completo.txt
+
+Útil para debuggear y entender la estructura de install-mappings.yml
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    inspect_parser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='Mostrar todos los mappings (no solo resumen)'
+    )
+    inspect_parser.add_argument(
+        '--output', '-o',
+        type=Path,
+        help='Guardar reporte en archivo'
+    )
+    
+    # Subcomando: setup-githooks
+    githooks_parser = subparsers.add_parser(
+        'setup-githooks',
+        help='Configurar Git hooks personalizados',
+        description='''
+Configura Git para usar hooks personalizados en .githooks/
+
+También asegura que todos los archivos con shebang tengan
+el bit ejecutable en el índice de Git (idempotente).
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Configurar hooks (recomendado después de clonar)
+  python install.py setup-githooks
+  
+  # Solo configurar hooks sin arreglar permisos
+  python install.py setup-githooks --no-fix-permissions
+  
+  # Desactivar hooks personalizados (revertir)
+  python install.py setup-githooks --disable
+  
+  # Usar directorio de hooks personalizado
+  python install.py setup-githooks --hooks-dir custom-hooks
+
+Esto ejecuta: git config core.hooksPath .githooks
+Para revertir: python install.py setup-githooks --disable
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    githooks_parser.add_argument(
+        '--hooks-dir',
+        default='.githooks',
+        help='Directorio de hooks (default: .githooks)'
+    )
+    githooks_parser.add_argument(
+        '--no-fix-permissions',
+        action='store_true',
+        help='No arreglar permisos ejecutables en archivos con shebang'
+    )
+    githooks_parser.add_argument(
+        '--disable',
+        action='store_true',
+        help='Desactivar hooks personalizados (revertir a hooks por defecto de Git)'
+    )
+    
+    args = parser.parse_args()
+    
+    # Si no se especifica subcomando, usar 'install' por defecto
+    if args.command is None:
+        # Modo compatibilidad: sin subcomando = install
+        # Re-parsear con install como default
+        sys.argv.insert(1, 'install')
+        args = parser.parse_args()
+    
+    # Ejecutar subcomando
+    if args.command == 'install':
+        return run_install(args)
+    elif args.command == 'backup-list':
+        return run_backup_list(args)
+    elif args.command == 'backup-restore':
+        return run_backup_restore(args)
+    elif args.command == 'backup-clean':
+        return run_backup_clean(args)
+    elif args.command == 'update-submodules':
+        return run_update_submodules(args)
+    elif args.command == 'inspect-mappings':
+        return run_inspect_mappings(args)
+    elif args.command == 'setup-githooks':
+        return run_setup_githooks(args)
+    else:
+        parser.print_help()
+        return 1
+
+
+def run_install(args):
+    
+    # Determine repository root
+    script_dir = Path(__file__).parent
+    repo_root = script_dir.parent  # scripts/ -> repo root
+    
+    # Determine target directory
+    target = Path(args.target).expanduser() if args.target else Path.home()
+    
+    # Load configuration
+    mappings_file = repo_root / 'install-mappings.yml'
+    if not mappings_file.exists():
+        print(f"✗ Mappings file not found: {mappings_file}")
+        return 1
+    
+    print("Dotfiles Installer (Python)")
+    print(f"Repository: {repo_root}")
+    print(f"Target: {target}")
+    print(f"Mappings: {mappings_file}")
+    
+    config = DotfilesConfig(str(mappings_file), str(target), str(repo_root))
+    print(f"Loaded {len(config.global_mappings)} global + {len(config.module_mappings)} module mappings")
+    print(f"Default action: {config.default_action}\n")
+    
+    # Initialize components
+    mapper = FileMapper(config)
+    symlink_mgr = SymlinkManager(target)
+    
+    # Determine modules to install
+    if args.modules:
+        # Use specified modules
+        modules = [repo_root / m for m in args.modules]
+    else:
+        # Use default modules (all under modules/ except system)
+        modules_dir = repo_root / 'modules'
+        modules = []
+        
+        # Find all module directories
+        for category_dir in modules_dir.iterdir():
+            if not category_dir.is_dir() or category_dir.name == 'system':
+                continue
+            
+            # Check if it's a category or direct module
+            has_config_files = any(
+                f.is_file() and not f.name.upper().startswith(('README', 'LICENSE'))
+                for f in category_dir.iterdir()
+            )
+            
+            if has_config_files:
+                # Direct module
+                modules.append(category_dir)
+            else:
+                # Category - add all subdirectories
+                for module_dir in category_dir.iterdir():
+                    if module_dir.is_dir():
+                        modules.append(module_dir)
+    
+    if not modules:
+        print("✗ No modules found to install")
+        return 1
+    
+    # Crear gestor de symlinks
+    symlink_mgr = SymlinkManager(config.target)
+    
+    # Iniciar sesión de backup (timestamp compartido) si no se deshabilitó
+    if not args.no_backup:
+        symlink_mgr.start_backup_session()
+    else:
+        print("⚠ Backups deshabilitados (--no-backup)\n")
+    
+    print(f"Modules to install: {len(modules)}\n")
+    
+    # Instalar cada módulo
+    for module_path in modules:
+        install_module(module_path, config, mapper, symlink_mgr, 
+                      args.fix_eol, args.fix_attribs, 
+                      allow_backup=not args.no_backup)
+    
+    # Guardar metadata de backups (si se habilitaron)
+    if not args.no_backup:
+        symlink_mgr.save_backup_metadata()
+    
+    print(f"\n{'='*60}")
+    print("✓ Installation complete!")
+    print(f"{'='*60}")
+    print("\nTo apply system-level changes (Xorg, etc.), run with appropriate privileges.")
+    if not args.no_backup:
+        print("Backups are stored in: ~/.dotfiles_backup/")
+        print("\nGestión de backups:")
+        print("  python scripts/install.py backup-list              # Listar backups")
+        print("  python scripts/install.py backup-restore --latest  # Restaurar último")
+        print("  python scripts/install.py backup-clean 5           # Mantener últimos 5")
+    
+    return 0
+
+
+def run_backup_list(args):
+    """Listar backups disponibles."""
+    from dotfiles_installer.backup import list_backups
+    list_backups(verbose=True)
+    return 0
+
+
+def run_backup_restore(args):
+    """Restaurar un backup."""
+    from dotfiles_installer.backup import restore_backup, get_backup_dir
+    
+    if args.latest:
+        backup_dir = get_backup_dir()
+        if not backup_dir.exists():
+            print("ERROR: No hay backups disponibles", file=sys.stderr)
+            return 1
+        
+        # Encontrar el más reciente
+        backups = sorted([d.name for d in backup_dir.iterdir() if d.is_dir()], reverse=True)
+        if not backups:
+            print("ERROR: No hay backups disponibles", file=sys.stderr)
+            return 1
+        
+        timestamp = backups[0]
+        print(f"Restaurando backup más reciente: {timestamp}\n")
+        return restore_backup(timestamp, args.dry_run)
+    
+    if args.timestamp:
+        return restore_backup(args.timestamp, args.dry_run)
+    
+    print("ERROR: Especifica --timestamp o --latest", file=sys.stderr)
+    return 1
+
+
+def run_backup_clean(args):
+    """Limpiar backups antiguos."""
+    from dotfiles_installer.backup import clean_old_backups
+    
+    if args.keep < 0:
+        print("ERROR: El número de backups a mantener debe ser >= 0", file=sys.stderr)
+        return 1
+    
+    clean_old_backups(keep=args.keep, dry_run=args.dry_run)
+    return 0
+
+
+def run_update_submodules(args):
+    """Actualizar submódulos git."""
+    from dotfiles_installer.submodules import (
+        update_repo_submodules,
+        update_submodules_in_dir,
+        run_git_command
+    )
+    
+    # Actualizar submódulos del repositorio principal
+    if args.repo:
+        return update_repo_submodules(recursive=args.recursive)
+    
+    # Determinar directorio target
+    if args.target_dir:
+        target_dir = args.target_dir
+    else:
+        target_dir = Path('distros/PKGBUILD')
+        if args.package:
+            target_dir = target_dir / args.package
+    
+    # Actualizar submódulos en directorio
+    updated = update_submodules_in_dir(target_dir, auto_commit=not args.no_commit)
+    
+    if updated == 0:
+        print("\nNo se encontraron submódulos para actualizar")
+        return 0
+    
+    print(f"\n✓ {updated} submódulo(s) actualizado(s)")
+    
+    # Commit si se solicitó y hay cambios
+    if not args.no_commit:
+        print("\nConfirmando actualizaciones de submódulos...")
+        try:
+            run_git_command(
+                ['git', 'commit', '-m', 'chore: update PKGBUILD submodules', '--no-verify'],
+                check=False
+            )
+            print("✓ Cambios commiteados")
+            print("\nListo. Revisa con 'git status' y sube tu rama de trabajo.")
+        except:
+            print("No hay cambios para commitear")
+    
+    return 0
+
+
+def run_inspect_mappings(args):
+    """Inspeccionar install-mappings.yml."""
+    from dotfiles_installer.inspect import inspect_mappings
+    
+    # Determinar ruta al archivo de mappings
+    script_dir = Path(__file__).parent
+    repo_root = script_dir.parent
+    mappings_file = repo_root / 'install-mappings.yml'
+    
+    return inspect_mappings(mappings_file, output_file=args.output, verbose=args.verbose)
+
+
+def run_setup_githooks(args):
+    """Configurar o desactivar git hooks."""
+    from dotfiles_installer.githooks import setup_githooks, disable_githooks
+    
+    # Si se especificó --disable, desactivar hooks
+    if args.disable:
+        return disable_githooks()
+    
+    # Configurar hooks
+    return setup_githooks(
+        hooks_dir=args.hooks_dir,
+        fix_permissions=not args.no_fix_permissions
+    )
+
+
+if __name__ == '__main__':
+    sys.exit(main())

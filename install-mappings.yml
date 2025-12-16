@@ -37,7 +37,6 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 #########################
 # TMux and XMMS configs (modules/cli-tools/*)
 .tmux.conf|tmux: xdg:tmux/tmux.conf                  # modules/cli-tools/tmux
-.tmuxrc|tmux: xdg:tmux/tmux.conf                     # modules/cli-tools/tmux (alias for .tmux.conf)
 .xmms2rc|xmms: home:.xmms2rc                         # modules/cli-tools/xmms
 htoprc|htop: xdg:htop/htoprc                         # modules/cli-tools/htop (Windows Task Manager style)
 
@@ -143,7 +142,7 @@ rust.conf|pacman: xdg:pacman/rust.conf               # modules/pacman
 .gitk|git: xdg:git/gitk                              # modules/dev-tools/git (gitk config)
 
 # Cargo (Rust package manager)
-cargo/config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
+config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
 
 # Gemini AI settings
 .gemini/settings.json|gemini: home:.gemini/settings.json  # modules/dev-tools/gemini
@@ -219,7 +218,7 @@ settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
 settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
 .vimrc|vim: home:.vimrc                              # modules/editor/vim
-.nanorc|nano: home:.nanorc                           # modules/editor/nano
+nanorc|nano: xdg:nano/nanorc                          # modules/editor/nano (DOS Edit style)
 xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
 
 # Sublime Text

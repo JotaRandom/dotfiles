@@ -1,38 +1,42 @@
 # GitLab CI/CD Pipeline para dotfiles
-# Similar a GitHub Actions pero adaptado para GitLab
+# Pipeline Python - Tests de instalación y validación
 
 stages:
   - lint
   - test
   - validate
 
-# Template para cache de apt
-.apt_cache: &apt_cache
+# Template para cache de Python
+.python_cache: &python_cache
   cache:
-    key: apt-cache
+    key: python-cache
     paths:
-      - apt-cache/
+      - .cache/pip
 
 variables:
   DEBIAN_FRONTEND: noninteractive
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 #######################
 # Stage: Lint
 #######################
 
-shell-lint:
+python-lint:
   stage: lint
-  image: ubuntu:latest
+  image: python:3-slim
   before_script:
-    - mkdir -p apt-cache
-    - apt-get update
-    - apt-get install -y shellcheck
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
-    # Verificar sintaxis bash
-    - for f in ./scripts/*.sh; do bash -n "$f"; done
-    # Ejecutar shellcheck
-    - for f in ./scripts/*.sh; do shellcheck "$f" || true; done
-  <<: *apt_cache
+    # Verificar sintaxis de todos los scripts Python
+    - echo "=== Verificando sintaxis Python ==="
+    - python -m py_compile scripts/install.py
+    - python -m py_compile .github/scripts/check-english.py
+    - python -m py_compile .github/scripts/check-mappings.py
+    - python -m py_compile .github/scripts/test_install.py
+    - python -m py_compile .github/scripts/test_sanitize.py
+    - echo "✅ Sintaxis Python válida"
+  <<: *python_cache
 
 check-executables:
   stage: lint
@@ -57,41 +61,32 @@ check-executables:
       fi
       if [ "$fail" -eq 1 ]; then exit 1; fi
 
-check-english:
+check-i18n:
   stage: lint
-  image: alpine/git
+  image: python:3-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
-    - apk add --no-cache bash
-    - chmod +x ./.github/scripts/check-english.sh
-    - ./.github/scripts/check-english.sh
-
-powershell-test:
-  stage: lint
-  tags:
-    - windows
-  script:
-    - echo "=== Testing install.ps1 ==="
-    - Get-Content scripts\install.ps1 -ErrorAction Stop
-    - echo "✅ Sintaxis PowerShell válida"
-  only:
-    - branches
-  allow_failure: true  # Permitir fallo por ahora (plataforma secundaria)
+    # Verificar no reintroducción de texto en inglés
+    - python .github/scripts/check-english.py
+  <<: *python_cache
 
 #######################
 # Stage: Test
 #######################
 
-test-mappings:
+test-install-complete:
   stage: test
-  image: ubuntu:latest
+  image: python:3-slim
   before_script:
-    - mkdir -p apt-cache
     - apt-get update
     - apt-get install -y git-lfs rsync
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
-    - chmod +x ./.github/scripts/test-install-mappings.sh
-    - echo "=== Ejecutando test-install-mappings.sh ==="
-    - ./.github/scripts/test-install-mappings.sh 2>&1 | tee /tmp/test-mappings.log
+    - echo "=== Ejecutando test_install.py ==="
+    - python .github/scripts/test_install.py 2>&1 | tee /tmp/test-mappings.log
     # Verificar NOTAs
     - |
       if grep -q "^NOTA:" /tmp/test-mappings.log; then
@@ -103,29 +98,34 @@ test-mappings:
           echo "❌ ERROR: Demasiadas NOTAs ($nota_count)"
           exit 1
         else
-          echo "✅ NOTAs aceptables"
+          echo "✅ NOTAs aceptables (archivos opcionales)"
         fi
       else
-        echo "✅ No se encontraron NOTAs"
+        echo "✅ No se encontraron NOTAs - Test perfecto!"
       fi
-  <<: *apt_cache
+  <<: *python_cache
+  artifacts:
+    when: on_failure
+    paths:
+      - /tmp/test-mappings.log
+    expire_in: 1 week
 
-install-test:
+test-quick-install:
   stage: test
-  image: ubuntu:latest
+  image: python:3-slim
   before_script:
-    - mkdir -p apt-cache
     - apt-get update
     - apt-get install -y git-lfs rsync
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
     - TMP=$(mktemp -d)
     - echo "Testing installer against: $TMP"
-    - chmod +x ./scripts/install.sh
-    - TARGET="$TMP" ./scripts/install.sh 2>&1 | head -100
+    - python scripts/install.py --target "$TMP" modules/shell/bash 2>&1 | head -50
     - echo "Verificando instalación..."
     - ls -la "$TMP" | head -20
-    - find "$TMP" -type l | head -10
-  <<: *apt_cache
+    - find "$TMP" -type l 2>/dev/null | head -10 || echo "No symlinks found yet"
+  <<: *python_cache
   after_script:
     - rm -rf "$TMP" || true
 
@@ -133,22 +133,82 @@ install-test:
 # Stage: Validate
 #######################
 
-validate-module-files:
+validate-mappings:
   stage: validate
-  image: ubuntu:latest
+  image: python:3-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
-    - chmod +x ./.github/scripts/check-mappings.sh
-    - ./.github/scripts/check-mappings.sh
+    # Verificar cobertura de mapeos
+    - python .github/scripts/check-mappings.py
+  <<: *python_cache
+
+validate-module-coverage:
+  stage: validate
+  image: python:3-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install pyyaml
+  script:
+    - |
+      echo "=== Verificando archivos top-level en módulos ==="
+      cd modules
+      FAIL=0
+      ALLOWED=''
+      if [ -f ../install-mappings.yml ]; then
+        raw_keys=$(sed -n 's/^[[:space:]]*//;s/#.*//;s/:.*$//;s/|.*$//;p' ../install-mappings.yml | sed '/^[[:space:]]*-/d' | sed '/^$/d' || true)
+        if [ -n "$raw_keys" ]; then
+          pats=$(printf '%s\n' "$raw_keys" | awk -F: '
+            /^[[:space:]]*#/ { next }
+            /^[[:space:]]*$/ { next }
+            { line=$1; sub(/^[[:space:]]*/, "", line); sub(/[[:space:]]*$/, "", line); sub(/\|.*$/, "", line);
+              n=split(line, parts, "/"); base=parts[n];
+              printf "%s|%s\n", line, base
+            }
+          ' | tr '\n' '|' | sed 's/|$//' || true)
+          esc=$(printf '%s' "$pats" | sed -E 's/([^a-zA-Z0-9_\-\.\/|])/\\\\\1/g' || true)
+          ALLOWED="^$(printf '%s' "$esc" | sed 's/|/\$|^/g')$|^\..+"
+        fi
+      fi
+      if [ -z "$ALLOWED" ]; then
+        ALLOWED='^\..+'
+      fi
+      for m in */ ; do
+        m=$(basename "$m")
+        while IFS= read -r -d $'\0' f; do
+          fname=$(basename "$f")
+          if [[ ! "$fname" =~ $ALLOWED ]] && [[ ! "$fname" =~ ^\..+ ]]; then
+            echo "ERROR: El módulo $m contiene archivo en raíz sin mapear: $fname"
+            FAIL=1
+          fi
+        done < <(find "$m" -maxdepth 1 -type f -print0 || true)
+      done
+      if [ "$FAIL" -eq 1 ]; then
+        echo "❌ Se detectaron archivos sin mapear"
+        exit 1
+      else
+        echo "✅ Todos los archivos están mapeados"
+      fi
+  <<: *python_cache
 
 # Job solo para tags/releases
 validate-release:
   stage: validate
-  image: ubuntu:latest
+  image: python:3-slim
   only:
     - tags
+  before_script:
+    - apt-get update
+    - apt-get install -y git-lfs rsync
+    - pip install --upgrade pip
+    - pip install pyyaml
   script:
-    - echo "Validando release $CI_COMMIT_TAG"
-    - chmod +x ./scripts/install.sh
+    - echo "=== Validando release $CI_COMMIT_TAG ==="
     - TMP=$(mktemp -d)
-    - TARGET="$TMP" ./scripts/install.sh
-    - echo "✅ Release validado"
+    # Ejecutar test completo
+    - python .github/scripts/test_install.py
+    - echo "✅ Release $CI_COMMIT_TAG validado correctamente"
+  <<: *python_cache
+  after_script:
+    - rm -rf "$TMP" || true

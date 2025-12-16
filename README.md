@@ -18,7 +18,7 @@ git submodule update --init --recursive
 2) Ejecuta el instalador (Linux / WSL):
 
 ```bash
-./scripts/install.sh modules/editor/nvim modules/shell/zsh
+./scripts/install.py modules/editor/nvim modules/shell/zsh
 ```
 
 3) En Windows (PowerShell):
