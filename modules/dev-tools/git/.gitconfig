@@ -2,9 +2,11 @@
 
 [user]
     # Configurar con tus datos
-    name = Tu Nombre
-    email = tu@email.com
-
+    name = Pablo Lezaeta Reyes
+    email = prflr88@gmail.com
+	signingkey = 9E2567C5DF0610D7FB9EADCDD93D9319797627C4
+[commit]
+	gpgsign = true
 [core]
     editor = nvim
     pager = less

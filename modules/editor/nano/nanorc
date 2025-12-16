@@ -24,19 +24,8 @@ set autoindent
 set tabsize 4
 set tabstospaces
 
-# Smooth scrolling
-set smooth
-
 # Mouse habilitado
 set mouse
-
-# ===== FUNCIONALIDADES =====
-# Backup automático
-set backup
-set backupdir "~/.nano/backups"
-
-# Suspend con Ctrl+Z
-set suspend
 
 # Cortar desde cursor
 set cutfromcursor
@@ -44,23 +33,20 @@ set cutfromcursor
 # Wrap suave de líneas
 set softwrap
 
-# ===== BÚSQUEDA =====
 # Case sensitive por defecto (como DOS Edit)
 set casesensitive
 
 # Expresiones regulares
 set regexp
 
-# ===== VISUAL =====
 # Mostrar posición del cursor siempre
 set constantshow
 
 # Colores números de línea (estilo Turbo Pascal)
-set numbercolor yellow,blue
+set numbercolor white,blue
 set keycolor brightcyan
 set functioncolor brightgreen
 
-# ===== SYNTAX HIGHLIGHTING =====
 # Incluir sintaxis del sistema
 include "/usr/share/nano/*.nanorc"
 
