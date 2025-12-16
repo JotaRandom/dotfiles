@@ -58,10 +58,11 @@ def run_installer(repo_root: Path, target_dir: Path, modules: list) -> int:
     """
     install_script = repo_root / 'scripts' / 'install.py'
     
-    # Construir comando
+    # Construir comando (con subcomando 'install')
     cmd = [
         sys.executable,
         str(install_script),
+        'install',  # ← Subcomando agregado
         '--target', str(target_dir)
     ] + [str(m) for m in modules]
     
