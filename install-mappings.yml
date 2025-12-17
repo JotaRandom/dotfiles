@@ -214,7 +214,6 @@ init.vim|nvim: xdg:nvim/init.vim                     # modules/editor/nvim
 kakrc|kakoune: xdg:kak/kakrc                         # modules/editor/kakoune
 katerc|kate: xdg:kate/katerc                         # modules/editor/kate
 settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
-
 settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
 vimrc|vim: xdg:vim/vimrc                              # modules/editor/vim (XDG_CONFIG_HOME/vim/vimrc)
