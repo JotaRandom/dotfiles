@@ -145,7 +145,7 @@ from dotfiles_installer.sanitize import sanitize_crlf_if_needed
 def install_module(module_path: Path, config: DotfilesConfig, 
                    mapper: FileMapper, symlink_mgr: SymlinkManager,
                    fix_eol: bool = False, fix_attribs: bool = False,
-                   allow_backup: bool = True):
+                   allow_backup: bool = True, dry_run: bool = False):
     """
     Instala un módulo individual creando symlinks para sus archivos.
     
@@ -157,6 +157,7 @@ def install_module(module_path: Path, config: DotfilesConfig,
         fix_eol: Si True, sanitiza CRLF a LF en archivos candidatos
         fix_attribs: Si True, establece permisos ejecutables en scripts
         allow_backup: Si True, crea backups de archivos existentes
+        dry_run: Si True, solo muestra lo que se haría sin crear symlinks
     """
     if not module_path.exists() or not module_path.is_dir():
         print(f"⚠ Módulo no encontrado: {module_path}")
@@ -209,7 +210,9 @@ def install_module(module_path: Path, config: DotfilesConfig,
         
         # Crear symlink(s) para cada destino
         for dest in destinations:
-            if symlink_mgr.create_symlink(source_to_link, dest, module_name, allow_backup=allow_backup):
+            if symlink_mgr.create_symlink(source_to_link, dest, module_name, 
+                                         allow_backup=allow_backup,
+                                         dry_run=dry_run):
                 symlinks_created += 1
                 
                 # Establecer permisos ejecutables si se solicito
@@ -693,8 +696,10 @@ def run_install(args):
     symlink_mgr = SymlinkManager(config.target)
     
     # Iniciar sesión de backup (timestamp compartido) si no se deshabilitó
-    if not args.no_backup:
+    if not args.no_backup and not args.dry_run:
         symlink_mgr.start_backup_session()
+    elif args.dry_run:
+        print("🔍 DRY-RUN MODE: No se crearán symlinks ni backups\n")
     else:
         print("⚠ Backups deshabilitados (--no-backup)\n")
     
@@ -704,7 +709,8 @@ def run_install(args):
     for module_path in modules:
         install_module(module_path, config, mapper, symlink_mgr, 
                       args.fix_eol, args.fix_attribs, 
-                      allow_backup=not args.no_backup)
+                      allow_backup=not args.no_backup,
+                      dry_run=args.dry_run)
     
     # Guardar metadata de backups (si se habilitaron)
     if not args.no_backup:

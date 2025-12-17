@@ -68,7 +68,7 @@ class SymlinkManager:
             print(f"  ⚠ Error guardando metadata: {e}")
     
     def create_symlink(self, source: Path, destination: Path, module_name: str,
-                      allow_backup: bool = True) -> bool:
+                      allow_backup: bool = True, dry_run: bool = False) -> bool:
         """
         Create a symlink, backing up existing file if needed.
         
@@ -77,6 +77,7 @@ class SymlinkManager:
             destination: Destination path for symlink
             module_name: Name of module (for backup organization)
             allow_backup: If True, backup existing files; if False, skip if exists
+            dry_run: If True, only show what would be done without making changes
         
         Returns:
             True if symlink was created, False if skipped
@@ -85,6 +86,11 @@ class SymlinkManager:
         if not source.exists():
             print(f"  ⚠ Source does not exist: {source}")
             return False
+        
+        # DRY-RUN: Solo mostrar lo que se haría
+        if dry_run:
+            print(f"  [DRY-RUN] {destination} → {source}")
+            return True  # Reportar como "exitoso" para contadores
         
         # Create destination parent directory
         destination.parent.mkdir(parents=True, exist_ok=True)
