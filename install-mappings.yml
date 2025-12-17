@@ -22,8 +22,8 @@ Microsoft.PowerShell_profile.ps1|pwsh: xdg:powershell/Microsoft.PowerShell_profi
 .kshrc|ksh: home:.kshrc                               # modules/shell/ksh
 .mkshrc|mksh: home:.mkshrc                            # modules/shell/mksh
 .tcshrc|tcsh: home:.tcshrc                            # modules/shell/tcsh
-rc.elv|elvish: home:.elvish/rc.elv                   # modules/shell/elvish
-.xonshrc|xonsh: home:.xonshrc                         # modules/shell/xonsh
+rc.elv|elvish: xdg:elvish/rc.elv                     # modules/shell/elvish (XDG_CONFIG_HOME/elvish/rc.elv)
+rc.xsh|xonsh: xdg:xonsh/rc.xsh                       # modules/shell/xonsh (XDG_CONFIG_HOME/xonsh/rc.xsh)
 config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 
 # Shell common files
@@ -37,7 +37,7 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 #########################
 # TMux and XMMS configs (modules/cli-tools/*)
 .tmux.conf|tmux: xdg:tmux/tmux.conf                  # modules/cli-tools/tmux
-.xmms2rc|xmms: home:.xmms2rc                         # modules/cli-tools/xmms
+xmms2.conf|xmms: xdg:xmms2/xmms2.conf                # modules/cli-tools/xmms (XDG_CONFIG_HOME/xmms2/ contains startup.d, shutdown.d, medialib.db)
 htoprc|htop: xdg:htop/htoprc                         # modules/cli-tools/htop (Windows Task Manager style)
 
 # Modern CLI tools
@@ -217,7 +217,7 @@ settings.json|micro: xdg:micro/settings.json         # modules/editor/micro
 
 settings.json|vscode: xdg:Code/User/settings.json    # modules/editor/vscode
 argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (disable GPU acceleration)
-.vimrc|vim: home:.vimrc                              # modules/editor/vim
+vimrc|vim: xdg:vim/vimrc                              # modules/editor/vim (XDG_CONFIG_HOME/vim/vimrc)
 nanorc|nano: xdg:nano/nanorc                          # modules/editor/nano (DOS Edit style)
 xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
 
@@ -282,3 +282,8 @@ thinkfan.conf: ignore                                  # hardware/system configs
 README.md: ignore
 ATTRIBUTIONS.md: ignore
 config.example: ignore
+.gitconfig: ignore                                     # Git config (may contain user info)
+.netrc: ignore                                         # Network credentials (sensitive)
+.authinfo: ignore                                      # Authentication info (sensitive)
+.gnupg/*: ignore                                       # GPG keys (private)
+.ssh/*: ignore                                         # SSH keys (private - except config.example)
