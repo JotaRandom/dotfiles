@@ -225,13 +225,6 @@ def install_module(module_path: Path, config: DotfilesConfig,
 
 def main():
     """Main entry point for dotfiles installer."""
-    # Check dependencies first
-    print("Verificando dependencias...")
-    if not check_and_install_pyyaml():
-        return 1
-    
-    check_and_install_git_lfs()  # Non-fatal if fails
-    print()
     
     # Parser principal con subcomandos
     parser = argparse.ArgumentParser(
@@ -295,7 +288,7 @@ y configuración automática de permisos ejecutables.
         epilog='''
 Ejemplos:
 
-  # Instalar TODOS los módulos (caso más común - sin argumentos)
+  # Instalar TODOS los módulos (sin argumentos)
   python install.py install
   
   # Instalar módulos específicos
@@ -304,16 +297,16 @@ Ejemplos:
   # Instalar sin crear backups (testing)
   python install.py install --no-backup modules/shell/bash
   
-  # Sanitizar CRLF a LF en archivos de configuración
+  # Sanitizar CRLF → LF
   python install.py install --fix-eol modules/shell/bash
   
-  # Establecer permisos ejecutables en scripts (.sh, shebangs)
+  # Permisos ejecutables en scripts
   python install.py install --fix-attributes modules/bin
   
   # Combinar opciones
   python install.py install --fix-eol --fix-attributes --no-backup modules/shell/bash
   
-  # Preview (ver qué se haría sin hacer cambios)
+  # Preview sin hacer cambios
   python install.py install --dry-run modules/shell/bash
 
 Los archivos se mapean según install-mappings.yml
@@ -598,6 +591,15 @@ Para revertir: python install.py setup-githooks --disable
     )
     
     args = parser.parse_args()
+    
+    # Verificar dependencias solo si se va a ejecutar un comando real
+    # (no al mostrar --help)
+    print("Verificando dependencias...")
+    if not check_and_install_pyyaml():
+        return 1
+    
+    check_and_install_git_lfs()  # Non-fatal if fails
+    print()
     
     # Si no se especifica subcomando, usar 'install' por defecto
     if args.command is None:
