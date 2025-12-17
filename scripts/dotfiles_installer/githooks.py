@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Configuración de Git hooks personalizados.
 
@@ -174,12 +176,12 @@ def setup_githooks(hooks_dir: str = '.githooks', fix_permissions: bool = True) -
 
 
 def disable_githooks() -> int:
-    ""
+    """
     Desactiva hooks personalizados y revierte a configuración por defecto de Git.
     
     Returns:
         0 si exitoso, 1 si error
-    ""
+    """
     if not is_git_repo():
         print("ERROR: No se encuentra dentro de un repositorio Git", file=sys.stderr)
         return 1
@@ -190,14 +192,14 @@ def disable_githooks() -> int:
             check=True,
             capture_output=True
         )
-        print(" Hooks personalizados desactivados")
+        print("✓ Hooks personalizados desactivados")
         print("  Git usará .git/hooks/ (configuración por defecto)")
         return 0
     except subprocess.CalledProcessError as e:
         # Si el config no existe, no es un error
         stderr_str = e.stderr.decode('utf-8', errors='ignore').lower()
         if 'not found' in stderr_str or 'no such' in stderr_str:
-            print(" No había hooks personalizados configurados")
+            print("✓ No había hooks personalizados configurados")
             return 0
         print(f"ERROR al desactivar hooks: {e}", file=sys.stderr)
         if e.stderr:

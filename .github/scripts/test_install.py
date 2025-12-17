@@ -501,6 +501,7 @@ def verify_installer_from_different_directory(repo_root: Path, modules: list) ->
                 cmd = [
                     sys.executable,
                     str(install_script),
+                    'install',  # ← Subcomando agregado
                     '--target', str(test_target),
                     str(test_module)
                 ]

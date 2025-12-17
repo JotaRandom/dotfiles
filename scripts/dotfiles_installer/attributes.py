@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Gestión de atributos de archivos (permisos de ejecución).
 
