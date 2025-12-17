@@ -28,8 +28,8 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 
 # Shell common files
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
-.lesshst|common: xdg_state:less/lesshst              # modules/shell/common (less history)
-.lesskey|common: home:.lesskey                        # modules/shell/common (less key bindings)
+.lesshst|common: xdg_state:less/lesshst              # modules/shell/common (less history - XDG_STATE_HOME)
+.lesskey|common: xdg:lesskey                         # modules/shell/common (less key bindings - XDG_CONFIG_HOME)
 .dmrc|common: home:.dmrc                              # modules/shell/common (display manager)
 
 #########################
