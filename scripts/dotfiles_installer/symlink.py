@@ -116,7 +116,7 @@ class SymlinkManager:
         # Create symlink
         try:
             destination.symlink_to(source)
-            print(f"  ✓ Created: {destination.name} → {source}")
+            print(f"  ✓ {destination} → {source}")
             return True
         except OSError as e:
             print(f"  ✗ Failed to create symlink {destination}: {e}")
