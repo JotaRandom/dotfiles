@@ -4,9 +4,7 @@
 # ===== WINDOW =====
 [window]
 # Padding mínimo para maximizar espacio en pantalla pequeña
-[window.padding]
-x = 2
-y = 2
+padding = { x = 2, y = 2 }
 
 # Sin decoraciones para ganar ~30px vertical
 decorations = "None"
@@ -49,14 +47,10 @@ family = "DejaVu Sans Mono"
 style = "Bold Italic"
 
 # Offset
-[font.offset]
-x = 0
-y = 0
+offset = { x = 0, y = 0 }
 
 # Glyph offset
-[font.glyph_offset]
-x = 0
-y = 0
+glyph_offset = { x = 0, y = 0 }
 
 # ===== COLORES (Monokai) =====
 [colors.primary]
