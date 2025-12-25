@@ -3,7 +3,7 @@
   // Path: ~/.config/waybar/config.jsonc
   "layer": "top",
   "position": "bottom",
-  "height": 28,
+  "height": 34,
   "spacing": 0,
   "modules-left": [
     "custom/start",

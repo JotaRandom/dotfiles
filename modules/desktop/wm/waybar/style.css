@@ -5,7 +5,7 @@
   border: none;
   border-radius: 0;
   font-family: "DejaVu Sans", "Liberation Sans", sans-serif;
-  font-size: 9pt;
+  font-size: 11pt;
   font-weight: bold;
   min-height: 0;
 }
@@ -22,7 +22,7 @@ window#waybar {
 #custom-start {
   background-color: #C0C0C0;
   color: #000000;
-  padding: 2px 8px;
+  padding: 4px 8px;
   margin: 2px 4px;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -39,7 +39,7 @@ window#waybar {
   border-left: 2px solid #808080;
   border-bottom: 2px solid #FFFFFF;
   border-right: 2px solid #FFFFFF;
-  padding: 3px 7px 1px 9px;
+  padding: 5px 7px 3px 9px;
   /* Simulate button press */
 }
 
@@ -53,7 +53,7 @@ window#waybar {
 #taskbar button {
   background-color: #C0C0C0;
   color: #000000;
-  padding: 2px 8px;
+  padding: 4px 8px;
   margin: 0 2px;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -96,7 +96,7 @@ window#waybar {
 #clock {
   background-color: #C0C0C0;
   color: #000000;
-  padding: 2px 6px;
+  padding: 4px 6px;
   margin: 2px 1px;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
@@ -106,7 +106,7 @@ window#waybar {
 
 /* ===== CLOCK (Special styling) ===== */
 #clock {
-  padding: 2px 8px;
+  padding: 4px 8px;
   margin: 2px 4px 2px 2px;
   font-weight: normal;
 }

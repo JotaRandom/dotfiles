@@ -25,8 +25,8 @@ multiplier = 3
 
 # ===== FUENTE =====
 [font]
-# Tamaño optimizado para HD
-size = 9.0
+# Tamaño optimizado para nostalgia Win95 (más grande/chunky)
+size = 12.0
 
 # Fuente optimizada para pantalla 1366x768
 # DejaVu Sans Mono: excelente renderizado, ampliamente disponible, buena para retro
