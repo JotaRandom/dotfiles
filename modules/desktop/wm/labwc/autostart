@@ -19,6 +19,3 @@ waybar &
 
 # Audio control (if using PipeWire/PulseAudio)
 # pavucontrol &
-
-# TODO: Add keyboard layout for "latam"
-#
