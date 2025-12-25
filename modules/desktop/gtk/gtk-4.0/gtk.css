@@ -1,4 +1,4 @@
-/* GTK 3.0 CSS - Perfect Windows 95/98 Aesthetic Refinement */
+/* GTK 4.0 CSS - Perfect Windows 95/98 Aesthetic Refinement */
 
 /* Global Font */
 * {
@@ -8,7 +8,6 @@
 }
 
 /* Base Colors */
-/* Base Colors */
 @define-color retro_grey #d4d0c8;
 @define-color retro_blue #0a246a;
 @define-color retro_white #ffffff;
@@ -16,7 +15,6 @@
 @define-color retro_black #000000;
 @define-color retro_light_grey #eaeaea;
 
-/* Global Backgrounds */
 /* Global Backgrounds */
 window,
 .background,
@@ -54,4 +52,24 @@ column-header {
     border: 1px solid @retro_black;
     box-shadow: inset 1px 1px @retro_white, inset -1px -1px @retro_shadow;
     padding: 2px;
+}
+
+/* Epiphany (GNOME Web) GTK4 Retro Tweaks */
+window.web-browser {
+    background-color: @retro_grey;
+}
+
+/* Viewport / Page container background */
+window.web-browser .view {
+    background-color: @retro_white;
+}
+
+/* Toolbar buttons retro style */
+window.web-browser toolbar button {
+    border: 1px solid transparent;
+}
+
+window.web-browser toolbar button:hover {
+    border: 1px solid @retro_shadow;
+    background-color: rgba(255, 255, 255, 0.1);
 }

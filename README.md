@@ -75,7 +75,7 @@ Este repo incluye módulos específicos diseñados para recrear un sistema de di
 
 ## 📂 Estructura y Mapeo
 
-El "cerebro" del sistema es `install-mappings.yml`. El instalador lo utiliza para aplicar reglas declarativas:
+El encargado de "decidir" "donde ir" los archivos es `install-mappings.yml`. El instalador lo utiliza para aplicar reglas declarativas:
 
 - `xdg:` → Enlaza a `~/.config/...`
 - `home:` → Enlaza directamente a la raíz del `$HOME`.

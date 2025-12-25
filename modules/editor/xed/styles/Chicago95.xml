@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<style-scheme id="chicago95" _name="Chicago95" version="2.0">
+  <author>Chicago95 Team / Retro Refinement</author>
+  <description>Classic Windows 95 style for GtkSourceView</description>
+
+  <!-- Global Settings -->
+  <style name="text" foreground="#000000" background="#FFFFFF"/>
+  <style name="selection" background="#0A246A" foreground="#FFFFFF"/>
+  <style name="cursor" foreground="#000000"/>
+  <style name="current-line" background="#D4D0C8"/>
+  <style name="line-numbers" foreground="#808080" background="#D4D0C8"/>
+  <style name="draw-spaces" foreground="#D4D0C8"/>
+
+  <!-- Bracket Matching -->
+  <style name="bracket-match" background="#D4D0C8" bold="true"/>
+  <style name="bracket-mismatch" background="#FF0000" foreground="#FFFFFF" bold="true"/>
+
+  <!-- Syntax Highlighting - Classic Colors -->
+  <style name="def:comment" foreground="#008000" italic="true"/>
+  <style name="def:string" foreground="#800000"/>
+  <style name="def:constant" foreground="#0000FF"/>
+  <style name="def:keyword" foreground="#000080" bold="true"/>
+  <style name="def:type" foreground="#000080" bold="true"/>
+  <style name="def:preprocessor" foreground="#808080"/>
+  <style name="def:identifier" foreground="#000000"/>
+  <style name="def:statement" foreground="#000080" bold="true"/>
+  <style name="def:error" background="#FF0000" foreground="#FFFFFF" bold="true"/>
+  <style name="def:note" background="#FFFF00" foreground="#000000" bold="true"/>
+
+</style-scheme>

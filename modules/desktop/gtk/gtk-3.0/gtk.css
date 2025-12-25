@@ -52,3 +52,37 @@
   font-family: "DejaVu Sans", sans-serif;
   font-size: 11pt;
 }
+
+/* XApps & GNOME Web specific retro tweaks (Windows 95/98) */
+XedWindow,
+XreaderWindow,
+EphyWindow {
+  background-color: @theme_bg_color;
+}
+
+XedWindow .view,
+EphyWindow .view {
+  background-color: @theme_base_color;
+  color: @theme_text_color;
+}
+
+/* Xreader/Evince/Epiphany viewport (Retro dark grey background) */
+EvView,
+XreaderView,
+EphyWebView {
+  background-color: #7B7B7B;
+}
+
+/* Toolbar button adjustments */
+XedWindow toolbar button,
+XreaderWindow toolbar button,
+EphyWindow toolbar button {
+  border: 1px solid transparent;
+}
+
+XedWindow toolbar button:hover,
+XreaderWindow toolbar button:hover,
+EphyWindow toolbar button:hover {
+  border: 1px solid @border_color;
+  background-color: rgba(255, 255, 255, 0.1);
+}

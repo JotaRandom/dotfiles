@@ -58,6 +58,8 @@ chrome-flags.conf|chrome:
 brave-flags.conf|brave: xdg:BraveSoftware/Brave-Browser/brave-flags.conf  # modules/browsers/brave
 userChrome.css|firefox: ignore                        # modules/browsers/firefox (manual/profile - copy to Firefox profile directory)
 user.js|firefox: ignore                               # modules/browsers/firefox (manual/profile - copy to Firefox profile directory)
+epiphany-settings.sh|epiphany: ignore                 # modules/browsers/epiphany (aplicar con bash)
+falkon-settings.sh|falkon: ignore                     # modules/browsers/falkon (aplicar con bash)
 
 #########################
 # modules/desktop/de & wm
@@ -267,6 +269,8 @@ argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (d
 vimrc|vim: xdg:vim/vimrc                              # modules/editor/vim (XDG_CONFIG_HOME/vim/vimrc)
 nanorc|nano: xdg:nano/nanorc                          # modules/editor/nano (DOS Edit style)
 xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
+styles/Chicago95.xml|xed: xdg_data:xed/styles/Chicago95.xml # modules/editor/xed/styles (GtkSourceView)
+xreader-settings.sh|xreader: ignore                    # modules/editor/xreader (aplicar con bash)
 images_chicago95.zip|editor: xdg:libreoffice/4/user/config  # modules/editor/libreoffice/libreoffice-chicago95-iconset (Nested)
 
 # Sublime Text
