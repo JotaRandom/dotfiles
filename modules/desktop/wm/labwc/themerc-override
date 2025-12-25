@@ -1,0 +1,8 @@
+# labwc theme override - Windows 95/98 Style
+# Path: ~/.config/labwc/themerc-override
+# This file overrides specific theme settings
+
+# ===== WINDOW BORDERS =====
+border.width: 3
+window.active.border.color: #000000
+window.inactive.border.color: #808080

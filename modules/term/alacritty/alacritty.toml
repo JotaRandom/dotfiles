@@ -30,26 +30,19 @@ size = 9.0
 
 # Fuente optimizada para pantalla 1366x768
 # DejaVu Sans Mono: excelente renderizado, ampliamente disponible, buena para retro
-[font.normal]
-family = "DejaVu Sans Mono"
-style = "Regular"
+normal = { family = "DejaVu Sans Mono", style = "Regular" }
+bold = { family = "DejaVu Sans Mono", style = "Bold" }
+italic = { family = "DejaVu Sans Mono", style = "Italic" }
+bold_italic = { family = "DejaVu Sans Mono", style = "Bold Italic" }
 
-[font.bold]
-family = "DejaVu Sans Mono"
-style = "Bold"
-
-[font.italic]
-family = "DejaVu Sans Mono"
-style = "Italic"
-
-[font.bold_italic]
-family = "DejaVu Sans Mono"
-style = "Bold Italic"
-
-# Offset
+# Offset (extra space around each character)
 offset = { x = 0, y = 0 }
 
 # ===== COLORES (Monokai) =====
+[colors]
+# When true, bold text is drawn using the bright color variants
+draw_bold_text_with_bright_colors = false
+
 [colors.primary]
 background = "#272822"
 foreground = "#f8f8f2"
@@ -102,9 +95,7 @@ hide_when_typing = true
 regex = "(mailto:|gemini:|https:|http:|file:|git:|ssh:|ftp:)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\s{-}\\^⟨⟩`]+"
 command = "xdg-open"
 post_processing = true
-
-[hints.enabled.mouse]
-enabled = true
+mouse = { enabled = true }
 
 # ===== KEY BINDINGS =====
 [[keyboard.bindings]]
@@ -141,8 +132,3 @@ action = "Quit"
 key = "N"
 mods = "Control|Shift"
 action = "SpawnNewInstance"
-
-# ===== PERFORMANCE =====
-# Optimizado para Intel HD Graphics Sandy Bridge
-[colors]
-draw_bold_text_with_bright_colors = false

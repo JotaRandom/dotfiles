@@ -123,6 +123,7 @@ config|sway: xdg:sway/config                        # modules/desktop/wm/sway (W
 hyprland.conf|hyprland: xdg:hypr/hyprland.conf       # modules/desktop/wm/hyprland (Wayland)
 rc.xml|labwc: xdg:labwc/rc.xml                       # modules/desktop/wm/labwc (Wayland)
 themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
+themerc-override|labwc: xdg:labwc/themerc-override   # modules/desktop/wm/labwc
 autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
 menu.xml|labwc: xdg:labwc/menu.xml                   # modules/desktop/wm/labwc
 
