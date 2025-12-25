@@ -8,8 +8,8 @@ setxkbmap latam
 # Set wallpaper to teal (Windows 95 default)
 swaybg -c 008080 &
 
-# Start waybar with Windows 95 style
-waybar &
+# Start waybar with explicit config paths
+waybar -c ~/.config/waybar/config.jsonc -s ~/.config/waybar/style.css &
 
 # Notification daemon (optional)
 # mako &

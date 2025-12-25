@@ -1,23 +1,28 @@
 {
   // Waybar Configuration - Windows 95/98 Taskbar Style
-  // Path: ~/.config/waybar/config-win95
-  
+  // Path: ~/.config/waybar/config.jsonc
   "layer": "top",
   "position": "bottom",
   "height": 28,
   "spacing": 0,
-  
-  "modules-left": ["custom/start", "wlr/taskbar"],
+  "modules-left": [
+    "custom/start",
+    "wlr/taskbar"
+  ],
   "modules-center": [],
-  "modules-right": ["tray", "pulseaudio", "network", "battery", "clock"],
-  
+  "modules-right": [
+    "tray",
+    "pulseaudio",
+    "network",
+    "battery",
+    "clock"
+  ],
   // ===== START BUTTON =====
   "custom/start": {
     "format": " Start",
     "on-click": "dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'",
     "tooltip": false
   },
-  
   // ===== TASKBAR (Window List) =====
   "wlr/taskbar": {
     "format": "{icon} {title}",
@@ -33,24 +38,25 @@
       "Alacritty": "Terminal"
     }
   },
-  
   // ===== SYSTEM TRAY =====
   "tray": {
     "icon-size": 16,
     "spacing": 4
   },
-  
   // ===== AUDIO =====
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "🔇 Mute",
     "format-icons": {
-      "default": ["🔈", "🔉", "🔊"]
+      "default": [
+        "🔈",
+        "🔉",
+        "🔊"
+      ]
     },
     "on-click": "pavucontrol",
     "tooltip-format": "{desc}: {volume}%"
   },
-  
   // ===== NETWORK =====
   "network": {
     "format-wifi": "📶 {essid}",
@@ -60,7 +66,6 @@
     "tooltip-format-wifi": "{essid} ({signalStrength}%): {ipaddr}",
     "on-click": "nm-connection-editor"
   },
-  
   // ===== BATTERY =====
   "battery": {
     "states": {
@@ -70,9 +75,14 @@
     "format": "{icon} {capacity}%",
     "format-charging": "🔌 {capacity}%",
     "format-plugged": "🔌 {capacity}%",
-    "format-icons": ["🪫", "🔋", "🔋", "🔋", "🔋"]
+    "format-icons": [
+      "🪫",
+      "🔋",
+      "🔋",
+      "🔋",
+      "🔋"
+    ]
   },
-  
   // ===== CLOCK (Bottom-right, classic Windows 95 style) =====
   "clock": {
     "interval": 1,
