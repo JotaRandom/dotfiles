@@ -12,7 +12,7 @@ swaybg -c 008080 &
 waybar -c ~/.config/waybar/config.jsonc -s ~/.config/waybar/style.css &
 
 # Notification daemon (optional)
-# mako &
+mako &
 
 # Network manager applet (if available)
 # nm-applet --indicator &

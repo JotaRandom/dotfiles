@@ -5,11 +5,11 @@ style "default"
 {
   font_name = "DejaVu Sans Bold 11"
   
-  bg[NORMAL]      = "#c0c0c0"
-  bg[PRELIGHT]    = "#d0d0d0"
+  bg[NORMAL]      = "#d4d0c8"
+  bg[PRELIGHT]    = "#eaeaea"
   bg[ACTIVE]      = "#808080"
-  bg[SELECTED]    = "#000080"
-  bg[INSENSITIVE] = "#c0c0c0"
+  bg[SELECTED]    = "#0a246a"
+  bg[INSENSITIVE] = "#d4d0c8"
 
   fg[NORMAL]      = "#000000"
   fg[PRELIGHT]    = "#000000"

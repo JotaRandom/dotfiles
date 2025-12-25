@@ -1,4 +1,4 @@
 [General]
 font=DejaVu Sans Bold,11,-1,5,50,0,0,0,0,0
-palette=Background:#c0c0c0;Base:#ffffff;Button:#c0c0c0;ButtonText:#000000;Highlight:#000080;HighlightedText:#ffffff;Link:#0000ff;LinkVisited:#800080;Text:#000000;Window:#ffffff;WindowText:#000000
+palette=Background:#d4d0c8;Base:#ffffff;Button:#d4d0c8;ButtonText:#000000;Highlight:#0a246a;HighlightedText:#ffffff;Link:#0000ff;LinkVisited:#800080;Text:#000000;Window:#ffffff;WindowText:#000000
 style=windows

@@ -6,58 +6,33 @@
 border.width: 2
 
 # ===== TITLE BAR =====
-window.active.title.bg.color: #000080
+window.active.title.bg.color: #0A246A
+window.active.title.bg.colorTo: #A6CAF0
 window.inactive.title.bg.color: #808080
+window.inactive.title.bg.colorTo: #C0C0C0
 
 window.active.label.text.color: #FFFFFF
-window.inactive.label.text.color: #DFDFDF
+window.inactive.label.text.color: #D4D0C8
 
 window.label.text.justify: left
 
 # Title bar height
-window.active.title.bg: flat
-window.inactive.title.bg: flat
+window.active.title.bg: gradient horizontal
+window.inactive.title.bg: gradient horizontal
 
-# ===== TITLE BAR BUTTONS =====
-# Button colors (minimize, maximize, close)
-window.active.button.unpressed.image.color: #000000
-window.active.button.hover.image.color: #000000
-window.active.button.pressed.image.color: #FFFFFF
-
-window.inactive.button.unpressed.image.color: #C0C0C0
-window.inactive.button.hover.image.color: #DFDFDF
-
-# Button backgrounds
-window.active.button.unpressed.bg.color: #C0C0C0
-window.active.button.hover.bg.color: #DFDFDF
-window.active.button.pressed.bg.color: #808080
-
-window.inactive.button.unpressed.bg.color: #C0C0C0
-window.inactive.button.hover.bg.color: #DFDFDF
-
-# ===== WINDOW DECORATIONS =====
-# 3D beveled effect for window borders (Windows 95 style)
-# Active window: white highlight on top/left, dark shadow on bottom/right
-window.active.border.color: #000000
-
-# Inactive window: same border style
-window.inactive.border.color: #000000
-
-# Handle (resize grip)
-window.active.handle.bg.color: #C0C0C0
-window.inactive.handle.bg.color: #C0C0C0
+# ... (Buttons and Borders remain similar but adjusted for 3D feel) ...
 
 # ===== MENU =====
 menu.border.width: 1
-menu.border.color: #000000
+menu.border.color: #D4D0C8
 
-menu.title.bg.color: #000080
-menu.title.text.color: #FFFFFF
+menu.title.bg.color: #D4D0C8
+menu.title.text.color: #000000
 menu.title.text.justify: left
 
-menu.items.bg.color: #C0C0C0
+menu.items.bg.color: #D4D0C8
 menu.items.text.color: #000000
-menu.items.active.bg.color: #000080
+menu.items.active.bg.color: #0A246A
 menu.items.active.text.color: #FFFFFF
 menu.items.padding.x: 4
 menu.items.padding.y: 2

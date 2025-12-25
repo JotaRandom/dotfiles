@@ -12,7 +12,7 @@
 
 /* ===== MAIN BAR ===== */
 window#waybar {
-  background-color: #C0C0C0;
+  background-color: #D4D0C8;
   color: #000000;
   border-top: 2px solid #FFFFFF;
   border-bottom: 2px solid #000000;
@@ -20,7 +20,7 @@ window#waybar {
 
 /* ===== START BUTTON ===== */
 #custom-start {
-  background-color: #C0C0C0;
+  background-color: #D4D0C8;
   color: #000000;
   padding: 4px 8px;
   margin: 2px 4px;
@@ -31,7 +31,7 @@ window#waybar {
 }
 
 #custom-start:hover {
-  background-color: #DFDFDF;
+  background-color: #EAEAEA;
 }
 
 #custom-start:active {
@@ -51,7 +51,7 @@ window#waybar {
 }
 
 #taskbar button {
-  background-color: #C0C0C0;
+  background-color: #D4D0C8;
   color: #000000;
   padding: 4px 8px;
   margin: 0 2px;
@@ -63,15 +63,20 @@ window#waybar {
 }
 
 #taskbar button:hover {
-  background-color: #DFDFDF;
+  background-color: #EAEAEA;
 }
 
 #taskbar button.active {
-  background-color: #DFDFDF;
+  background-color: #EAEAEA;
   border-top: 2px solid #808080;
   border-left: 2px solid #808080;
   border-bottom: 2px solid #FFFFFF;
   border-right: 2px solid #FFFFFF;
+  background: repeating-linear-gradient(45deg,
+      #D4D0C8,
+      #D4D0C8 2px,
+      #FFFFFF 2px,
+      #FFFFFF 4px);
 }
 
 /* ===== SYSTEM TRAY ===== */
@@ -94,7 +99,7 @@ window#waybar {
 #network,
 #battery,
 #clock {
-  background-color: #C0C0C0;
+  background-color: #D4D0C8;
   color: #000000;
   padding: 4px 6px;
   margin: 2px 1px;

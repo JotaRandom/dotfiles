@@ -143,6 +143,7 @@ preferences|icewm: xdg:icewm/preferences             # modules/desktop/wm/icewm
 config|fvwm: xdg:fvwm/config                         # modules/desktop/wm/fvwm
 .xinitrc|fvwm: ignore                                # modules/desktop/wm/fvwm
 rc.xml|openbox: xdg:openbox/rc.xml                   # modules/desktop/wm/openbox
+RetroClassic98|openbox: home:.local/share/themes/RetroClassic98 # modules/desktop/wm/openbox/RetroClassic98
 .xinitrc|openbox: ignore                             # modules/desktop/wm/openbox
 config|sway: xdg:sway/config                        # modules/desktop/wm/sway (Wayland)
 hyprland.conf|hyprland: xdg:hypr/hyprland.conf       # modules/desktop/wm/hyprland (Wayland)

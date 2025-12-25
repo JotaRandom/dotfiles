@@ -8,12 +8,13 @@
 }
 
 /* Base Colors */
-@define-color retro_grey #c0c0c0;
-@define-color retro_blue #000080;
+/* Base Colors */
+@define-color retro_grey #d4d0c8;
+@define-color retro_blue #0a246a;
 @define-color retro_white #ffffff;
 @define-color retro_shadow #808080;
 @define-color retro_black #000000;
-@define-color retro_light_grey #dfdfdf;
+@define-color retro_light_grey #eaeaea;
 
 /* Global Backgrounds */
 /* Global Backgrounds */
