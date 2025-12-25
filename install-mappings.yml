@@ -118,7 +118,7 @@ themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
 autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
 
 # Waybar (Wayland status bar)
-config|waybar: xdg:waybar/config                     # modules/desktop/wm/waybar
+config.jsonc|waybar: xdg:waybar/config.jsonc           # modules/desktop/wm/waybar
 style.css|waybar: xdg:waybar/style.css               # modules/desktop/wm/waybar
 
 # Window Managers - NeXTSTEP Style
