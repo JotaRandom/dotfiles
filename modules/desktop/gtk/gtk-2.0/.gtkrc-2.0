@@ -1,0 +1,38 @@
+# GTK+ 2.0 configuration - Windows 95/98 Style Consistency
+# Path: ~/.gtkrc-2.0
+
+style "default"
+{
+  font_name = "DejaVu Sans Bold 11"
+  
+  bg[NORMAL]      = "#c0c0c0"
+  bg[PRELIGHT]    = "#d0d0d0"
+  bg[ACTIVE]      = "#808080"
+  bg[SELECTED]    = "#000080"
+  bg[INSENSITIVE] = "#c0c0c0"
+
+  fg[NORMAL]      = "#000000"
+  fg[PRELIGHT]    = "#000000"
+  fg[ACTIVE]      = "#000000"
+  fg[SELECTED]    = "#ffffff"
+  fg[INSENSITIVE] = "#808080"
+  
+  base[NORMAL]    = "#ffffff"
+  base[SELECTED]  = "#000080"
+  
+  text[NORMAL]    = "#000000"
+  text[SELECTED]  = "#ffffff"
+}
+
+class "GtkWidget" style "default"
+
+# Performance/Visual consistency
+gtk-button-images = 1
+gtk-menu-images   = 1
+gtk-enable-event-sounds = 1
+gtk-enable-input-feedback-sounds = 1
+gtk-xft-antialiasing = 1
+gtk-xft-hinting = 1
+gtk-xft-hintstyle = "hintmedium"
+gtk-cursor-theme-name = "Adwaita"
+gtk-cursor-theme-size = 24

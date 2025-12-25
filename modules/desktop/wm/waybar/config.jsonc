@@ -19,7 +19,7 @@
   ],
   // ===== START BUTTON =====
   "custom/start": {
-    "format": " Start",
+    "format": "  Start",
     "on-click": "dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'",
     "tooltip": false
   },
@@ -31,6 +31,7 @@
     "tooltip-format": "{title}",
     "on-click": "activate",
     "on-click-middle": "close",
+    "on-click-right": "minimize",
     "ignore-list": [],
     "app_ids-mapping": {},
     "rewrite": {

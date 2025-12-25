@@ -1,0 +1,27 @@
+# GTK+ 1.2 configuration - Nostalgia Windows 95
+# Path: ~/.gtkrc
+
+style "default"
+{
+  fontset = "-*-dejavu sans-bold-r-normal-*-11-*-*-*-*-*-iso8859-1"
+  
+  bg[NORMAL]      = "#c0c0c0"
+  bg[PRELIGHT]    = "#d0d0d0"
+  bg[ACTIVE]      = "#808080"
+  bg[SELECTED]    = "#000080"
+  bg[INSENSITIVE] = "#c0c0c0"
+
+  fg[NORMAL]      = "#000000"
+  fg[PRELIGHT]    = "#000000"
+  fg[ACTIVE]      = "#000000"
+  fg[SELECTED]    = "#ffffff"
+  fg[INSENSITIVE] = "#808080"
+  
+  base[NORMAL]    = "#ffffff"
+  base[SELECTED]  = "#000080"
+  
+  text[NORMAL]    = "#000000"
+  text[SELECTED]  = "#ffffff"
+}
+
+class "GtkWidget" style "default"

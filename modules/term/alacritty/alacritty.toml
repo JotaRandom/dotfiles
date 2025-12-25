@@ -38,38 +38,38 @@ bold_italic = { family = "DejaVu Sans Mono", style = "Bold Italic" }
 # Offset (extra space around each character)
 offset = { x = 0, y = 0 }
 
-# ===== COLORES (Monokai) =====
+# ===== COLORES (Windows Command Prompt) =====
 [colors]
 # When true, bold text is drawn using the bright color variants
 draw_bold_text_with_bright_colors = false
 
 [colors.primary]
-background = "#272822"
-foreground = "#f8f8f2"
+background = "#000000"
+foreground = "#c0c0c0"
 
 [colors.cursor]
-text = "#272822"
-cursor = "#f8f8f2"
+text = "#000000"
+cursor = "#c0c0c0"
 
 [colors.normal]
-black   = "#272822"
-red     = "#f92672"
-green   = "#a6e22e"
-yellow  = "#f4bf75"
-blue    = "#66d9ef"
-magenta = "#ae81ff"
-cyan    = "#a1efe4"
-white   = "#f8f8f2"
+black   = "#000000"
+red     = "#800000"
+green   = "#008000"
+yellow  = "#808000"
+blue    = "#000080"
+magenta = "#800080"
+cyan    = "#008080"
+white   = "#c0c0c0"
 
 [colors.bright]
-black   = "#75715e"
-red     = "#f92672"
-green   = "#a6e22e"
-yellow  = "#f4bf75"
-blue    = "#66d9ef"
-magenta = "#ae81ff"
-cyan    = "#a1efe4"
-white   = "#f9f8f5"
+black   = "#808080"
+red     = "#ff0000"
+green   = "#00ff00"
+yellow  = "#ffff00"
+blue    = "#0000ff"
+magenta = "#ff00ff"
+cyan    = "#00ffff"
+white   = "#ffffff"
 
 # ===== CURSOR =====
 [cursor.style]

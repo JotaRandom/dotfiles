@@ -9,8 +9,8 @@ window.inactive.border.color: #808080
 
 # ===== FONTS & SIZES =====
 # Larger fonts to simulate Win95 on 800x600 resolution
-window.label.text.font: DejaVu Sans:size=11:weight=bold
-menu.items.font: DejaVu Sans:size=11
-menu.title.font: DejaVu Sans:size=11:weight=bold
+window.label.text.font: DejaVu Sans Bold:size=11
+menu.items.font: DejaVu Sans Bold:size=11
+menu.title.font: DejaVu Sans Bold:size=11
 window.button.width: 24
 window.button.height: 24

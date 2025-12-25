@@ -74,7 +74,7 @@ padding.height: 3
 # Windows 95 used MS Sans Serif, closest alternatives:
 # - DejaVu Sans (modern, clean)
 # - Liberation Sans (metrics-compatible with Arial)
-window.label.text.font: DejaVu Sans:size=9:weight=bold
-menu.items.font: DejaVu Sans:size=9
-menu.title.font: DejaVu Sans:size=9:weight=bold
-osd.label.font: DejaVu Sans:size=9:weight=bold
+window.label.text.font: DejaVu Sans Bold:size=11
+menu.items.font: DejaVu Sans Bold:size=11
+menu.title.font: DejaVu Sans Bold:size=11
+osd.label.font: DejaVu Sans Bold:size=11

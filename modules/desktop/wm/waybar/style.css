@@ -59,7 +59,7 @@ window#waybar {
   border-left: 2px solid #FFFFFF;
   border-bottom: 2px solid #808080;
   border-right: 2px solid #808080;
-  min-width: 120px;
+  min-width: 160px;
 }
 
 #taskbar button:hover {

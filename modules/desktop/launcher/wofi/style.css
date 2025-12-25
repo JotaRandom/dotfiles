@@ -1,0 +1,58 @@
+/* Wofi CSS - Windows 95 Retro Style */
+
+window {
+    margin: 0px;
+    border: 2px solid #808080;
+    background-color: #C0C0C0;
+    font-family: "DejaVu Sans Bold", sans-serif;
+    font-size: 11pt;
+}
+
+#outer-box {
+    margin: 2px;
+    border: 2px solid #FFFFFF;
+    border-right-color: #808080;
+    border-bottom-color: #808080;
+    background-color: #C0C0C0;
+    padding: 4px;
+}
+
+#input {
+    margin: 5px;
+    border: 2px solid #808080;
+    border-right-color: #FFFFFF;
+    border-bottom-color: #FFFFFF;
+    background-color: #FFFFFF;
+    color: #000000;
+    padding: 2px 4px;
+}
+
+#scroll {
+    margin: 5px;
+    border: 2px solid #808080;
+    border-right-color: #FFFFFF;
+    border-bottom-color: #FFFFFF;
+    background-color: #FFFFFF;
+}
+
+#inner-box {
+    background-color: #FFFFFF;
+}
+
+#entry {
+    padding: 2px 4px;
+    color: #000000;
+}
+
+#entry:selected {
+    background-color: #000080;
+    color: #FFFFFF;
+}
+
+#text {
+    margin: 2px;
+}
+
+#text:selected {
+    color: #FFFFFF;
+}

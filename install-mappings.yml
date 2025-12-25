@@ -111,6 +111,29 @@ dunstrc|dunst: xdg:dunst/dunstrc                     # modules/desktop/de/dunst
 # File Managers
 pcmanfm.conf|pcmanfm: xdg:pcmanfm/default/pcmanfm.conf  # modules/desktop/file-manager/pcmanfm
 
+# Toolkit / System
+.gtkrc|gtk1: home:.gtkrc                          # modules/desktop/gtk/gtk-1.2
+.gtkrc-2.0|gtk2: home:.gtkrc-2.0                      # modules/desktop/gtk/gtk-2.0
+settings.ini|gtk3: xdg:gtk-3.0/settings.ini          # modules/desktop/gtk/gtk-3.0
+gtk.css|gtk3: xdg:gtk-3.0/gtk.css                    # modules/desktop/gtk/gtk-3.0
+settings.ini|gtk4: xdg:gtk-4.0/settings.ini          # modules/desktop/gtk/gtk-4.0
+gtk.css|gtk4: xdg:gtk-4.0/gtk.css                    # modules/desktop/gtk/gtk-4.0
+
+# Launcher
+config|wofi: xdg:wofi/config                          # modules/desktop/launcher/wofi
+style.css|wofi: xdg:wofi/style.css                    # modules/desktop/launcher/wofi
+
+# Future QT Support (Placeholder structure)
+qtrc|qt1: home:.qtrc                                # modules/desktop/qt/qt1
+qtrc|qt2: home:.qtrc                                # modules/desktop/qt/qt2 (same filename as qt1)
+qtrc|qt3: home:.qt/qtrc                             # modules/desktop/qt/qt3
+Trolltech.conf|qt4: xdg:Trolltech.conf               # modules/desktop/qt/qt4
+qt5ct.conf|qt5: xdg:qt5ct/qt5ct.conf               # modules/desktop/qt/qt5
+qt6ct.conf|qt6: xdg:qt6ct/qt6ct.conf               # modules/desktop/qt/qt6
+
+# TDE (Trinity Desktop Environment) - Managed under QT due to heritage
+kdeglobals|tde: home:.trinity/share/config/kdeglobals # modules/desktop/qt/tde
+
 # ===== SHELL =====
 # Window Managers - Windows 95/98 Style
 preferences|icewm: xdg:icewm/preferences             # modules/desktop/wm/icewm

@@ -1,0 +1,65 @@
+/* GTK 4.0 CSS - Windows 95/98 Style Overrides */
+
+* {
+    font-family: "DejaVu Sans Bold", sans-serif;
+    font-size: 11pt;
+}
+
+/* Classic Grey Background */
+window,
+.background {
+    background-color: #c0c0c0;
+    color: #000000;
+}
+
+/* 3D Borders for Buttons */
+button {
+    background-image: none;
+    background-color: #c0c0c0;
+    border-radius: 0;
+    border: 2px solid;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    border-bottom-color: #808080;
+    border-right-color: #808080;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+button:hover {
+    background-color: #d0d0d0;
+}
+
+button:active,
+button:checked {
+    border-top-color: #808080;
+    border-left-color: #808080;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
+}
+
+/* Selection Colors */
+selection,
+contentview:selection,
+.view:selection,
+.selection {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+/* Menus & Popovers */
+popover {
+    background-color: #c0c0c0;
+    color: #000000;
+    border: 1px solid #808080;
+}
+
+/* Lists */
+list {
+    background-color: #ffffff;
+}
+
+list row:selected {
+    background-color: #000080;
+    color: #ffffff;
+}

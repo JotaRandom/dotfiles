@@ -37,7 +37,7 @@
     
     <item label="Run...">
       <action name="Execute">
-        <command>dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'</command>
+        <command>wofi --show drun</command>
       </action>
     </item>
     
