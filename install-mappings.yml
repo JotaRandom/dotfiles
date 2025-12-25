@@ -110,6 +110,8 @@ dunstrc|dunst: xdg:dunst/dunstrc                     # modules/desktop/de/dunst
 
 # File Managers
 pcmanfm.conf|pcmanfm: xdg:pcmanfm/default/pcmanfm.conf  # modules/desktop/file-manager/pcmanfm
+thunarrc|thunar: xdg:Thunar/thunarrc                    # modules/desktop/file-manager/thunar
+spacefm.conf|spacefm: xdg:spacefm/spacefm.conf          # modules/desktop/file-manager/spacefm
 
 # Toolkit / System
 .gtkrc|gtk-1.2: home:.gtkrc                          # modules/desktop/gtk/gtk-1.2

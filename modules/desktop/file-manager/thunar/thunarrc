@@ -1,0 +1,11 @@
+[Configuration]
+LastDetailsViewZoomLevel=THUNAR_ZOOM_LEVEL_SMALLER
+LastDetailsViewColumnWidths=50,200,80,100,150
+LastSidePane=THUNAR_SIDE_PANE_TYPE_TREE
+LastView=THUNAR_VIEW_DETAILS
+MiscSingleClick=FALSE
+MiscShowAboutTemplates=FALSE
+MiscRememberViewSettings=TRUE
+MiscRecursiveSearch=FALSE
+MiscDateStyle=THUNAR_DATE_STYLE_SHORT
+MiscTextBesideIcons=FALSE
