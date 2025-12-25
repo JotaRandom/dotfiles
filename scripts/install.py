@@ -663,13 +663,36 @@ def run_install(args):
             )
             
             if has_config_files:
-                # Direct module
+                # Direct module (e.g., modules/pacman/)
                 modules.append(category_dir)
             else:
-                # Category - add all subdirectories
-                for module_dir in category_dir.iterdir():
-                    if module_dir.is_dir():
-                        modules.append(module_dir)
+                # Category - recursively add all subdirectories with config files
+                # This handles cases like modules/desktop/wm/labwc, modules/shell/bash, etc.
+                def find_modules_recursive(directory, depth=0, max_depth=3):
+                    """Recursively find directories containing config files."""
+                    found = []
+                    if depth > max_depth:
+                        return found
+                    
+                    for item in directory.iterdir():
+                        if not item.is_dir():
+                            continue
+                        
+                        # Check if this directory has config files
+                        has_files = any(
+                            f.is_file() and not f.name.upper().startswith(('README', 'LICENSE'))
+                            for f in item.iterdir()
+                        )
+                        
+                        if has_files:
+                            found.append(item)
+                        else:
+                            # Recurse into subdirectories
+                            found.extend(find_modules_recursive(item, depth + 1, max_depth))
+                    
+                    return found
+                
+                modules.extend(find_modules_recursive(category_dir))
     
     if not modules:
         print("✗ No modules found to install")

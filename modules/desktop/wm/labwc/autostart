@@ -2,11 +2,14 @@
 # labwc autostart - Windows 95/98 Style
 # Path: ~/.config/labwc/autostart
 
+# Set keyboard layout to Spanish Latin America
+setxkbmap latam
+
 # Set wallpaper to teal (Windows 95 default)
 swaybg -c 008080 &
 
 # Start waybar with Windows 95 style
-waybar -c ~/.config/waybar/config-win95 -s ~/.config/waybar/style-win95.css &
+waybar &
 
 # Notification daemon (optional)
 # mako &
@@ -16,3 +19,6 @@ waybar -c ~/.config/waybar/config-win95 -s ~/.config/waybar/style-win95.css &
 
 # Audio control (if using PipeWire/PulseAudio)
 # pavucontrol &
+
+# TODO: Add keyboard layout for "latam"
+#
