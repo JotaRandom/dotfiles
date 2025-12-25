@@ -10,7 +10,7 @@ window.active.title.bg.color: #000080
 window.inactive.title.bg.color: #808080
 
 window.active.label.text.color: #FFFFFF
-window.inactive.label.text.color: #C0C0C0
+window.inactive.label.text.color: #DFDFDF
 
 window.label.text.justify: left
 
@@ -24,8 +24,8 @@ window.active.button.unpressed.image.color: #000000
 window.active.button.hover.image.color: #000000
 window.active.button.pressed.image.color: #FFFFFF
 
-window.inactive.button.unpressed.image.color: #808080
-window.inactive.button.hover.image.color: #000000
+window.inactive.button.unpressed.image.color: #C0C0C0
+window.inactive.button.hover.image.color: #DFDFDF
 
 # Button backgrounds
 window.active.button.unpressed.bg.color: #C0C0C0

@@ -21,6 +21,9 @@ window {
     border-bottom-color: #808080;
     background-color: #c0c0c0;
     padding: 2px;
+    /* Move Input to Bottom */
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 #input {
