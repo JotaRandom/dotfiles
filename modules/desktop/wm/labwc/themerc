@@ -59,6 +59,10 @@ menu.items.bg.color: #C0C0C0
 menu.items.text.color: #000000
 menu.items.active.bg.color: #000080
 menu.items.active.text.color: #FFFFFF
+menu.items.padding.x: 4
+menu.items.padding.y: 2
+menu.overlap.x: 0
+menu.overlap.y: 0
 
 # ===== OSD (On-Screen Display) =====
 osd.bg.color: #C0C0C0

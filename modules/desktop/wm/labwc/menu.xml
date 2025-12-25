@@ -4,50 +4,62 @@
 
 <openbox_menu>
   
-  <!-- Root menu (Desktop right-click) -->
-  <menu id="root-menu" label="Desktop">
+  <!-- Root menu (Desktop right-click) - Classic Win95 -->
+  <menu id="root-menu" label="Context Menu">
     
-    <item label="Terminal">
-      <action name="Execute">
-        <command>alacritty</command>
-      </action>
-    </item>
-    
-    <item label="File Manager">
-      <action name="Execute">
-        <command>pcmanfm</command>
-      </action>
-    </item>
-    
+    <menu id="arrange" label="Arrange Icons">
+      <item label="by Name"><action name="Execute"><command>true</command></action></item>
+      <item label="by Type"><action name="Execute"><command>true</command></action></item>
+      <item label="by Size"><action name="Execute"><command>true</command></action></item>
+      <item label="by Date"><action name="Execute"><command>true</command></action></item>
+    </menu>
+
+    <!-- "Line Up Icons" - Decoration only -->
+    <item label="Line Up Icons"><action name="Execute"><command>true</command></action></item>
+
     <separator />
     
-    <item label="Web Browser">
-      <action name="Execute">
-        <command>chromium</command>
-      </action>
-    </item>
-    
-    <item label="Text Editor">
-      <action name="Execute">
-        <command>xed</command>
-      </action>
-    </item>
-    
-    <separator />
-    
-    <item label="Run...">
-      <action name="Execute">
-        <command>wofi --show drun</command>
-      </action>
-    </item>
-    
-    <separator />
-    
-    <item label="Reconfigure">
+    <item label="Refresh">
       <action name="Reconfigure" />
     </item>
+
+    <separator />
+
+    <item label="Paste"><action name="Execute"><command>wl-paste</command></action></item>
+    <item label="Paste Shortcut"><action name="Execute"><command>true</command></action></item>
     
-    <item label="Exit">
+    <separator />
+
+    <menu id="new" label="New">
+      <item label="Folder">
+        <action name="Execute"><command>pcmanfm --new-win</command></action>
+      </item>
+      <item label="Shortcut">
+        <action name="Execute"><command>true</command></action>
+      </item>
+      <separator />
+      <item label="Text Document">
+        <action name="Execute"><command>xed</command></action>
+      </item>
+      <item label="Bitmap Image">
+        <action name="Execute"><command>mtpaint</command></action>
+      </item>
+    </menu>
+    
+    <separator />
+
+    <!-- Essential Utilities disguised -->
+    <item label="Properties">
+       <action name="Execute"><command>alacritty -e vim ~/.config/labwc/rc.xml</command></action>
+    </item>
+    
+    <separator />
+
+    <item label="Run...">
+      <action name="Execute"><command>wofi --show drun</command></action>
+    </item>
+
+    <item label="Shut Down...">
       <action name="Exit" />
     </item>
     

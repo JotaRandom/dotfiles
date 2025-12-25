@@ -4,8 +4,6 @@
 
 # ===== WINDOW BORDERS =====
 border.width: 3
-window.active.border.color: #000000
-window.inactive.border.color: #808080
 
 # ===== FONTS & SIZES =====
 # Larger fonts to simulate Win95 on 800x600 resolution
