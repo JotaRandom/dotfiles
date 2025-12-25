@@ -30,7 +30,7 @@ config.nu|nushell: xdg:nushell/config.nu             # modules/shell/nushell
 .inputrc|common: home:.inputrc                        # modules/shell/common (readline)
 .lesshst|common: xdg_state:less/lesshst              # modules/shell/common (less history - XDG_STATE_HOME)
 .lesskey|common: xdg:lesskey                         # modules/shell/common (less key bindings - XDG_CONFIG_HOME)
-.dmrc|common: home:.dmrc                              # modules/shell/common (display manager)
+.dmrc|common: ignore                              # modules/shell/common (display manager)
 
 #########################
 # modules/cli-tools
@@ -66,7 +66,7 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 # Mapear según el DE que uses (comentar/descomentar según necesidad)
 
 # === Cinnamon Desktop === (optimizado - polkit-gnome, csd-power, nm-applet)
-.xinitrc|cinnamon: home:.xinitrc                      # modules/desktop/de/cinnamon (usar para Cinnamon)
+.xinitrc|cinnamon: ignore                      # modules/desktop/de/cinnamon (usar para Cinnamon)
 .dmrc|cinnamon: ignore                                # modules/desktop/de/cinnamon (no usado)
 
 # === XFCE Desktop === (optimizado - xfce-polkit, xfce4-power-manager)
@@ -109,15 +109,22 @@ picom.conf|picom: xdg:picom/picom.conf               # modules/desktop/de/picom
 dunstrc|dunst: xdg:dunst/dunstrc                     # modules/desktop/de/dunst
 
 # File Managers
+# File Managers
 pcmanfm.conf|pcmanfm: xdg:pcmanfm/default/pcmanfm.conf  # modules/desktop/file-manager/pcmanfm
 thunarrc|thunar: xdg:Thunar/thunarrc                    # modules/desktop/file-manager/thunar
 spacefm.conf|spacefm: xdg:spacefm/spacefm.conf          # modules/desktop/file-manager/spacefm
+# Extras (LibreOffice Icons) - Disabled if missing
+# libreoffice|libreoffice: xdg:libreoffice/4/user/config  # modules/extras/libreoffice
 
 # Toolkit / System
+# Toolkit / System
 .gtkrc|gtk-1.2: home:.gtkrc                          # modules/desktop/gtk/gtk-1.2
-.gtkrc-2.0|gtk-2.0: home:.gtkrc-2.0                      # modules/desktop/gtk/gtk-2.0
-settings.ini|gtk-3.0: xdg:gtk-3.0/settings.ini          # modules/desktop/gtk/gtk-3.0
-gtk.css|gtk-3.0: xdg:gtk-3.0/gtk.css                    # modules/desktop/gtk/gtk-3.0
+.gtkrc-2.0|gtk-2.0: home:.gtkrc-2.0                  # modules/desktop/gtk/gtk-2.0 (Config File)
+*|gtk-2.0: home:.local/share/themes/RetroClassic98/gtk-2.0 # modules/desktop/gtk/gtk-2.0 (Theme Assets - exclude .gtkrc-2.0 via ignore rule or copy behavior)
+
+# GTK 3.0 (Full directory mapping for Assets & Modular CSS)
+*|gtk-3.0: xdg:gtk-3.0/                              # modules/desktop/gtk/gtk-3.0
+
 settings.ini|gtk-4.0: xdg:gtk-4.0/settings.ini          # modules/desktop/gtk/gtk-4.0
 gtk.css|gtk-4.0: xdg:gtk-4.0/gtk.css                    # modules/desktop/gtk/gtk-4.0
 
@@ -138,6 +145,7 @@ kdeglobals|tde: home:.trinity/share/config/kdeglobals # modules/desktop/qt/tde
 
 # ===== SHELL =====
 # Window Managers - Windows 95/98 Style
+RetroClassic98|xfwm4: home:.local/share/themes/RetroClassic98/xfwm4  # modules/desktop/wm/xfwm4 (XFWM4 Theme Assets)
 preferences|icewm: xdg:icewm/preferences             # modules/desktop/wm/icewm
 .xinitrc|icewm: ignore                               # modules/desktop/wm/icewm
 config|fvwm: xdg:fvwm/config                         # modules/desktop/wm/fvwm
@@ -152,13 +160,17 @@ themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
 themerc-override|labwc: xdg:labwc/themerc-override   # modules/desktop/wm/labwc
 autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
 menu.xml|labwc: xdg:labwc/menu.xml                   # modules/desktop/wm/labwc
+RetroClassic98|metacity-1: home:.local/share/themes/RetroClassic98/metacity-1            # modules/desktop/wm/metacity
+.xinitrc|openbox: ignore                            # modules/desktop/wm/openbox
+rc.xml|openbox: xdg:openbox/rc.xml                   # modules/desktop/wm/openbox
+RetroClassic98|openbox: home:.local/share/themes/RetroClassic98 # modules/desktop/wm/openbox/RetroClassic98
 
 # Waybar (Wayland status bar)
 config.jsonc|waybar: xdg:waybar/config.jsonc           # modules/desktop/wm/waybar
 style.css|waybar: xdg:waybar/style.css               # modules/desktop/wm/waybar
 
 # Window Managers - NeXTSTEP Style
-WindowMaker|windowmaker: home:GNUstep/Defaults/WindowMaker  # modules/desktop/wm/windowmaker
+WindowMaker|windowmaker: ignore  # modules/desktop/wm/windowmaker
 .xinitrc|windowmaker: ignore                         # modules/desktop/wm/windowmaker
 wlmaker.plist|wlmaker: xdg:wlmaker/wlmaker.plist     # modules/desktop/wm/wlmaker (Wayland)
 
@@ -188,7 +200,7 @@ rust.conf|pacman: xdg:pacman/rust.conf               # modules/pacman
 config|cargo: xdg:cargo/config                 # modules/dev-tools/cargo
 
 # Gemini AI settings
-.gemini/settings.json|gemini: home:.gemini/settings.json  # modules/dev-tools/gemini
+.gemini/settings.json|gemini: ignore  # modules/dev-tools/gemini
 .gemini.example|gemini: ignore                            # modules/dev-tools/gemini (example file)
 
 # Lazygit
@@ -262,6 +274,7 @@ argv.json|vscode: xdg:Code/User/argv.json             # modules/editor/vscode (d
 vimrc|vim: xdg:vim/vimrc                              # modules/editor/vim (XDG_CONFIG_HOME/vim/vimrc)
 nanorc|nano: xdg:nano/nanorc                          # modules/editor/nano (DOS Edit style)
 xed-settings.sh|xed: ignore                          # modules/editor/xed (aplicar con bash - Linux Mint)
+images_chicago95.zip|editor: xdg:libreoffice/4/user/config  # modules/editor/libreoffice/libreoffice-chicago95-iconset (Nested)
 
 # Sublime Text
 Preferences.sublime-settings|sublime: xdg:sublime-text/Packages/User/Preferences.sublime-settings

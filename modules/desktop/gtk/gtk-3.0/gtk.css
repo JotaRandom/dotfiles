@@ -1,57 +1,54 @@
-/* GTK 3.0 CSS - Perfect Windows 95/98 Aesthetic Refinement */
+/* GTK 3.0 - Chicago95 "Advanced" Modular Import */
 
-/* Global Font */
+/* Core Configuration & Colors */
+/* Note: Chicago95 defines colors in gtk.css, we'll keep ours but must ensure variable names match if Chicago95 uses specific ones.
+   Chicago95 uses @bg_color, @base_color, etc. We need to map our retro variables or redefine them. */
+
+/* Importing Chicago95 Modules */
+@import url("gtk-widgets.css");
+@import url("gtk-buttons.css");
+@import url("gtk-scrollbar.css");
+@import url("gtk-menu.css");
+@import url("gtk-frames.css");
+@import url("gtk-combobox.css");
+@import url("gtk-entry.css");
+@import url("gtk-scrolledwindows.css");
+@import url("gtk-notebooks.css");
+@import url("gtk-viewports.css");
+@import url("gtk-linkbutton.css");
+
+/* Overrides to ensure our specific Classic 98 palette sticks */
+@define-color theme_fg_color #000000;
+@define-color theme_bg_color #d4d0c8;
+@define-color theme_text_color #000000;
+@define-color theme_base_color #ffffff;
+@define-color theme_selected_bg_color #0a246a;
+@define-color theme_selected_fg_color #ffffff;
+
+@define-color bg_color #d4d0c8;
+@define-color base_color #ffffff;
+@define-color text_color #000000;
+@define-color selected_bg_color #0a246a;
+@define-color selected_fg_color #ffffff;
+
+/* Chicago95 specific variable mappings */
+@define-color border_color #808080;
+/* Shadow */
+@define-color border_bright #ffffff;
+/* Highlight */
+@define-color border_dark #000000;
+/* Black */
+@define-color border_shade #808080;
+/* Shadow */
+@define-color border_shade_dark #404040;
+
+/* Scrollbar specific */
+@define-color scrollbar_bg_color #d4d0c8;
+@define-color scrollbar_trough_bg_color #ffffff;
+/* Win98 scrollbar tracks were dithered/white-ish */
+
+/* Global Reset (optional but safe) */
 * {
-    font-family: "DejaVu Sans Bold", sans-serif;
-    font-size: 11pt;
-    -GtkHTML-cursor-color: #000000;
-}
-
-/* Base Colors */
-/* Base Colors */
-@define-color retro_grey #d4d0c8;
-@define-color retro_blue #0a246a;
-@define-color retro_white #ffffff;
-@define-color retro_shadow #808080;
-@define-color retro_black #000000;
-@define-color retro_light_grey #eaeaea;
-
-/* Global Backgrounds */
-/* Global Backgrounds */
-window,
-.background,
-text {
-    background-color: @retro_grey;
-    color: @retro_black;
-}
-
-/* ... 3D Borders Helper ... */
-/* ... Buttons ... */
-/* ... Input Entries ... */
-/* ... Scrollbars ... */
-/* ... Checkboxes ... */
-/* ... Tabs ... */
-/* ... Menus ... */
-
-/* TreeView & IconView (File Manager content) */
-.view,
-treeview.view,
-iconview {
-    background-color: @retro_white;
-    color: @retro_black;
-    border: none;
-}
-
-.view:selected,
-treeview.view:selected,
-iconview:selected {
-    background-color: @retro_blue;
-    color: @retro_white;
-}
-
-column-header {
-    background-color: @retro_grey;
-    border: 1px solid @retro_black;
-    box-shadow: inset 1px 1px @retro_white, inset -1px -1px @retro_shadow;
-    padding: 2px;
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 11pt;
 }

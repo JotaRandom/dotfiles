@@ -1,38 +1,28 @@
-# GTK+ 2.0 configuration - Windows 95/98 Style Consistency
-# Path: ~/.gtkrc-2.0
+# GTK 2.0 - Chicago95 "Advanced" Configuration
+# pointing to the theme in .local/share/themes/RetroClassic98
 
-style "default"
-{
-  font_name = "DejaVu Sans Bold 11"
-  
-  bg[NORMAL]      = "#d4d0c8"
-  bg[PRELIGHT]    = "#eaeaea"
-  bg[ACTIVE]      = "#808080"
-  bg[SELECTED]    = "#0a246a"
-  bg[INSENSITIVE] = "#d4d0c8"
+gtk-theme-name="RetroClassic98"
+gtk-icon-theme-name="Chicago95"
+gtk-font-name="DejaVu Sans Bold 11"
+gtk-cursor-theme-name="Chicago95_Cursor_Black"
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
 
-  fg[NORMAL]      = "#000000"
-  fg[PRELIGHT]    = "#000000"
-  fg[ACTIVE]      = "#000000"
-  fg[SELECTED]    = "#ffffff"
-  fg[INSENSITIVE] = "#808080"
-  
-  base[NORMAL]    = "#ffffff"
-  base[SELECTED]  = "#000080"
-  
-  text[NORMAL]    = "#000000"
-  text[SELECTED]  = "#ffffff"
+# Include the main theme file which handles all the pixmaps and 3D styles
+include "/home/Usuario/.local/share/themes/RetroClassic98/gtk-2.0/gtkrc"
+
+# Custom color overrides for "Classic 98" palette (Warm Grey/Navy)
+style "classic98-overrides" {
+    bg[NORMAL]      = "#d4d0c8"
+    bg[PRELIGHT]    = "#eaeaea"
+    bg[ACTIVE]      = "#808080"
+    bg[SELECTED]    = "#0a246a"
+    bg[INSENSITIVE] = "#d4d0c8"
+
+    fg[NORMAL]      = "#000000"
+    fg[PRELIGHT]    = "#000000"
+    fg[ACTIVE]      = "#ffffff"
+    fg[SELECTED]    = "#ffffff"
+    fg[INSENSITIVE] = "#808080"
 }
-
-class "GtkWidget" style "default"
-
-# Performance/Visual consistency
-gtk-button-images = 1
-gtk-menu-images   = 1
-gtk-enable-event-sounds = 1
-gtk-enable-input-feedback-sounds = 1
-gtk-xft-antialiasing = 1
-gtk-xft-hinting = 1
-gtk-xft-hintstyle = "hintmedium"
-gtk-cursor-theme-name = "Adwaita"
-gtk-cursor-theme-size = 24
+# Apply overrides responsibly
+class "GtkWidget" style "classic98-overrides"
