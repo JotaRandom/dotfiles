@@ -158,8 +158,11 @@ Ejemplos de uso:
   # Instalar módulos específicos
   python install.py install modules/shell/bash modules/editors/vim
   
-  # Instalar con sanitización CRLF y permisos ejecutables
-  python install.py install --fix-eol --fix-attributes modules/shell/bash
+  # Verificar fuentes requeridas
+  python install.py check-fonts
+  
+  # Verificar git-lfs
+  python install.py check-gitlfs
   
   # Listar backups disponibles
   python install.py backup-list
@@ -169,16 +172,8 @@ Ejemplos de uso:
   
   # Limpiar backups antiguos (mantener últimos 5)
   python install.py backup-clean 5
-  
-  # Actualizar submódulos (PKGBUILDs)
-  python install.py update-submodules
-  
-  # Inspeccionar mappings (debuggear YAML)
-  python install.py inspect-mappings
-  
-  # Configurar Git hooks personalizados
-  python install.py setup-githooks
 
+Para ayuda: python install.py --help o python install.py help
 Para ayuda de cada subcomando: python install.py <subcomando> --help
         '''.strip(),
         formatter_class=argparse.RawDescriptionHelpFormatter
@@ -187,6 +182,13 @@ Para ayuda de cada subcomando: python install.py <subcomando> --help
     subparsers = parser.add_subparsers(
         dest='command',
         help='Subcomandos disponibles (usa <subcomando> --help para detalles)'
+    )
+    
+    # Subcomando: help (alias para --help)
+    help_parser = subparsers.add_parser(
+        'help',
+        help='Mostrar ayuda general',
+        description='Muestra la ayuda general del instalador'
     )
     
     # Subcomando: install (default)
@@ -459,6 +461,68 @@ Ejemplos:
         help='Guardar reporte en archivo'
     )
     
+    # Subcomando: check-fonts
+    fonts_parser = subparsers.add_parser(
+        'check-fonts',
+        help='Verificar e instalar fuentes requeridas',
+        description='''
+Verifica que las fuentes requeridas estén instaladas.
+
+Si faltan fuentes, ofrece instalarlas automáticamente usando
+el package manager de la distribución detectada.
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Verificar fuentes (interactivo)
+  python install.py check-fonts
+  
+  # Verificar e instalar automáticamente
+  python install.py check-fonts --non-interactive
+  
+  # Incluir fuentes opcionales
+  python install.py check-fonts --optional
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    fonts_parser.add_argument(
+        '--non-interactive',
+        action='store_true',
+        help='No preguntar antes de instalar (auto-instalar)'
+    )
+    fonts_parser.add_argument(
+        '--optional',
+        action='store_true',
+        help='También verificar e instalar fuentes opcionales'
+    )
+    
+    # Subcomando: check-gitlfs
+    gitlfs_parser = subparsers.add_parser(
+        'check-gitlfs',
+        help='Verificar e instalar git-lfs',
+        description='''
+Verifica que git-lfs esté instalado.
+
+Si no está instalado, ofrece instalarlo automáticamente usando
+el package manager de la distribución detectada.
+        '''.strip(),
+        epilog='''
+Ejemplos:
+
+  # Verificar git-lfs (interactivo)
+  python install.py check-gitlfs
+  
+  # Verificar e instalar automáticamente
+  python install.py check-gitlfs --non-interactive
+        '''.strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    gitlfs_parser.add_argument(
+        '--non-interactive',
+        action='store_true',
+        help='No preguntar antes de instalar (auto-instalar)'
+    )
+    
     # Subcomando: setup-githooks
     githooks_parser = subparsers.add_parser(
         'setup-githooks',
@@ -524,8 +588,15 @@ Para revertir: python install.py setup-githooks --disable
         args = parser.parse_args()
     
     # Ejecutar subcomando
-    if args.command == 'install':
+    if args.command == 'help':
+        parser.print_help()
+        return 0
+    elif args.command == 'install':
         return run_install(args)
+    elif args.command == 'check-fonts':
+        return run_check_fonts(args)
+    elif args.command == 'check-gitlfs':
+        return run_check_gitlfs(args)
     elif args.command == 'backup-list':
         return run_backup_list(args)
     elif args.command == 'backup-restore':
@@ -654,6 +725,27 @@ def run_install(args):
         print("  python scripts/install.py backup-clean 5           # Mantener últimos 5")
     
     return 0
+
+
+def run_check_fonts(args):
+    """Verificar e instalar fuentes requeridas."""
+    from dotfiles_installer.fonts import check_and_install_fonts
+    
+    installed, missing = check_and_install_fonts(
+        interactive=not args.non_interactive,
+        install_optional=args.optional
+    )
+    
+    # Exit code: 0 si todas las requeridas están, 1 si falta alguna
+    return 0 if not missing else 1
+
+
+def run_check_gitlfs(args):
+    """Verificar e instalar git-lfs."""
+    from dotfiles_installer.gitlfs import check_and_install_git_lfs
+    
+    success = check_and_install_git_lfs(interactive=not args.non_interactive)
+    return 0 if success else 1
 
 
 def run_backup_list(args):
