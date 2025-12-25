@@ -15,11 +15,6 @@
   <keyboard>
     <default />
     
-    <!-- Keyboard layout: Spanish Latin America -->
-    <keybind key="XF86_Switch_VT_1">
-      <action name="SwitchVT"><vt>1</vt></action>
-    </keybind>
-    
     <!-- Windows 95 style keybindings -->
     
     <!-- Alt+F4 - Close window -->
@@ -50,9 +45,9 @@
       <action name="PreviousWindow"/>
     </keybind>
     
-    <!-- Super+D - Show desktop -->
+    <!-- Super+D - Minimize window (closest to "Show Desktop") -->
     <keybind key="W-d">
-      <action name="ToggleShowDesktop"/>
+      <action name="Iconify"/>
     </keybind>
     
     <!-- Super+F - Fullscreen -->
