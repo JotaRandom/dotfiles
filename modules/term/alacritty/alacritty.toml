@@ -27,6 +27,9 @@ multiplier = 3
 
 # ===== FUENTE =====
 [font]
+# Tamaño optimizado para HD
+size = 9.0
+
 # Fuente optimizada para pantalla 1366x768
 # DejaVu Sans Mono: excelente renderizado, ampliamente disponible, buena para retro
 [font.normal]
@@ -44,9 +47,6 @@ style = "Italic"
 [font.bold_italic]
 family = "DejaVu Sans Mono"
 style = "Bold Italic"
-
-# Tamaño optimizado para HD
-size = 9.0
 
 # Offset
 [font.offset]

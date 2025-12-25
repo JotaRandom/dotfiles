@@ -39,7 +39,8 @@ window#waybar {
   border-left: 2px solid #808080;
   border-bottom: 2px solid #FFFFFF;
   border-right: 2px solid #FFFFFF;
-  padding: 3px 7px 1px 9px; /* Simulate button press */
+  padding: 3px 7px 1px 9px;
+  /* Simulate button press */
 }
 
 /* ===== TASKBAR (Window List) ===== */
@@ -59,7 +60,6 @@ window#waybar {
   border-bottom: 2px solid #808080;
   border-right: 2px solid #808080;
   min-width: 120px;
-  max-width: 180px;
 }
 
 #taskbar button:hover {
@@ -81,11 +81,11 @@ window#waybar {
   margin: 2px 0;
 }
 
-#tray > .passive {
+#tray>.passive {
   -gtk-icon-effect: dim;
 }
 
-#tray > .needs-attention {
+#tray>.needs-attention {
   -gtk-icon-effect: highlight;
 }
 
