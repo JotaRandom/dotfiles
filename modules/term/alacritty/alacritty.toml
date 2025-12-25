@@ -6,8 +6,8 @@
 # Padding mínimo para maximizar espacio en pantalla pequeña
 padding = { x = 2, y = 2 }
 
-# Sin decoraciones para ganar ~30px vertical
-decorations = "None"
+# Window decorations (Full = con bordes, None = sin bordes)
+decorations = "Full"
 
 # Startup mode
 startup_mode = "Windowed"
