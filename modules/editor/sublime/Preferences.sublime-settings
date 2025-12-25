@@ -2,7 +2,7 @@
 	// Configuración general
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Monokai.sublime-color-scheme",
-	"font_face": "Cascadia Code",
+	"font_face": "DejaVu Sans Mono",
 	"font_size": 9,  // Optimizado para 1366x768
 	"line_padding_top": 0,  // Reducido para ganar espacio
 	"line_padding_bottom": 0,

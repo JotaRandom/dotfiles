@@ -113,6 +113,13 @@ rc.xml|openbox: xdg:openbox/rc.xml                   # modules/desktop/wm/openbo
 .xinitrc|openbox: ignore                             # modules/desktop/wm/openbox
 config|sway: xdg:sway/config                        # modules/desktop/wm/sway (Wayland)
 hyprland.conf|hyprland: xdg:hypr/hyprland.conf       # modules/desktop/wm/hyprland (Wayland)
+rc.xml|labwc: xdg:labwc/rc.xml                       # modules/desktop/wm/labwc (Wayland)
+themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
+autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
+
+# Waybar (Wayland status bar)
+config-win95|waybar: xdg:waybar/config-win95         # modules/desktop/wm/waybar
+style-win95.css|waybar: xdg:waybar/style-win95.css   # modules/desktop/wm/waybar
 
 # Window Managers - NeXTSTEP Style
 WindowMaker|windowmaker: home:GNUstep/Defaults/WindowMaker  # modules/desktop/wm/windowmaker
@@ -232,7 +239,7 @@ Package Control.sublime-settings|sublime: xdg:sublime-text/Packages/User/Package
 # modules/term
 #########################
 # Terminal emulator configs (modules/term/*)
-alacritty.yml|alacritty: xdg:alacritty/alacritty.yml  # modules/term/alacritty
+alacritty.toml|alacritty: xdg:alacritty/alacritty.toml  # modules/term/alacritty
 kitty.conf|kitty: xdg:kitty/kitty.conf               # modules/term/kitty
 gnome-terminal-settings.sh|gnome-terminal: ignore    # modules/term/gnome-terminal (aplicar con bash)
 Profile.profile|konsole: xdg_data:konsole/Profile.profile # modules/term/konsole (KDE)

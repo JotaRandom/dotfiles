@@ -1,76 +1,55 @@
 {
   // VSCode Settings - Optimizado para ThinkPad L420 (1366x768)
-  
   // ===== EDITOR =====
   "editor.fontSize": 12,
   "editor.lineHeight": 18,
-  "editor.fontFamily": "'Cascadia Code', 'Courier New', monospace",
-  
+  "editor.fontFamily": "'DejaVu Sans Mono', 'Courier New', monospace",
   // Minimap OFF (ahorra ~120px horizontal)
   "editor.minimap.enabled": false,
-  
   // Smooth scrolling OFF (mejor performance)
   "editor.smoothScrolling": false,
-  
   // Cursor sólido (sin animación)
   "editor.cursorBlinking": "solid",
   "editor.cursorSmoothCaretAnimation": "off",
-  
   // Render
   "editor.renderLineHighlight": "line",
   "editor.renderWhitespace": "selection",
-  
   // ===== TERMINAL =====
   "terminal.integrated.fontSize": 11,
   "terminal.integrated.lineHeight": 1.2,
-  
   // ===== VENTANA =====
   "window.zoomLevel": 0,
-  
   // Menu bar oculto hasta Alt (ganar espacio vertical)
   "window.menuBarVisibility": "toggle",
-  
   // Title bar custom
   "window.titleBarStyle": "custom",
-  
   // ===== WORKBENCH (Optimizado 1366x768) =====
   // Activity bar arriba (ahorra ~48px horizontal)
   "workbench.activityBar.location": "top",
-  
   // Status bar visible
   "workbench.statusBar.visible": true,
-  
   // Sidebar a la izquierda
   "workbench.sideBar.location": "left",
-  
   // Smooth scrolling OFF en listas
   "workbench.list.smoothScrolling": false,
-  
   // Tree indent reducido
   "workbench.tree.indent": 10,
-  
   // ===== ARCHIVOS =====
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
-  
   // ===== FORMATO =====
   "editor.formatOnSave": true,
   "editor.formatOnPaste": false,
-  
   // ===== BREADCRUMBS =====
   "breadcrumbs.enabled": true,
-  
   // ===== PERFORMANCE =====
   // Reducir extensiones activas si es necesario
   "extensions.autoUpdate": false,
-  
   // Git
   "git.autofetch": false,
   "git.confirmSync": false,
-  
   // ===== COLORES =====
   "workbench.colorTheme": "Monokai",
-  
   // ===== EXPLORER =====
   "explorer.compactFolders": true,
   "explorer.confirmDelete": false,

@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<!-- labwc configuration - Windows 95/98 Style para ThinkPad L420 -->
+<!-- Path: ~/.config/labwc/rc.xml -->
+
+<labwc_config>
+
+  <!-- ===== THEME ===== -->
+  <theme>
+    <name>Win95</name>
+    <cornerRadius>0</cornerRadius>
+    <keepBorder>yes</keepBorder>
+  </theme>
+
+  <!-- ===== KEYBOARD ===== -->
+  <keyboard>
+    <default />
+    
+    <!-- Windows 95 style keybindings -->
+    
+    <!-- Alt+F4 - Close window -->
+    <keybind key="A-F4">
+      <action name="Close"/>
+    </keybind>
+    
+    <!-- Super+Return - Terminal -->
+    <keybind key="W-Return">
+      <action name="Execute">
+        <command>alacritty</command>
+      </action>
+    </keybind>
+    
+    <!-- Super+Space - Run dialog (dmenu) -->
+    <keybind key="W-space">
+      <action name="Execute">
+        <command>dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'</command>
+      </action>
+    </keybind>
+    
+    <!-- Alt+Tab - Window switching -->
+    <keybind key="A-Tab">
+      <action name="NextWindow"/>
+    </keybind>
+    
+    <keybind key="A-S-Tab">
+      <action name="PreviousWindow"/>
+    </keybind>
+    
+    <!-- Super+D - Show desktop -->
+    <keybind key="W-d">
+      <action name="ToggleShowDesktop"/>
+    </keybind>
+    
+    <!-- Super+F - Fullscreen -->
+    <keybind key="W-f">
+      <action name="ToggleFullscreen"/>
+    </keybind>
+    
+    <!-- Super+M - Maximize -->
+    <keybind key="W-m">
+      <action name="ToggleMaximize"/>
+    </keybind>
+    
+    <!-- Super+Shift+Q - Exit -->
+    <keybind key="W-S-q">
+      <action name="Exit"/>
+    </keybind>
+    
+    <!-- Workspaces (Virtual Desktops) -->
+    <keybind key="W-1">
+      <action name="GoToDesktop"><to>1</to></action>
+    </keybind>
+    <keybind key="W-2">
+      <action name="GoToDesktop"><to>2</to></action>
+    </keybind>
+    <keybind key="W-3">
+      <action name="GoToDesktop"><to>3</to></action>
+    </keybind>
+    <keybind key="W-4">
+      <action name="GoToDesktop"><to>4</to></action>
+    </keybind>
+    
+    <!-- Move window to workspace -->
+    <keybind key="W-S-1">
+      <action name="SendToDesktop"><to>1</to></action>
+    </keybind>
+    <keybind key="W-S-2">
+      <action name="SendToDesktop"><to>2</to></action>
+    </keybind>
+    <keybind key="W-S-3">
+      <action name="SendToDesktop"><to>3</to></action>
+    </keybind>
+    <keybind key="W-S-4">
+      <action name="SendToDesktop"><to>4</to></action>
+    </keybind>
+    
+  </keyboard>
+
+  <!-- ===== MOUSE ===== -->
+  <mouse>
+    <default />
+    
+    <!-- Window dragging with Super+Left Click -->
+    <context name="Frame">
+      <mousebind button="W-Left" action="Press">
+        <action name="Move"/>
+      </mousebind>
+      <mousebind button="W-Right" action="Press">
+        <action name="Resize"/>
+      </mousebind>
+    </context>
+    
+    <!-- Title bar actions -->
+    <context name="Title">
+      <mousebind button="Left" action="Drag">
+        <action name="Move"/>
+      </mousebind>
+      <mousebind button="Left" action="DoubleClick">
+        <action name="ToggleMaximize"/>
+      </mousebind>
+      <mousebind button="Right" action="Press">
+        <action name="ShowMenu">
+          <menu>client-menu</menu>
+        </action>
+      </mousebind>
+    </context>
+    
+    <!-- Desktop right-click menu -->
+    <context name="Root">
+      <mousebind button="Right" action="Press">
+        <action name="ShowMenu">
+          <menu>root-menu</menu>
+        </action>
+      </mousebind>
+    </context>
+    
+  </mouse>
+
+  <!-- ===== DESKTOPS (Virtual Desktops) ===== -->
+  <desktops>
+    <number>4</number>
+    <popupTime>0</popupTime>
+  </desktops>
+
+  <!-- ===== WINDOW PLACEMENT ===== -->
+  <placement>
+    <policy>automatic</policy>
+  </placement>
+
+  <!-- ===== WINDOW RULES ===== -->
+  <windowRules>
+    <!-- Example: Force certain apps to specific workspaces -->
+    <!-- <windowRule identifier="firefox">
+      <action name="SetDesktop"><to>2</to></action>
+    </windowRule> -->
+  </windowRules>
+
+  <!-- ===== RESISTANCE ===== -->
+  <resistance>
+    <screenEdgeStrength>20</screenEdgeStrength>
+    <windowEdgeStrength>20</windowEdgeStrength>
+  </resistance>
+
+  <!-- ===== FOCUS ===== -->
+  <focus>
+    <followMouse>no</followMouse>
+    <raiseOnFocus>yes</raiseOnFocus>
+  </focus>
+
+  <!-- ===== MENUS ===== -->
+  <!-- Root menu (right-click desktop) -->
+  <!-- This would typically be in a separate menu.xml file -->
+
+</labwc_config>

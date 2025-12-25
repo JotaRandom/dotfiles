@@ -1,0 +1,156 @@
+/* Waybar Style - Windows 95/98 Taskbar */
+/* Path: ~/.config/waybar/style-win95.css */
+
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "DejaVu Sans", "Liberation Sans", sans-serif;
+  font-size: 9pt;
+  font-weight: bold;
+  min-height: 0;
+}
+
+/* ===== MAIN BAR ===== */
+window#waybar {
+  background-color: #C0C0C0;
+  color: #000000;
+  border-top: 2px solid #FFFFFF;
+  border-bottom: 2px solid #000000;
+}
+
+/* ===== START BUTTON ===== */
+#custom-start {
+  background-color: #C0C0C0;
+  color: #000000;
+  padding: 2px 8px;
+  margin: 2px 4px;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+}
+
+#custom-start:hover {
+  background-color: #DFDFDF;
+}
+
+#custom-start:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #FFFFFF;
+  border-right: 2px solid #FFFFFF;
+  padding: 3px 7px 1px 9px; /* Simulate button press */
+}
+
+/* ===== TASKBAR (Window List) ===== */
+#taskbar {
+  background-color: transparent;
+  padding: 0;
+  margin: 2px 4px;
+}
+
+#taskbar button {
+  background-color: #C0C0C0;
+  color: #000000;
+  padding: 2px 8px;
+  margin: 0 2px;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  min-width: 120px;
+  max-width: 180px;
+}
+
+#taskbar button:hover {
+  background-color: #DFDFDF;
+}
+
+#taskbar button.active {
+  background-color: #DFDFDF;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #FFFFFF;
+  border-right: 2px solid #FFFFFF;
+}
+
+/* ===== SYSTEM TRAY ===== */
+#tray {
+  background-color: transparent;
+  padding: 0 4px;
+  margin: 2px 0;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}
+
+/* ===== SYSTEM MODULES ===== */
+#pulseaudio,
+#network,
+#battery,
+#clock {
+  background-color: #C0C0C0;
+  color: #000000;
+  padding: 2px 6px;
+  margin: 2px 1px;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-bottom: 1px solid #FFFFFF;
+  border-right: 1px solid #FFFFFF;
+}
+
+/* ===== CLOCK (Special styling) ===== */
+#clock {
+  padding: 2px 8px;
+  margin: 2px 4px 2px 2px;
+  font-weight: normal;
+}
+
+/* ===== BATTERY STATES ===== */
+#battery.warning {
+  color: #FF8C00;
+}
+
+#battery.critical {
+  color: #FF0000;
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+#battery.charging {
+  color: #008000;
+}
+
+/* ===== NETWORK DISCONNECTED ===== */
+#network.disconnected {
+  color: #FF0000;
+}
+
+/* ===== PULSEAUDIO MUTED ===== */
+#pulseaudio.muted {
+  color: #808080;
+}
+
+/* ===== TOOLTIPS ===== */
+tooltip {
+  background-color: #FFFFE1;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 0;
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 9pt;
+}
+
+tooltip label {
+  color: #000000;
+}

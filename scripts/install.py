@@ -44,96 +44,8 @@ def check_and_install_pyyaml():
             return False
 
 
-def check_and_install_git_lfs():
-    """Verifica que git-lfs esté instalado, ofrece instalación si falta."""
-    try:
-        subprocess.check_call(['git', 'lfs', 'version'],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("\n⚠ git-lfs no está instalado")
-        print("  git-lfs es necesario para algunos submódulos con assets grandes")
-        
-        # Verificar si estamos en terminal interactiva
-        if not sys.stdin.isatty():
-            print("  Modo no interactivo detectado. Omitiendo instalación de git-lfs")
-            print("  Por favor instala git-lfs manualmente más tarde")
-            return False
-        
-        response = input("  ¿Deseas intentar instalar git-lfs ahora? (s/n): ").strip().lower()
-        if response not in ('s', 'si', 'y', 'yes'):
-            print("  Omitiendo instalación de git-lfs")
-            return False
-        
-        # Intentar instalación según plataforma
-        import platform
-        system = platform.system()
-        
-        try:
-            if system == 'Linux':
-                # Detectar herramientas de escalado de privilegios disponibles
-                # Orden de preferencia: doas, sudo-rs, sudo, run0
-                priv_tools = []
-                for tool in ['doas', 'sudo-rs', 'sudo', 'run0']:
-                    if subprocess.run(['which', tool], capture_output=True).returncode == 0:
-                        priv_tools.append(tool)
-                
-                # Detectar package managers disponibles
-                pkg_managers = [
-                    (['apt', 'install', '-y', 'git-lfs'], 'apt'),
-                    (['pacman', '-S', '--noconfirm', 'git-lfs'], 'pacman'),
-                    (['dnf', 'install', '-y', 'git-lfs'], 'dnf'),
-                    (['yum', 'install', '-y', 'git-lfs'], 'yum'),
-                    (['zypper', 'install', '-y', 'git-lfs'], 'zypper'),
-                ]
-                
-                for cmd, mgr in pkg_managers:
-                    # Verificar si el package manager existe
-                    if subprocess.run(['which', cmd[0]], capture_output=True).returncode != 0:
-                        continue
-                    
-                    # Intentar con herramienta de privilegios si hay alguna
-                    if priv_tools:
-                        for priv_tool in priv_tools:
-                            try:
-                                subprocess.check_call([priv_tool] + cmd)
-                                print(f"✓ git-lfs instalado exitosamente (usando {priv_tool})")
-                                return True
-                            except subprocess.CalledProcessError:
-                                continue
-                    else:
-                        # Intentar sin escalado (root o package manager sin privilegios)
-                        try:
-                            subprocess.check_call(cmd)
-                            print("✓ git-lfs instalado exitosamente")
-                            return True
-                        except subprocess.CalledProcessError:
-                            continue
-                
-                print("  ✗ No se pudo instalar git-lfs automáticamente")
-                print("  Por favor instala git-lfs manualmente con tu package manager")
-                return False
-                
-            elif system == 'Darwin':  # macOS
-                # brew no requiere privilegios especiales
-                try:
-                    subprocess.check_call(['brew', 'install', 'git-lfs'])
-                    print("✓ git-lfs instalado exitosamente")
-                    return True
-                except (subprocess.CalledProcessError, FileNotFoundError):
-                    print("  ✗ No se pudo instalar con brew. Instálalo manualmente")
-                    return False
-            elif system == 'Windows':
-                print("  En Windows, descarga git-lfs desde: https://git-lfs.github.com/")
-                return False
-            
-            print("  No se pudo instalar git-lfs automáticamente")
-            return False
-        
-        except subprocess.CalledProcessError:
-            print("  ✗ La instalación de git-lfs falló")
-            return False
-
+# Import git-lfs checker from module
+from dotfiles_installer.gitlfs import check_and_install_git_lfs
 
 from dotfiles_installer.config import DotfilesConfig
 from dotfiles_installer.mapper import FileMapper
@@ -601,7 +513,7 @@ Para revertir: python install.py setup-githooks --disable
     if not check_and_install_pyyaml():
         return 1
     
-    check_and_install_git_lfs()  # Non-fatal if fails
+    check_and_install_git_lfs(interactive=True)  # Non-fatal if fails
     print()
     
     # Si no se especifica subcomando, usar 'install' por defecto
@@ -719,6 +631,20 @@ def run_install(args):
     print(f"\n{'='*60}")
     print("✓ Installation complete!")
     print(f"{'='*60}")
+    
+    # Verificar fuentes requeridas
+    try:
+        from dotfiles_installer.fonts import check_and_install_fonts
+        
+        # Verificar si estamos instalando módulos de terminal o editor
+        terminal_modules = any('term' in str(m) or 'editor' in str(m) for m in modules)
+        
+        if terminal_modules:
+            print("\nVerificando fuentes requeridas...")
+            check_and_install_fonts(interactive=True, install_optional=False)
+    except ImportError:
+        pass  # fonts.py no disponible, omitir verificación
+    
     print("\nTo apply system-level changes (Xorg, etc.), run with appropriate privileges.")
     if not args.no_backup:
         print("Backups are stored in: ~/.dotfiles_backup/")

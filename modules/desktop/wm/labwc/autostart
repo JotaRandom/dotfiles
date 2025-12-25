@@ -1,0 +1,18 @@
+#!/bin/sh
+# labwc autostart - Windows 95/98 Style
+# Path: ~/.config/labwc/autostart
+
+# Set wallpaper to teal (Windows 95 default)
+swaybg -c 008080 &
+
+# Start waybar with Windows 95 style
+waybar -c ~/.config/waybar/config-win95 -s ~/.config/waybar/style-win95.css &
+
+# Notification daemon (optional)
+# mako &
+
+# Network manager applet (if available)
+# nm-applet --indicator &
+
+# Audio control (if using PipeWire/PulseAudio)
+# pavucontrol &

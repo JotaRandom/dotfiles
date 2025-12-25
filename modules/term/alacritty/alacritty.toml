@@ -1,0 +1,157 @@
+# Alacritty Terminal Configuration - Optimizado para ThinkPad L420 (1366x768)
+# Path: ~/.config/alacritty/alacritty.toml
+
+# ===== WINDOW =====
+[window]
+# Padding mínimo para maximizar espacio en pantalla pequeña
+[window.padding]
+x = 2
+y = 2
+
+# Sin decoraciones para ganar ~30px vertical
+decorations = "None"
+
+# Startup mode
+startup_mode = "Windowed"
+
+# Opacidad completa (mejor performance en GPU limitada)
+opacity = 1.0
+
+# ===== SCROLLING =====
+[scrolling]
+# Reducido para ThinkPad con RAM limitada (4-8GB típico)
+history = 5000
+
+# Multiplicador de scroll
+multiplier = 3
+
+# ===== FUENTE =====
+[font]
+# Fuente optimizada para pantalla 1366x768
+# DejaVu Sans Mono: excelente renderizado, ampliamente disponible, buena para retro
+[font.normal]
+family = "DejaVu Sans Mono"
+style = "Regular"
+
+[font.bold]
+family = "DejaVu Sans Mono"
+style = "Bold"
+
+[font.italic]
+family = "DejaVu Sans Mono"
+style = "Italic"
+
+[font.bold_italic]
+family = "DejaVu Sans Mono"
+style = "Bold Italic"
+
+# Tamaño optimizado para HD
+size = 9.0
+
+# Offset
+[font.offset]
+x = 0
+y = 0
+
+# Glyph offset
+[font.glyph_offset]
+x = 0
+y = 0
+
+# ===== COLORES (Monokai) =====
+[colors.primary]
+background = "#272822"
+foreground = "#f8f8f2"
+
+[colors.cursor]
+text = "#272822"
+cursor = "#f8f8f2"
+
+[colors.normal]
+black   = "#272822"
+red     = "#f92672"
+green   = "#a6e22e"
+yellow  = "#f4bf75"
+blue    = "#66d9ef"
+magenta = "#ae81ff"
+cyan    = "#a1efe4"
+white   = "#f8f8f2"
+
+[colors.bright]
+black   = "#75715e"
+red     = "#f92672"
+green   = "#a6e22e"
+yellow  = "#f4bf75"
+blue    = "#66d9ef"
+magenta = "#ae81ff"
+cyan    = "#a1efe4"
+white   = "#f9f8f5"
+
+# ===== CURSOR =====
+[cursor.style]
+shape = "Block"
+blinking = "Off"
+
+# ===== BELL =====
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+color = "#ffffff"
+
+# ===== SELECTION =====
+[selection]
+save_to_clipboard = true
+
+# ===== MOUSE =====
+[mouse]
+hide_when_typing = true
+
+# ===== HINTS =====
+[[hints.enabled]]
+regex = "(mailto:|gemini:|https:|http:|file:|git:|ssh:|ftp:)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\s{-}\\^⟨⟩`]+"
+command = "xdg-open"
+post_processing = true
+
+[hints.enabled.mouse]
+enabled = true
+
+# ===== KEY BINDINGS =====
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Control"
+action = "ResetFontSize"
+
+[[keyboard.bindings]]
+key = "Q"
+mods = "Control"
+action = "Quit"
+
+[[keyboard.bindings]]
+key = "N"
+mods = "Control|Shift"
+action = "SpawnNewInstance"
+
+# ===== PERFORMANCE =====
+# Optimizado para Intel HD Graphics Sandy Bridge
+[colors]
+draw_bold_text_with_bright_colors = false
