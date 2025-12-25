@@ -1,10 +1,9 @@
 # Establecer comportamiento predeterminado: normalizar finales de línea
 * text=auto
 
-# Git LFS: todos los assets pesados están en assets/ (ej. assets/poni)
-# Git LFS: todos los assets pesados están en assets/ (ej. assets/poni)
-assets/** filter=lfs diff=lfs merge=lfs -text
-assets/Win-Old/** !filter !diff !merge binary
+# Git LFS: solo los assets pesados de la RAÍZ (ej. assets/poni)
+/assets/** filter=lfs diff=lfs merge=lfs -text
+/assets/Win-Old/** !filter !diff !merge binary
 
 # Normalizar finales de línea por tipo de archivo:
 # - Scripts POSIX: LF

@@ -109,14 +109,10 @@ picom.conf|picom: xdg:picom/picom.conf               # modules/desktop/de/picom
 dunstrc|dunst: xdg:dunst/dunstrc                     # modules/desktop/de/dunst
 
 # File Managers
-# File Managers
 pcmanfm.conf|pcmanfm: xdg:pcmanfm/default/pcmanfm.conf  # modules/desktop/file-manager/pcmanfm
 thunarrc|thunar: xdg:Thunar/thunarrc                    # modules/desktop/file-manager/thunar
 spacefm.conf|spacefm: xdg:spacefm/spacefm.conf          # modules/desktop/file-manager/spacefm
-# Extras (LibreOffice Icons) - Disabled if missing
-# libreoffice|libreoffice: xdg:libreoffice/4/user/config  # modules/extras/libreoffice
 
-# Toolkit / System
 # Toolkit / System
 .gtkrc|gtk-1.2: home:.gtkrc                          # modules/desktop/gtk/gtk-1.2
 .gtkrc-2.0|gtk-2.0: home:.gtkrc-2.0                  # modules/desktop/gtk/gtk-2.0 (Config File)
@@ -160,10 +156,7 @@ themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
 themerc-override|labwc: xdg:labwc/themerc-override   # modules/desktop/wm/labwc
 autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
 menu.xml|labwc: xdg:labwc/menu.xml                   # modules/desktop/wm/labwc
-RetroClassic98|metacity-1: home:.local/share/themes/RetroClassic98/metacity-1            # modules/desktop/wm/metacity
-.xinitrc|openbox: ignore                            # modules/desktop/wm/openbox
-rc.xml|openbox: xdg:openbox/rc.xml                   # modules/desktop/wm/openbox
-RetroClassic98|openbox: home:.local/share/themes/RetroClassic98 # modules/desktop/wm/openbox/RetroClassic98
+RetroClassic98|metacity-1: home:.local/share/themes/RetroClassic98/metacity-1            # modules/desktop/wm/metacity-1
 
 # Waybar (Wayland status bar)
 config.jsonc|waybar: xdg:waybar/config.jsonc           # modules/desktop/wm/waybar

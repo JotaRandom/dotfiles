@@ -23,3 +23,5 @@ debug_*.txt
 test_*.txt
 test_*.log
 *_results.txt
+
+!modules/**
