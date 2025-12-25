@@ -104,6 +104,14 @@ user.js|firefox: ignore                               # modules/browsers/firefox
 .xinitrc|wm: ignore                                   # Window manager .xinitrc (manual setup)
 .Xdefaults|wm: ignore                                 # X11 defaults (deprecated, use .Xresources)
 
+# Desktop Environment
+picom.conf|picom: xdg:picom/picom.conf               # modules/desktop/de/picom
+dunstrc|dunst: xdg:dunst/dunstrc                     # modules/desktop/de/dunst
+
+# File Managers
+pcmanfm.conf|pcmanfm: xdg:pcmanfm/default/pcmanfm.conf  # modules/desktop/file-manager/pcmanfm
+
+# ===== SHELL =====
 # Window Managers - Windows 95/98 Style
 preferences|icewm: xdg:icewm/preferences             # modules/desktop/wm/icewm
 .xinitrc|icewm: ignore                               # modules/desktop/wm/icewm
@@ -116,6 +124,7 @@ hyprland.conf|hyprland: xdg:hypr/hyprland.conf       # modules/desktop/wm/hyprla
 rc.xml|labwc: xdg:labwc/rc.xml                       # modules/desktop/wm/labwc (Wayland)
 themerc|labwc: xdg:labwc/themerc                     # modules/desktop/wm/labwc
 autostart|labwc: xdg:labwc/autostart                 # modules/desktop/wm/labwc
+menu.xml|labwc: xdg:labwc/menu.xml                   # modules/desktop/wm/labwc
 
 # Waybar (Wayland status bar)
 config.jsonc|waybar: xdg:waybar/config.jsonc           # modules/desktop/wm/waybar

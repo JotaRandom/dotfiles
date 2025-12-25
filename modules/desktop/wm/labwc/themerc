@@ -2,8 +2,8 @@
 # Path: ~/.config/labwc/themerc
 
 # ===== WINDOW BORDERS =====
+# Border width
 border.width: 2
-border.color: #000000
 
 # ===== TITLE BAR =====
 window.active.title.bg.color: #000080
@@ -36,9 +36,12 @@ window.inactive.button.unpressed.bg.color: #C0C0C0
 window.inactive.button.hover.bg.color: #DFDFDF
 
 # ===== WINDOW DECORATIONS =====
-# 3D beveled effect for window borders
-window.active.border.color: #FFFFFF
-window.inactive.border.color: #808080
+# 3D beveled effect for window borders (Windows 95 style)
+# Active window: white highlight on top/left, dark shadow on bottom/right
+window.active.border.color: #000000
+
+# Inactive window: same border style
+window.inactive.border.color: #000000
 
 # Handle (resize grip)
 window.active.handle.bg.color: #C0C0C0

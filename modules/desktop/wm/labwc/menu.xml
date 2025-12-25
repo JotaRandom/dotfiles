@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!-- labwc menu - Windows 95/98 Style -->
+<!-- Path: ~/.config/labwc/menu.xml -->
+
+<openbox_menu>
+  
+  <!-- Root menu (Desktop right-click) -->
+  <menu id="root-menu" label="Desktop">
+    
+    <item label="Terminal">
+      <action name="Execute">
+        <command>alacritty</command>
+      </action>
+    </item>
+    
+    <item label="File Manager">
+      <action name="Execute">
+        <command>pcmanfm</command>
+      </action>
+    </item>
+    
+    <separator />
+    
+    <item label="Web Browser">
+      <action name="Execute">
+        <command>chromium</command>
+      </action>
+    </item>
+    
+    <item label="Text Editor">
+      <action name="Execute">
+        <command>xed</command>
+      </action>
+    </item>
+    
+    <separator />
+    
+    <item label="Run...">
+      <action name="Execute">
+        <command>dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'</command>
+      </action>
+    </item>
+    
+    <separator />
+    
+    <item label="Reconfigure">
+      <action name="Reconfigure" />
+    </item>
+    
+    <item label="Exit">
+      <action name="Exit" />
+    </item>
+    
+  </menu>
+  
+  <!-- Client menu (Window right-click on title bar) -->
+  <menu id="client-menu" label="Window">
+    
+    <item label="Minimize">
+      <action name="Iconify" />
+    </item>
+    
+    <item label="Maximize">
+      <action name="ToggleMaximize" />
+    </item>
+    
+    <item label="Fullscreen">
+      <action name="ToggleFullscreen" />
+    </item>
+    
+    <separator />
+    
+    <item label="Move">
+      <action name="Move" />
+    </item>
+    
+    <item label="Resize">
+      <action name="Resize" />
+    </item>
+    
+    <separator />
+    
+    <item label="Always on Top">
+      <action name="ToggleAlwaysOnTop" />
+    </item>
+    
+    <separator />
+    
+    <item label="Close">
+      <action name="Close" />
+    </item>
+    
+  </menu>
+  
+</openbox_menu>

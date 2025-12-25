@@ -49,9 +49,6 @@ style = "Bold Italic"
 # Offset
 offset = { x = 0, y = 0 }
 
-# Glyph offset
-glyph_offset = { x = 0, y = 0 }
-
 # ===== COLORES (Monokai) =====
 [colors.primary]
 background = "#272822"
