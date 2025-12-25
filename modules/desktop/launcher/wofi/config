@@ -2,9 +2,11 @@
 # Path: ~/.config/wofi/config
 
 mode=drun
-width=400
-height=300
-location=center
+width=300
+height=400
+location=bottom_left
+xoffset=10
+yoffset=-40
 show=drun
 prompt=Run:
 filter_rate=100

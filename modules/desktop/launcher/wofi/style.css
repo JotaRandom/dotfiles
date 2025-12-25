@@ -1,58 +1,73 @@
-/* Wofi CSS - Windows 95 Retro Style */
+/* Wofi specific styling for Windows 95 Start Menu */
 
 window {
-    margin: 0px;
-    border: 2px solid #808080;
-    background-color: #C0C0C0;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    border-right-color: #000000;
+    border-bottom-color: #000000;
     font-family: "DejaVu Sans Bold", sans-serif;
-    font-size: 11pt;
+    font-size: 10pt;
+    color: #000000;
 }
 
 #outer-box {
     margin: 2px;
-    border: 2px solid #FFFFFF;
+    border: 1px solid;
+    border-top-color: #dfdfdf;
+    border-left-color: #dfdfdf;
     border-right-color: #808080;
     border-bottom-color: #808080;
-    background-color: #C0C0C0;
-    padding: 4px;
+    background-color: #c0c0c0;
+    padding: 2px;
 }
 
 #input {
-    margin: 5px;
-    border: 2px solid #808080;
-    border-right-color: #FFFFFF;
-    border-bottom-color: #FFFFFF;
-    background-color: #FFFFFF;
+    margin: 4px;
+    background-color: #ffffff;
     color: #000000;
+    border: 2px solid;
+    border-top-color: #808080;
+    border-left-color: #808080;
+    border-right-color: #ffffff;
+    border-bottom-color: #ffffff;
     padding: 2px 4px;
+    box-shadow: none;
 }
 
 #scroll {
-    margin: 5px;
-    border: 2px solid #808080;
-    border-right-color: #FFFFFF;
-    border-bottom-color: #FFFFFF;
-    background-color: #FFFFFF;
+    margin: 4px;
+    background-color: #c0c0c0;
+    border: none;
 }
 
 #inner-box {
-    background-color: #FFFFFF;
+    background-color: #c0c0c0;
 }
 
 #entry {
-    padding: 2px 4px;
+    padding: 4px 8px;
+    background-color: #c0c0c0;
     color: #000000;
+    border: none;
 }
 
 #entry:selected {
     background-color: #000080;
-    color: #FFFFFF;
+    color: #ffffff;
+    outline: none;
 }
 
 #text {
-    margin: 2px;
+    margin-left: 5px;
 }
 
 #text:selected {
-    color: #FFFFFF;
+    color: #ffffff;
+}
+
+#img {
+    margin-right: 5px;
+    background-color: transparent;
 }

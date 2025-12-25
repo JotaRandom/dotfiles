@@ -1,65 +1,183 @@
-/* GTK 4.0 CSS - Windows 95/98 Style Overrides */
+/* GTK 3.0 CSS - Perfect Windows 95/98 Aesthetic Refinement */
 
+/* Global Font */
 * {
     font-family: "DejaVu Sans Bold", sans-serif;
     font-size: 11pt;
+    -GtkHTML-cursor-color: #000000;
 }
 
-/* Classic Grey Background */
+/* Base Colors */
+@define-color retro_grey #c0c0c0;
+@define-color retro_blue #000080;
+@define-color retro_white #ffffff;
+@define-color retro_shadow #808080;
+@define-color retro_black #000000;
+@define-color retro_light_grey #dfdfdf;
+
+/* Global Backgrounds */
 window,
-.background {
-    background-color: #c0c0c0;
-    color: #000000;
+.background,
+.view,
+text {
+    background-color: @retro_grey;
+    color: @retro_black;
 }
 
-/* 3D Borders for Buttons */
+/* 3D Borders Helper */
+.raised {
+    border: 2px solid;
+    border-top-color: @retro_white;
+    border-left-color: @retro_white;
+    border-bottom-color: @retro_shadow;
+    border-right-color: @retro_shadow;
+    box-shadow: 1px 1px @retro_black;
+}
+
+.sunken {
+    border: 2px solid;
+    border-top-color: @retro_shadow;
+    border-left-color: @retro_shadow;
+    border-bottom-color: @retro_white;
+    border-right-color: @retro_white;
+    box-shadow: inset 1px 1px @retro_black;
+}
+
+/* Buttons */
 button {
     background-image: none;
-    background-color: #c0c0c0;
+    background-color: @retro_grey;
     border-radius: 0;
-    border: 2px solid;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    border-bottom-color: #808080;
-    border-right-color: #808080;
-    box-shadow: none;
+    border: 1px solid @retro_black;
+    box-shadow: inset 1px 1px @retro_white, inset -1px -1px @retro_shadow;
+    padding: 2px 6px;
     text-shadow: none;
+    margin: 2px;
 }
 
 button:hover {
-    background-color: #d0d0d0;
+    background-color: @retro_grey;
 }
 
 button:active,
 button:checked {
-    border-top-color: #808080;
-    border-left-color: #808080;
-    border-bottom-color: #ffffff;
-    border-right-color: #ffffff;
+    box-shadow: inset 1px 1px @retro_shadow, inset 2px 2px @retro_black;
+    padding: 3px 5px 1px 7px;
 }
 
-/* Selection Colors */
-selection,
-contentview:selection,
-.view:selection,
-.selection {
-    background-color: #000080;
-    color: #ffffff;
+/* Input Entries */
+entry {
+    background-color: @retro_white;
+    color: @retro_black;
+    border-radius: 0;
+    border: 1px solid @retro_black;
+    box-shadow: inset 1px 1px @retro_shadow, inset -1px -1px @retro_white;
 }
 
-/* Menus & Popovers */
-popover {
-    background-color: #c0c0c0;
-    color: #000000;
-    border: 1px solid #808080;
+entry:selection {
+    background-color: @retro_blue;
+    color: @retro_white;
 }
 
-/* Lists */
-list {
-    background-color: #ffffff;
+/* Scrollbars - Classic Win95 */
+scrollbar {
+    background-color: @retro_grey;
+    border: none;
 }
 
-list row:selected {
-    background-color: #000080;
-    color: #ffffff;
+scrollbar slider {
+    background-color: @retro_grey;
+    border: 1px solid @retro_black;
+    box-shadow: inset 1px 1px @retro_white, inset -1px -1px @retro_shadow;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+scrollbar trough {
+    background-color: @retro_light_grey;
+    background-image: none;
+    /* Removed dither for clarity */
+}
+
+/* Checkboxes & Radios */
+check,
+radio {
+    margin: 4px;
+    background-color: @retro_white;
+    border: 1px solid @retro_black;
+    box-shadow: inset 1px 1px @retro_shadow, inset -1px -1px @retro_white;
+    min-width: 14px;
+    min-height: 14px;
+}
+
+check:checked {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><path d='M2 5l3 3 5-5' stroke='black' stroke-width='3' fill='none'/></svg>");
+}
+
+radio {
+    border-radius: 100%;
+}
+
+/* Notebook / Tabs */
+notebook {
+    background-color: @retro_grey;
+    border: 2px solid @retro_white;
+    border-right-color: @retro_shadow;
+    border-bottom-color: @retro_shadow;
+}
+
+notebook tab {
+    background-color: @retro_grey;
+    border: 1px solid @retro_black;
+    border-bottom: none;
+    box-shadow: inset 1px 1px @retro_white, inset -1px 0 @retro_shadow;
+    margin: 0 1px;
+    padding: 4px 8px;
+}
+
+notebook tab:checked {
+    background-color: @retro_grey;
+    border-width: 2px 2px 0 2px;
+    margin-top: -2px;
+    padding-bottom: 6px;
+}
+
+/* Menus */
+menubar {
+    background-color: @retro_grey;
+    border-bottom: 1px solid @retro_shadow;
+}
+
+menu {
+    background-color: @retro_grey;
+    border: 1px solid @retro_black;
+    box-shadow: 2px 2px @retro_shadow;
+}
+
+menuitem {
+    padding: 4px 16px;
+}
+
+menuitem:hover {
+    background-color: @retro_blue;
+    color: @retro_white;
+}
+
+/* TreeView (File Manager) */
+treeview.view {
+    background-color: @retro_white;
+    color: @retro_black;
+    border: 1px solid @retro_shadow;
+}
+
+treeview.view:selected {
+    background-color: @retro_blue;
+    color: @retro_white;
+}
+
+column-header {
+    background-color: @retro_grey;
+    border: 1px solid @retro_black;
+    box-shadow: inset 1px 1px @retro_white, inset -1px -1px @retro_shadow;
+    padding: 2px;
 }

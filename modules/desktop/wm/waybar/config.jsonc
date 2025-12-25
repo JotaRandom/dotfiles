@@ -19,8 +19,8 @@
   ],
   // ===== START BUTTON =====
   "custom/start": {
-    "format": "  Start",
-    "on-click": "dmenu_run -fn 'Sans-9' -nb '#C0C0C0' -nf '#000000' -sb '#000080' -sf '#FFFFFF'",
+    "format": " Start",
+    "on-click": "wofi --show drun",
     "tooltip": false
   },
   // ===== TASKBAR (Window List) =====
