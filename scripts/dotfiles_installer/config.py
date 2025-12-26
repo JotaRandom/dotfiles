@@ -29,10 +29,20 @@ class DotfilesConfig:
         self.repo_root = Path(repo_root)
         
         # XDG Base Directory paths
-        self.xdg_config_home = Path(os.environ.get('XDG_CONFIG_HOME', self.target / '.config'))
-        self.xdg_data_home = Path(os.environ.get('XDG_DATA_HOME', self.target / '.local/share'))
-        self.xdg_state_home = Path(os.environ.get('XDG_STATE_HOME', self.target / '.local/state'))
-        self.xdg_cache_home = Path(os.environ.get('XDG_CACHE_HOME', self.target / '.cache'))
+        # If target is not the default home, we should stay within the target for all paths
+        # to ensure isolation during tests or specific installations.
+        is_home = self.target == Path.home()
+        
+        if is_home:
+            self.xdg_config_home = Path(os.environ.get('XDG_CONFIG_HOME', self.target / '.config'))
+            self.xdg_data_home = Path(os.environ.get('XDG_DATA_HOME', self.target / '.local/share'))
+            self.xdg_state_home = Path(os.environ.get('XDG_STATE_HOME', self.target / '.local/state'))
+            self.xdg_cache_home = Path(os.environ.get('XDG_CACHE_HOME', self.target / '.cache'))
+        else:
+            self.xdg_config_home = self.target / '.config'
+            self.xdg_data_home = self.target / '.local/share'
+            self.xdg_state_home = self.target / '.local/state'
+            self.xdg_cache_home = self.target / '.cache'
         
         # Configuration data
         self.default_action = "dotify"
@@ -130,6 +140,11 @@ class DotfilesConfig:
             key = f"{basename}|{module_name}"
             if key in self.module_mappings:
                 return self.module_mappings[key], True
+
+            # Try wildcard mapping (e.g., *|module_name)
+            wildcard_key = f"*|{module_name}"
+            if wildcard_key in self.module_mappings:
+                return self.module_mappings[wildcard_key], True
         
         # Try global mapping with full path
         if filename in self.global_mappings:

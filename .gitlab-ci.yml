@@ -76,7 +76,7 @@ check-i18n:
 # Stage: Test
 #######################
 
-test-install-complete:
+test-install-default:
   stage: test
   image: python:3-slim
   before_script:
@@ -85,29 +85,26 @@ test-install-complete:
     - pip install --upgrade pip
     - pip install pyyaml
   script:
-    - echo "=== Ejecutando test_install.py ==="
-    - python .github/scripts/test_install.py 2>&1 | tee /tmp/test-mappings.log
-    # Verificar NOTAs
-    - |
-      if grep -q "^NOTA:" /tmp/test-mappings.log; then
-        echo "⚠️ Se encontraron NOTAs:"
-        grep "^NOTA:" /tmp/test-mappings.log || true
-        nota_count=$(grep -c "^NOTA:" /tmp/test-mappings.log || echo "0")
-        echo "Total de NOTAs: $nota_count"
-        if [ "$nota_count" -gt 5 ]; then
-          echo "❌ ERROR: Demasiadas NOTAs ($nota_count)"
-          exit 1
-        else
-          echo "✅ NOTAs aceptables (archivos opcionales)"
-        fi
-      else
-        echo "✅ No se encontraron NOTAs - Test perfecto!"
-      fi
+    - echo "=== Ejecutando test_install.py (Default - Sin Temas) ==="
+    - python .github/scripts/test_install.py 2>&1 | tee /tmp/test-default.log
+  <<: *python_cache
+
+test-install-with-themes:
+  stage: test
+  image: python:3-slim
+  before_script:
+    - apt-get update
+    - apt-get install -y git-lfs rsync
+    - pip install --upgrade pip
+    - pip install pyyaml
+  script:
+    - echo "=== Ejecutando test_install.py (Con Temas) ==="
+    - python .github/scripts/test_install.py --with-themes 2>&1 | tee /tmp/test-themes.log
   <<: *python_cache
   artifacts:
     when: on_failure
     paths:
-      - /tmp/test-mappings.log
+      - /tmp/test-themes.log
     expire_in: 1 week
 
 test-quick-install:

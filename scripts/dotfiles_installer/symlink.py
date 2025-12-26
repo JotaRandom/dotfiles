@@ -102,25 +102,28 @@ class SymlinkManager:
                 print(f"  ✓ Symlink already correct: {destination.name}")
                 return False
             
-            # Backup existing file if allowed
+            # Backup existing file/directory if allowed
             if allow_backup:
-                if not destination.is_symlink():
+                # Si es un directorio real y no un symlink, respaldarlo
+                if destination.is_dir() and not destination.is_symlink():
+                    self._create_backup(destination, module_name)
+                    shutil.rmtree(destination)
+                    print(f"  🗑 Directorio existente eliminado: {destination}")
+                elif not destination.is_symlink():
                     # Regular file - create backup
                     self._create_backup(destination, module_name)
-                # Remove existing symlink/file
-                if destination.is_symlink():
                     destination.unlink()
-                elif destination.is_file():
+                else:
+                    # Existing symlink
                     destination.unlink()
-                elif destination.is_dir():
-                    # Don't remove directories - this would be dangerous
-                    print(f"  ⚠ Skipping: destination is a directory: {destination}")
-                    return False
             else:
                 return False
         
         # Create symlink
         try:
+            # Ensure parent directory exists
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            
             destination.symlink_to(source)
             print(f"  ✓ {destination} → {source}")
             return True
@@ -166,18 +169,23 @@ class SymlinkManager:
         backup_dir = self.backup_base / self._backup_timestamp
         backup_dir.mkdir(parents=True, exist_ok=True)
         
-        # Backup file
+        # Backup file or directory
         backup_path = backup_dir / file_path.name
         try:
-            shutil.copy2(file_path, backup_path)
-            print(f"  📦 Backed up: {file_path.name}")
+            if file_path.is_dir():
+                shutil.copytree(file_path, backup_path)
+                print(f"  📦 Backed up directory: {file_path.name}")
+            else:
+                shutil.copy2(file_path, backup_path)
+                print(f"  📦 Backed up: {file_path.name}")
             
             # Agregar a metadata
             self._backup_metadata['modules_installed'].add(module_name)
             self._backup_metadata['files_backed_up'].append({
                 'original': str(file_path),
                 'backup': file_path.name,
-                'module': module_name
+                'module': module_name,
+                'is_dir': file_path.is_dir()
             })
         except OSError as e:
             print(f"  ⚠ Backup failed for {file_path.name}: {e}")

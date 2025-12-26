@@ -80,39 +80,70 @@ def install_module(module_path: Path, config: DotfilesConfig,
     print(f"Instalando módulo: {module_name}")
     print(f"{'='*60}")
     
-    # Encontrar todos los archivos en el módulo
     files_processed = 0
     symlinks_created = 0
     
-    # Detectar si el módulo tiene subdirectorios que deben incluirse en la ruta
-    # Por ejemplo: modules/dev-tools/cargo/config debe pasar "cargo/config" al mapper
-    # Verificar si hay subdirectorio con mismo nombre que el módulo
-    has_subdir_with_module_name = (module_path / module_name).is_dir()
-    
+    # --- NUEVO: Soporte para enlace a directorios completos ---
+    # Si el módulo tiene un mapeo de wildcard (*), lo tratamos como un enlace de directorio
+    # y evitamos iterar por sus archivos individuales.
+    destinations, is_explicit, action = mapper.resolve_destination('*', module_name)
+    if is_explicit and action != 'ignore' and destinations:
+        print(f"  → Optimización: Creando enlace de directorio para módulo {module_name}")
+        for dest in destinations:
+            if symlink_mgr.create_symlink(module_path, dest, module_name, 
+                                         allow_backup=allow_backup,
+                                         dry_run=dry_run):
+                symlinks_created += 1
+                if fix_attribs:
+                    fix_attributes(module_path, recursive=True, verbose=True)
+        
+        print(f"\n✓ Módulo '{module_name}' instalado (directorio):")
+        print(f"  Symlinks creados: {symlinks_created}")
+        return
+
+    # Mantener registro de directorios que ya fueron enlazados para saltar sus contenidos
+    processed_dirs = []
+
     for file_path in module_path.rglob('*'):
-        if not file_path.is_file():
+        # Saltar si el padre ya fue procesado como enlace de directorio
+        if any(file_path.is_relative_to(d) for d in processed_dirs):
             continue
-        
-        # Saltar README, LICENSE y documentación
-        if file_path.name.upper().startswith(('README', 'LICENSE')):
-            continue
-        
+            
         # Obtener ruta relativa desde la raíz del módulo
         rel_path = file_path.relative_to(module_path)
-        
-        # Si hay un subdirectorio con nombre del módulo y el archivo está dentro,
-        # usar la ruta completa con el subdirectorio
         mapping_key = str(rel_path).replace('\\', '/')
         
-        # Resolver destino(s) para este archivo
+        # Resolver destino(s) para este archivo/carpeta
         destinations, is_explicit, action = mapper.resolve_destination(mapping_key, module_name)
-        
-        files_processed += 1
         
         # Manejar archivos a ignorar
         if not destinations or action == 'ignore':
-            print(f"  → Ignorando: {rel_path}")
+            if is_explicit:
+                print(f"  → Ignorando: {rel_path}")
             continue
+            
+        # Si es un directorio y tiene mapeo explícito, lo enlazamos completo y saltamos hijos
+        if file_path.is_dir() and is_explicit:
+            print(f"  → Creando enlace de directorio: {rel_path}")
+            for dest in destinations:
+                if symlink_mgr.create_symlink(file_path, dest, module_name, 
+                                             allow_backup=allow_backup,
+                                             dry_run=dry_run):
+                    symlinks_created += 1
+                    if fix_attribs:
+                        fix_attributes(file_path, recursive=True, verbose=True)
+            processed_dirs.append(file_path)
+            continue
+            
+        # Saltar directorios sin mapeo explícito (sus hijos serán procesados individualmente)
+        if file_path.is_dir():
+            continue
+        
+        # Saltar README, LICENSE y documentación (solo si no se enlazó el directorio)
+        if file_path.name.upper().startswith(('README', 'LICENSE')):
+            continue
+            
+        files_processed += 1
         
         # Sanitizar CRLF solo si se solicitó con --fix-eol
         if fix_eol:
@@ -129,10 +160,8 @@ def install_module(module_path: Path, config: DotfilesConfig,
                 
                 # Establecer permisos ejecutables si se solicito
                 if fix_attribs:
-                    fix_attributes(source_to_link, verbose=True)
+                    fix_attributes(source_to_link, recursive=False, verbose=True)
         
-        files_processed += 1
-    
     print(f"\n✓ Módulo '{module_name}' instalado:")
     print(f"  Archivos procesados: {files_processed}")
     print(f"  Symlinks creados: {symlinks_created}")
@@ -260,6 +289,21 @@ Los archivos se mapean según install-mappings.yml
         '--no-backup',
         action='store_true',
         help='NO crear backups de archivos existentes (no recomendado excepto para testing/CI)'
+    )
+    install_parser.add_argument(
+        '--with-gtk',
+        action='store_true',
+        help='Incluir instalación de temas GTK (saltados por defecto)'
+    )
+    install_parser.add_argument(
+        '--with-qt',
+        action='store_true',
+        help='Incluir instalación de componentes QT (saltados por defecto)'
+    )
+    install_parser.add_argument(
+        '--with-themes',
+        action='store_true',
+        help='Incluir tanto GTK como QT (shorthand para --with-gtk --with-qt)'
     )
     
     # Subcomando: backup-list
@@ -694,9 +738,30 @@ def run_install(args):
                 
                 modules.extend(find_modules_recursive(category_dir))
     
+    # Filtering themes by default
+    with_gtk = args.with_gtk or args.with_themes
+    with_qt = args.with_qt or args.with_themes
+    
     if not modules:
         print("✗ No modules found to install")
         return 1
+    
+    # Filter modules if needed (only if installing all)
+    if not args.modules:
+        filtered_modules = []
+        for m in modules:
+            m_str = str(m).replace('\\', '/')
+            is_gtk = '/gtk/' in m_str
+            is_qt = '/qt/' in m_str
+            
+            if is_gtk and not with_gtk:
+                # print(f"  (Saltando tema GTK: {m.name})") # Verbose?
+                continue
+            if is_qt and not with_qt:
+                # print(f"  (Saltando componente QT: {m.name})")
+                continue
+            filtered_modules.append(m)
+        modules = filtered_modules
     
     # Crear gestor de symlinks
     symlink_mgr = SymlinkManager(config.target)
@@ -825,9 +890,16 @@ def run_update_submodules(args):
         run_git_command
     )
     
-    # Actualizar submódulos del repositorio principal
-    if args.repo:
-        return update_repo_submodules(recursive=args.recursive)
+    script_dir = Path(__file__).parent
+    repo_root = script_dir.parent
+    
+    # Actualizar submódulos en distros/PKGBUILD/ si existen
+    distros_dir = repo_root / 'distros'
+    if distros_dir.exists():
+        update_submodules_in_dir(distros_dir, repo_root=repo_root, auto_commit=True)
+    
+    # También actualizar submódulos del repo principal
+    update_repo_submodules(recursive=True)
     
     # Determinar directorio target
     if args.target_dir:

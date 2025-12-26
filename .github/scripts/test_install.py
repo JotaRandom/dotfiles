@@ -29,6 +29,7 @@ import os
 import tempfile
 import subprocess
 import yaml
+import argparse
 from pathlib import Path
 
 # Configurar encoding para Windows
@@ -44,7 +45,7 @@ from dotfiles_installer.config import DotfilesConfig
 from dotfiles_installer.mapper import FileMapper
 
 
-def run_installer(repo_root: Path, target_dir: Path, modules: list) -> int:
+def run_installer(repo_root: Path, target_dir: Path, modules: list, extra_args: list = None) -> int:
     """
     Ejecuta install.py en directorio temporal.
     
@@ -52,6 +53,7 @@ def run_installer(repo_root: Path, target_dir: Path, modules: list) -> int:
         repo_root: Raíz del repositorio
         target_dir: Directorio destino temporal
         modules: Lista de módulos a instalar
+        extra_args: Argumentos adicionales para el instalador
     
     Returns:
         Código de salida del instalador
@@ -64,7 +66,12 @@ def run_installer(repo_root: Path, target_dir: Path, modules: list) -> int:
         str(install_script),
         'install',  # ← Subcomando agregado
         '--target', str(target_dir)
-    ] + [str(m) for m in modules]
+    ]
+    
+    if extra_args:
+        cmd.extend(extra_args)
+        
+    cmd += [str(m) for m in modules]
     
     # Ejecutar
     print(f"Ejecutando: {' '.join(cmd)}\n")
@@ -255,15 +262,29 @@ def verify_symlink(expected: Path, src: Path, mapping_key: str, target_dir: Path
     if not expected.exists() and not expected.is_symlink():
         return False, f"ERROR: el destino esperado no existe para el mapeo '{mapping_key}': {expected} (origen: {src})"
     
+    def is_in_symlinked_dir(path: Path, base_target: Path) -> bool:
+        """Verifica si algún padre de la ruta es un enlace simbólico, hasta llegar al target base."""
+        curr = path
+        while curr != base_target and curr != curr.parent:
+            if os.path.islink(curr):
+                return True
+            curr = curr.parent
+        return False
+
     if not expected.is_symlink():
-        return False, f"ERROR: el destino esperado no es un enlace simbólico para el mapeo '{mapping_key}': {expected} (origen: {src})"
+        # Permitir que no sea symlink si es un archivo dentro de un directorio que ya fue enlazado
+        if is_in_symlinked_dir(expected, target_dir):
+            pass # OK, contenido de un directorio enlazado
+        else:
+            return False, f"ERROR: el destino esperado no es un enlace simbólico para el mapeo '{mapping_key}': {expected} (origen: {src})"
     
     # Verificar objetivo del enlace
     try:
+        # Resolvemos la ruta completa (maneja symlinks intermedios y finales)
         target = expected.resolve()
-        source = src.resolve()
-        
-        if target == source:
+        source_abs = src.resolve()
+
+        if target == source_abs:
             return True, f"OK: {expected} -> {src}"
         
         # Verificar si es copia saneada
@@ -282,7 +303,7 @@ def verify_symlink(expected: Path, src: Path, mapping_key: str, target_dir: Path
             
             return True, f"OK: {expected} -> {target} (copia saneada de {src})"
         
-        return False, f"ERROR: discrepancia en el objetivo del enlace para el mapeo '{mapping_key}'. Se esperaba <{source}>, pero se encontró <{target}>. (dest: {expected})"
+        return False, f"ERROR: discrepancia en el objetivo del enlace para el mapeo '{mapping_key}'. Se esperaba <{source_abs}>, pero se encontró <{target}>. (dest: {expected})"
     
     except Exception as e:
         return False, f"ERROR: excepción al verificar {expected}: {e}"
@@ -333,6 +354,8 @@ def verify_installation(repo_root: Path, target_dir: Path, modules: list) -> tup
     print(f"Total de claves en mappings: {len(mapping_keys)}\n")
     
     # Verificar cada clave del YAML
+    installed_module_paths = [m.resolve() for m in modules]
+    
     for mapping_key in mapping_keys:
         mapping_value = mappings_data[mapping_key]
         
@@ -347,12 +370,12 @@ def verify_installation(repo_root: Path, target_dir: Path, modules: list) -> tup
             parts = mapping_key.split('|')
             key = parts[0]
             module_override = parts[1]
-        
+            
         # Buscar archivos fuente
         found_paths = find_source_file(repo_root, key, module_override)
         
         if not found_paths:
-            # Distinguir entre templates y archivos realmente faltantes
+            # (Rest of the logic remains similar)
             if mapping_key.endswith('.example'):
                 print(f"OK: archivo de plantilla/ejemplo: {mapping_key}")
                 continue
@@ -362,36 +385,45 @@ def verify_installation(repo_root: Path, target_dir: Path, modules: list) -> tup
         
         # Para cada archivo fuente encontrado
         for src in found_paths:
+            # VERIFICACIÓN CRÍTICA: ¿Pertenece este archivo a un módulo que estamos instalando hoy?
+            src_abs = src.resolve()
+            is_installed = False
+            for mod_path in installed_module_paths:
+                if str(src_abs).startswith(str(mod_path)):
+                    is_installed = True
+                    break
+            
+            if not is_installed:
+                continue
+
             # Si el valor contiene comas, es un mapeo múltiple
             if isinstance(mapping_value, str) and ',' in mapping_value:
-                # Procesar cada destino
+                # ... (procesamiento múltiple) ...
                 dest_specs = [s.strip() for s in mapping_value.split(',')]
-                
                 for spec in dest_specs:
-                    # Resolver spec a ruta completa usando config
                     dest = config.expand_xdg_path(spec)
-                    
                     checked += 1
                     ok, msg = verify_symlink(dest, src, mapping_key, target_dir)
-                    
-                    if ok:
-                        print(msg)
-                    else:
-                        errors.append(msg)
+                    if ok: print(msg)
+                    else: errors.append(msg)
             else:
-                # Mapeo simple
-                if module_override:
-                    destinations, action, _ = mapper.resolve_destination(key, module_override)
-                else:
-                    # Necesitamos detectar el módulo desde la ruta del archivo
-                    modules_dir = repo_root / 'modules'
-                    try:
-                        rel_to_modules = src.relative_to(modules_dir)
-                        module_name = rel_to_modules.parts[0]
-                        destinations, action, _ = mapper.resolve_destination(key, module_name)
-                    except:
-                        destinations = []
-                        action = None
+                # Mapeo simple - Necesitamos detectar el módulo para resolver el destino
+                # (aunque ya sabemos que está instalado, resolver necesita el nombre del modulo)
+                modules_dir = repo_root / 'modules'
+                try:
+                    rel_to_modules = src.relative_to(modules_dir)
+                    # El nombre del módulo es la carpeta inmediata dentro del path del módulo
+                    # En realidad, podemos usar el nombre de la carpeta que coincidió en mod_path
+                    module_name = None
+                    for mod_path in installed_module_paths:
+                        if str(src_abs).startswith(str(mod_path)):
+                            module_name = mod_path.name
+                            break
+                    
+                    destinations, action, _ = mapper.resolve_destination(key, module_name)
+                except:
+                    destinations = []
+                    action = None
                 
                 if action == 'ignore':
                     continue
@@ -715,11 +747,31 @@ def test_subcommands(repo_root: Path) -> bool:
 
 
 def main():
-
     """Test principal."""
+    parser = argparse.ArgumentParser(description='Test de Instalación Completa - install.py')
+    parser.add_argument('--with-themes', action='store_true', help='Testear con temas habilitados')
+    parser.add_argument('--no-subcommands', action='store_true', help='Saltar test de subcomandos')
+    parser.add_argument('--only-subcommands', action='store_true', help='Solo ejecutar test de subcomandos')
+    
+    args, unknown = parser.parse_known_args()
+    
+    if args.only_subcommands:
+        repo_root = Path(__file__).parent.parent.parent
+        if not test_subcommands(repo_root):
+             sys.exit(1)
+        sys.exit(0)
+
     print("="*60)
     print("Test de Instalación Completa - install.py")
+    if args.with_themes:
+        print("MODO: Con temas enabled (--with-themes)")
     print("="*60 + "\n")
+    
+    extra_installer_args = []
+    if args.with_themes:
+        extra_installer_args.append('--with-themes')
+    # Permitir otros argumentos arbitrarios pasados después de --
+    extra_installer_args.extend(unknown)
     
     # Obtener raíz del repositorio
     repo_root = Path(__file__).parent.parent.parent
@@ -795,7 +847,7 @@ def main():
         print(f"\nDirectorio temporal: {target}\n")
         
         # Ejecutar instalador
-        exit_code = run_installer(repo_root, target, modules)
+        exit_code = run_installer(repo_root, target, modules, extra_args=extra_installer_args)
         
         if exit_code != 0:
             print(f"\nERROR: Instalador falló con código {exit_code}", file=sys.stderr)
@@ -840,9 +892,10 @@ def main():
         return 1
     
     # Test de subcomandos
-    if not test_subcommands(repo_root):
-        print("\n✗ Algunos subcomandos no pasaron las pruebas")
-        return 1
+    if not args.no_subcommands:
+        if not test_subcommands(repo_root):
+            print("\n✗ Algunos subcomandos no pasaron las pruebas")
+            return 1
     
     print("\n" + "="*60)
     print("✓ TODAS LAS VERIFICACIONES PASARON")

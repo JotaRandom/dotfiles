@@ -20,23 +20,35 @@ if sys.platform == 'win32':
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 
-def get_backup_dir() -> Path:
-    """Obtiene el directorio de backups."""
-    home = Path.home()
-    return home / '.dotfiles_backup'
+def get_backup_dir(target_dir: Optional[Path] = None) -> Path:
+    """
+    Obtiene el directorio de backups.
+    
+    Si se proporciona target_dir y no es el home del usuario, 
+    el backup se guarda dentro de ese target para mantener aislamiento.
+    """
+    if target_dir:
+        # Si el target es el home, usar la ruta estándar
+        if target_dir.resolve() == Path.home().resolve():
+            return Path.home() / '.dotfiles_backup'
+        # Si es un target personalizado, guardar backups allí mismo
+        return target_dir / '.dotfiles_backup'
+        
+    return Path.home() / '.dotfiles_backup'
 
 
-def list_backups(verbose: bool = False) -> List[Tuple[str, Optional[dict]]]:
+def list_backups(target_dir: Optional[Path] = None, verbose: bool = False) -> List[Tuple[str, Optional[dict]]]:
     """
     Lista todos los backups disponibles.
     
     Args:
+        target_dir: Directorio target opcional
         verbose: Si True, muestra información detallada
     
     Returns:
         Lista de tuplas (timestamp, metadata)
     """
-    backup_dir = get_backup_dir()
+    backup_dir = get_backup_dir(target_dir)
     
     if not backup_dir.exists():
         if verbose:
@@ -90,18 +102,20 @@ def list_backups(verbose: bool = False) -> List[Tuple[str, Optional[dict]]]:
     return backups
 
 
-def restore_backup(timestamp: str, dry_run: bool = False) -> int:
+def restore_backup(timestamp: str, target_dir: Optional[Path] = None, dry_run: bool = False) -> int:
     """
     Restaura un backup específico.
     
     Args:
         timestamp: Timestamp del backup a restaurar
+        target_dir: Directorio target opcional
         dry_run: Si True, solo muestra qué se haría
     
     Returns:
         0 si éxito, 1 si error
     """
-    backup_dir = get_backup_dir() / timestamp
+    backup_base = get_backup_dir(target_dir)
+    backup_dir = backup_base / timestamp
     
     if not backup_dir.exists():
         print(f"ERROR: Backup '{timestamp}' no encontrado", file=sys.stderr)
@@ -156,9 +170,22 @@ def restore_backup(timestamp: str, dry_run: bool = False) -> int:
                 # Crear directorio padre si no existe
                 original_path.parent.mkdir(parents=True, exist_ok=True)
                 
-                # Copiar backup al original
-                shutil.copy2(backup_file, original_path)
-                print(f"  > Restaurado: {original_path.name}")
+                # Manejar restauración de directorios
+                is_dir = file_info.get('is_dir', False)
+                
+                if is_dir:
+                    if original_path.exists():
+                         if original_path.is_dir() and not original_path.is_symlink():
+                             shutil.rmtree(original_path)
+                         else:
+                             original_path.unlink()
+                    shutil.copytree(backup_file, original_path)
+                    print(f"  > Restaurado (dir): {original_path.name}")
+                else:
+                    # Copiar backup al original
+                    shutil.copy2(backup_file, original_path)
+                    print(f"  > Restaurado: {original_path.name}")
+                
                 restored += 1
             except Exception as e:
                 print(f"  X Error restaurando {original_path.name}: {e}")
@@ -168,18 +195,19 @@ def restore_backup(timestamp: str, dry_run: bool = False) -> int:
     return 0 if errors == 0 else 1
 
 
-def clean_old_backups(keep: int = 5, dry_run: bool = False) -> int:
+def clean_old_backups(keep: int = 5, target_dir: Optional[Path] = None, dry_run: bool = False) -> int:
     """
     Limpia backups antiguos, manteniendo solo los más recientes.
     
     Args:
         keep: Número de backups más recientes a mantener
+        target_dir: Directorio target opcional
         dry_run: Si True, solo muestra qué se eliminaría
     
     Returns:
         Número de backups eliminados
     """
-    backups = list_backups(verbose=False)
+    backups = list_backups(target_dir=target_dir, verbose=False)
     
     if len(backups) <= keep:
         print(f"Solo hay {len(backups)} backup(s), manteniendo todos (límite: {keep})")

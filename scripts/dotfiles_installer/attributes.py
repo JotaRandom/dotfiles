@@ -80,48 +80,55 @@ def should_be_executable(file_path: Path) -> bool:
     return False
 
 
-def fix_attributes(file_path: Path, verbose: bool = False) -> bool:
+def fix_attributes(path: Path, recursive: bool = False, verbose: bool = False) -> bool:
     """
     Establece permisos de ejecución si el archivo lo requiere.
     
-    Solo funciona en sistemas Unix/Linux. En Windows es no-op.
-    
     Args:
-        file_path: Ruta al archivo
+        path: Ruta al archivo o directorio
+        recursive: Si es True y path es un directorio, procesa recursivamente
         verbose: Si True, imprime mensajes
     
     Returns:
         True si se modificaron permisos, False en caso contrario
     """
-    # Solo en sistemas Unix
-    # FIXME: Implementar para Windows, ay que la anterior implementacion si lo hacia
+    # En Windows, no-op para permisos Unix
     if os.name != 'posix':
         return False
     
-    if not file_path.exists() or not file_path.is_file():
+    if not path.exists():
+        return False
+
+    if path.is_dir():
+        if not recursive:
+            return False
+        
+        modified = False
+        for item in path.rglob('*'):
+            if item.is_file():
+                if fix_attributes(item, recursive=False, verbose=verbose):
+                    modified = True
+        return modified
+    
+    if not path.is_file():
         return False
     
     # Verificar si debe ser ejecutable
-    if not should_be_executable(file_path):
+    if not should_be_executable(path):
         return False
     
     # Verificar si ya es ejecutable
-    if os.access(file_path, os.X_OK):
-        if verbose:
-            print(f"  ✓ Ya ejecutable: {file_path.name}")
+    if os.access(path, os.X_OK):
         return False
     
     # Establecer permisos ejecutables
     try:
         # Agregar permisos de ejecución: rwxr-xr-x (0o755)
-        os.chmod(file_path, 0o755)
-        
+        os.chmod(path, 0o755)
         if verbose:
-            print(f"  ✓ Permisos ejecutables agregados: {file_path.name}")
-        
+            print(f"  ✓ Permisos ejecutables agregados: {path.name}")
         return True
-    
     except (OSError, IOError) as e:
         if verbose:
-            print(f"  ⚠ No se pudieron establecer permisos en {file_path.name}: {e}")
+            print(f"  ⚠ No se pudieron establecer permisos en {path.name}: {e}")
         return False

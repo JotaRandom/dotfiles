@@ -9,6 +9,7 @@ package managers, y herramientas de escalado de privilegios.
 
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -45,7 +46,7 @@ def detect_distro() -> Optional[str]:
         return 'fedora'
     elif which('zypper'):
         return 'opensuse'
-    
+    # TODO: Add more distributions with package managers
     return None
 
 
@@ -59,7 +60,7 @@ def which(command: str) -> bool:
     Returns:
         True si el comando existe, False en caso contrario
     """
-    return subprocess.run(['which', command], capture_output=True).returncode == 0
+    return shutil.which(command) is not None
 
 
 def get_privilege_tools() -> List[str]:
@@ -220,7 +221,14 @@ def is_package_installed(package: str, distro: str) -> bool:
         return False
     
     try:
-        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return True
+        if distro == 'debian':
+            # En Debian/Ubuntu, dpkg -l puede mostrar 'rc' (remover configuración) para paquetes no instalados.
+            # Verificamos que el estado empiece por 'ii' (installed).
+            result = subprocess.run(['dpkg-query', '-W', '-f=${Status}', package], 
+                                  capture_output=True, text=True, check=False)
+            return 'install ok installed' in result.stdout
+        else:
+            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
     except subprocess.CalledProcessError:
         return False

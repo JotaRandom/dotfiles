@@ -131,15 +131,17 @@ jobs:
           # git-lfs es usado por el repo; rsync se requiere para que el instalador copie módulos
           sudo apt-get install -y git-lfs rsync || true
       
-      - name: Verificar instalador y mapeos
+      - name: Verificar instalador y mapeos (Default y Temas)
         run: |
           set -e
           TMP=$(mktemp -d)
           echo "Testing installer against temp target: $TMP"
           
-          # Ejecutar test y capturar salida
-          echo "=== Ejecutando test_install.py ==="
-          python .github/scripts/test_install.py 2>&1 | tee /tmp/test-mappings.log
+          echo "=== Ejecutando test_install.py (Default) ==="
+          python .github/scripts/test_install.py 2>&1 | tee /tmp/test-default.log
+          
+          echo "=== Ejecutando test_install.py (Con Temas) ==="
+          python .github/scripts/test_install.py --with-themes 2>&1 | tee /tmp/test-themes.log
           
           # Verificar que no haya NOTAs críticas (solo permitir las de archivos opcionales conocidos)
           echo ""
@@ -215,9 +217,10 @@ jobs:
         run: |
           python .github/scripts/check-mappings.py
       
-      - name: Ejecutar test completo de instalación
+      - name: Ejecutar test completo de instalación (Dual)
         run: |
           python .github/scripts/test_install.py
+          python .github/scripts/test_install.py --with-themes
       
       - name: Verificar comportamiento del instalador con permisos
         run: |

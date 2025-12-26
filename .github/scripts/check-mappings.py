@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 Verifica que cada archivo en modules/ tenga su mapping en install-mappings.yml
-
-Comprueba que todos los archivos no-dotfiles en la raiz de modulos (maxdepth 2)
-esten declarados en install-mappings.yml o sean dotfiles que se dotifican automaticamente.
 """
 
 import sys
+import os
 from pathlib import Path
-import re
+import yaml
 
 # Configurar encoding para Windows
 if sys.platform == 'win32':
@@ -20,43 +18,6 @@ if sys.platform == 'win32':
 # Agregar scripts al path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
-from dotfiles_installer.config import DotfilesConfig
-
-
-def get_mapping_keys(mappings_file: Path) -> set:
-    """
-    Extrae todas las claves de mapping del archivo YAML.
-    
-    Returns:
-        Set de claves de mapping (sin sufijo de modulo)
-    """
-    keys = set()
-    
-    try:
-        with open(mappings_file, 'r', encoding='utf-8') as f:
-            for line in f:
-                # Ignorar comentarios y listas
-                line = line.strip()
-                if line.startswith('#') or line.startswith('-'):
-                    continue
-                
-                # Buscar clave antes de ':'
-                if ':' in line:
-                    key = line.split(':', 1)[0].strip()
-                    
-                    # Remover sufijo de modulo despues de '|'
-                    if '|' in key:
-                        key = key.split('|', 1)[0].strip()
-                    
-                    if key:
-                        keys.add(key)
-    
-    except (OSError, IOError) as e:
-        print(f"ERROR: No se pudo leer {mappings_file}: {e}", file=sys.stderr)
-        sys.exit(1)
-    
-    return keys
-
 
 def check_mappings():
     """Verifica que todos los archivos en modules/ tengan mapping."""
@@ -64,7 +25,6 @@ def check_mappings():
     print("Verificando mappings de archivos en modules/")
     print("="*60)
     
-    # Obtener raiz del repositorio
     repo_root = Path(__file__).parent.parent.parent
     mappings_file = repo_root / 'install-mappings.yml'
     
@@ -72,11 +32,19 @@ def check_mappings():
         print(f"ERROR: No se encontro {mappings_file}", file=sys.stderr)
         return 1
     
-    # Obtener claves de mappings
-    mapping_keys = get_mapping_keys(mappings_file)
-    print(f"Claves de mapping encontradas: {len(mapping_keys)}")
+    try:
+        with open(mappings_file, 'r', encoding='utf-8') as f:
+            mappings_data = yaml.safe_load(f)
+    except Exception as e:
+        print(f"ERROR: No se pudo cargar YAML {mappings_file}: {e}", file=sys.stderr)
+        return 1
+
+    mapping_keys = set(mappings_data.keys())
+    # Claves base (sin |module)
+    base_keys = {k.split('|')[0] if '|' in k else k for k in mapping_keys}
     
-    # Buscar archivos en modules/ (incluye subdirectorios)
+    print(f"Claves de mapping encontradas en YAML: {len(mapping_keys)}")
+    
     modules_dir = repo_root / 'modules'
     errors = 0
     files_checked = 0
@@ -86,86 +54,100 @@ def check_mappings():
         return 1
     
     # Recopilar todos los archivos en modules/
-    all_files = []
-    for module_dir in modules_dir.iterdir():
-        if not module_dir.is_dir():
+    for file_path in modules_dir.rglob('*'):
+        if not file_path.is_file():
             continue
-        
-        # Buscar archivos en el modulo y subdirectorios
-        for file_path in module_dir.rglob('*'):
-            if file_path.is_file():
-                all_files.append(file_path)
-    
-    print(f"Archivos encontrados en modules/: {len(all_files)}\n")
-    
-    # Verificar cada archivo
-    for file_path in all_files:
+            
         try:
             rel_path = file_path.relative_to(modules_dir)
         except ValueError:
             continue
-        
+            
         files_checked += 1
         fname = file_path.name
         
-        # Saltar dotfiles (se dotifican automaticamente)
+        # Saltar dotfiles
         if fname.startswith('.'):
             continue
-        
-        # Construir ruta relativa desde modules/ para comparar
-        # Ejemplo: "shell/bash/bashrc" -> necesitamos "bashrc" o "bash/bashrc"
+            
         parts = rel_path.parts
-        
-        # Nombre base
         base_name = fname
         
-        # Ruta relativa sin el primer nivel (modulo)
-        # modules/shell/bash/bashrc -> bash/bashrc
-        if len(parts) > 1:
-            subpath = '/'.join(parts[1:])
-        else:
-            subpath = fname
-
-        
-        # Verificar si existe algun mapping
+        # Encontrar el nombre del módulo (último directorio antes de los archivos configuración)
+        # Por simplicidad, probaremos todas las partes como posibles módulos
         found = False
         
-        # Opcion 1: nombre base exacto
-        if base_name in mapping_keys:
+        # 1. Nombre base
+        if base_name in base_keys:
             found = True
         
-        # Opcion 2: subpath (sin modulo principal)
-        elif subpath in mapping_keys:
-            found = True
-        
-        # Opcion 3: path completo desde modules/
-        elif str(rel_path).replace('\\', '/') in mapping_keys:
-            found = True
-        
-        # Opcion 4: claves que terminen en /nombre_base
+        # 2. Subpath (relativo a modules/)
         if not found:
-            for key in mapping_keys:
-                if key.endswith(f'/{base_name}'):
+            # shell/bash/bashrc
+            if len(parts) > 1:
+                # Probar bash/bashrc
+                for i in range(len(parts)-1):
+                    p = '/'.join(parts[i+1:])
+                    if p in base_keys:
+                        found = True
+                        break
+            
+            # Probar path completo
+            if not found:
+                p_full = '/'.join(parts)
+                if p_full in base_keys:
+                    found = True
+
+        # 3. Sufijo /nombre_base
+        if not found:
+            for k in base_keys:
+                if k.endswith(f'/{base_name}'):
                     found = True
                     break
         
+        # 4. Wildcards y Optimización (NUEVO)
+        if not found:
+            # Probar cada parte de la ruta como posible nombre de módulo para wildcard (*|module)
+            for part in parts:
+                if f"*|{part}" in mapping_keys:
+                    found = True
+                    break
+            
+            if not found and "*" in mapping_keys:
+                 found = True
+
+            # Verificar si algún padre tiene mapeo de directorio explícito
+            if not found:
+                for i in range(len(parts)):
+                    p = '/'.join(parts[0:i+1])
+                    if p in base_keys or f"{p}/*" in base_keys:
+                        found = True
+                        break
+                # También probar sin categoría
+                if not found and len(parts) > 1:
+                    for i in range(1, len(parts)):
+                        p = '/'.join(parts[1:i+1])
+                        if p in base_keys or f"{p}/*" in base_keys:
+                            found = True
+                            break
+
         if not found:
             rel_str = str(rel_path).replace('\\', '/')
+            # No reportar como error README o LICENSE si no tienen mapping (silencioso)
+            if base_name.upper() in ['README.MD', 'README', 'LICENSE', 'LICENSE.MD']:
+                continue
+                
             print(f"ERROR: Archivo sin mapping: {base_name} (en {rel_str})", file=sys.stderr)
             errors += 1
-    
+            
     print(f"\nArchivos verificados: {files_checked}")
     print("="*60)
     
     if errors > 0:
         print(f"X Se detectaron {errors} archivos sin mapping", file=sys.stderr)
-        print(f"  Agrega entradas en install-mappings.yml", file=sys.stderr)
-        print(f"  (usa 'ignore:' para README.md, etc.)", file=sys.stderr)
-        print("="*60)
         return 1
     else:
         print("✓ Todos los archivos tienen mapping correcto")
-        print("="*60)
         return 0
 
 

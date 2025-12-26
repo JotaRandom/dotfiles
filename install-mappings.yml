@@ -118,10 +118,10 @@ spacefm.conf|spacefm: xdg:spacefm/spacefm.conf          # modules/desktop/file-m
 # Toolkit / System
 .gtkrc|gtk-1.2: home:.gtkrc                          # modules/desktop/gtk/gtk-1.2
 .gtkrc-2.0|gtk-2.0: home:.gtkrc-2.0                  # modules/desktop/gtk/gtk-2.0 (Config File)
-*|gtk-2.0: home:.local/share/themes/RetroClassic98/gtk-2.0 # modules/desktop/gtk/gtk-2.0 (Theme Assets - exclude .gtkrc-2.0 via ignore rule or copy behavior)
+"*|gtk-2.0": home:.local/share/themes/RetroClassic98/gtk-2.0 # modules/desktop/gtk/gtk-2.0 (Theme Assets - exclude .gtkrc-2.0 via ignore rule or copy behavior)
 
 # GTK 3.0 (Full directory mapping for Assets & Modular CSS)
-*|gtk-3.0: xdg:gtk-3.0/                              # modules/desktop/gtk/gtk-3.0
+"*|gtk-3.0": xdg:gtk-3.0/                              # modules/desktop/gtk/gtk-3.0
 
 settings.ini|gtk-4.0: xdg:gtk-4.0/settings.ini          # modules/desktop/gtk/gtk-4.0
 gtk.css|gtk-4.0: xdg:gtk-4.0/gtk.css                    # modules/desktop/gtk/gtk-4.0
