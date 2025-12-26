@@ -103,6 +103,8 @@ def sanitize_crlf_if_needed(source_file: Path, target_dir: Path) -> Path:
     """
     Verifica si un archivo necesita sanitización CRLF y crea copia sanitizada si es necesario.
     
+    Proactividad: analiza cualquier archivo de texto (no binario) en busca de CRLF.
+    
     Args:
         source_file: Ruta al archivo fuente a verificar
         target_dir: Directorio destino (para crear directorio sanitizado)
@@ -112,23 +114,20 @@ def sanitize_crlf_if_needed(source_file: Path, target_dir: Path) -> Path:
     """
     basename = source_file.name
     
-    # Solo verificar archivos en la lista de candidatos
-    if basename not in SANITIZE_CANDIDATES:
-        return source_file
-    
     # Verificar que el archivo existe y es un archivo regular
     if not source_file.exists() or not source_file.is_file():
         return source_file
     
-    # Detectar archivos binarios antes de intentar leerlos como texto
+    # 1. Protección contra binarios (Crítico)
     if is_binary_file(source_file):
-        print(f"  ⚠ Saltando archivo binario: {basename}")
+        # print(f"  [!] Saltando archivo binario: {basename}") # Comentado para reducir ruido si no es un candidato explícito
         return source_file
     
-    # Verificar CRLF
+    # 2. Verificar CRLF (Solo si es texto)
     try:
+        # Leer una porción representativa o todo si es pequeño
         with open(source_file, 'rb') as f:
-            content = f.read()
+            content = f.read(1024 * 1024) # Leer máximo 1MB para check
             if b'\r\n' not in content:
                 # No se encontró CRLF, usar original
                 return source_file
@@ -136,7 +135,7 @@ def sanitize_crlf_if_needed(source_file: Path, target_dir: Path) -> Path:
         # No se puede leer, usar original
         return source_file
     
-    # CRLF encontrado - crear copia sanitizada
+    # 3. CRLF encontrado - crear copia sanitizada
     sanitized_dir = target_dir / '.dotfiles_sanitized'
     sanitized_dir.mkdir(parents=True, exist_ok=True)
     
@@ -157,9 +156,9 @@ def sanitize_crlf_if_needed(source_file: Path, target_dir: Path) -> Path:
         if os.access(source_file, os.X_OK):
             os.chmod(sanitized_path, 0o755)
         
-        print(f"  🔧 Sanitizado CRLF a LF: {basename}")
+        print(f"  [FIX] Sanitizado CRLF a LF: {basename}")
         return sanitized_path
     
     except (OSError, IOError) as e:
-        print(f"  ⚠ Falló sanitización de {basename}: {e}")
+        print(f"  [!] Falló sanitización de {basename}: {e}")
         return source_file

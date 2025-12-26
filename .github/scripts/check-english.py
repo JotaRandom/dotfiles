@@ -104,7 +104,7 @@ def main():
     
     print("\n" + "="*60)
     if total_errors == 0:
-        print("✓ No se encontraron cadenas en ingles")
+        print("[OK] No se encontraron cadenas en ingles")
         print("="*60)
         return 0
     else:

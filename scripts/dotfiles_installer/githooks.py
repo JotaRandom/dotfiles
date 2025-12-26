@@ -55,7 +55,7 @@ def setup_hooks_path(hooks_dir: str = '.githooks') -> bool:
             check=True,
             capture_output=True
         )
-        print(f"✓ Ruta de hooks de Git configurada a '{hooks_dir}'")
+        print(f"[OK] Ruta de hooks de Git configurada a '{hooks_dir}'")
         print(f"  Para revertir: git config --unset core.hooksPath")
         return True
     except subprocess.CalledProcessError as e:
@@ -128,15 +128,15 @@ def fix_executable_permissions() -> int:
                 check=True
             )
             updated += 1
-            print(f"  ✓ {file_path}")
+            print(f"  [OK] {file_path}")
         except subprocess.CalledProcessError:
             # Pueden fallar algunos (ej: archivos ya con +x), no es crítico
             errors += 1
     
     if updated > 0:
-        print(f"\n✓ {updated} archivo(s) con shebang actualizado(s)")
+        print(f"\n[OK] {updated} archivo(s) con shebang actualizado(s)")
     else:
-        print("\n✓ No se necesitaron actualizaciones")
+        print("\n[OK] No se necesitaron actualizaciones")
     
     if errors > 0 and errors < len(files):
         print(f"  (algunos archivos ya tenían permisos correctos)")
@@ -169,7 +169,7 @@ def setup_githooks(hooks_dir: str = '.githooks', fix_permissions: bool = True) -
         fix_executable_permissions()
     
     print("\n" + "="*60)
-    print("✓ Configuración de Git hooks completada")
+    print("[OK] Configuración de Git hooks completada")
     print("="*60)
     
     return 0
@@ -192,14 +192,14 @@ def disable_githooks() -> int:
             check=True,
             capture_output=True
         )
-        print("✓ Hooks personalizados desactivados")
+        print("[OK] Hooks personalizados desactivados")
         print("  Git usará .git/hooks/ (configuración por defecto)")
         return 0
     except subprocess.CalledProcessError as e:
         # Si el config no existe, no es un error
         stderr_str = e.stderr.decode('utf-8', errors='ignore').lower()
         if 'not found' in stderr_str or 'no such' in stderr_str:
-            print("✓ No había hooks personalizados configurados")
+            print("[OK] No había hooks personalizados configurados")
             return 0
         print(f"ERROR al desactivar hooks: {e}", file=sys.stderr)
         if e.stderr:

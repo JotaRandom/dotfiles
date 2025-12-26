@@ -9,13 +9,13 @@ se creen correctamente según install-mappings.yml.
 Este script es un reemplazo completo y mejorado de test-install-mappings.sh
 con 100% de paridad funcional:
 
-- ✓ Detección de secretos en modules/
-- ✓ Verificación de todos los mappings del YAML
-- ✓ Soporte para mappings múltiples y formato key|module
-- ✓ Detección de archivos sanitizados con verificación CRLF
-- ✓ Verificación de coherencia de directorios
-- ✓ Prueba de portabilidad (ejecución desde diferentes directorios)
-- ✓ Códigos de salida idénticos (0=OK, 1=error, 3=directorios, 4=secretos)
+- [OK] Detección de secretos en modules/
+- [OK] Verificación de todos los mappings del YAML
+- [OK] Soporte para mappings múltiples y formato key|module
+- [OK] Detección de archivos sanitizados con verificación CRLF
+- [OK] Verificación de coherencia de directorios
+- [OK] Prueba de portabilidad (ejecución desde diferentes directorios)
+- [OK] Códigos de salida idénticos (0=OK, 1=error, 3=directorios, 4=secretos)
 
 Ventajas sobre el bash:
 - Usa yaml.safe_load() para parsing robusto del YAML
@@ -603,13 +603,13 @@ def test_subcommands(repo_root: Path) -> bool:
             timeout=30
         )
         if result.returncode == 0:
-            print("  ✓ inspect-mappings OK")
+            print("  [OK] inspect-mappings OK")
         else:
-            print(f"  ✗ inspect-mappings FALLÓ (exit {result.returncode})")
+            print(f"  [X] inspect-mappings FALLÓ (exit {result.returncode})")
             print(f"    stderr: {result.stderr[:200]}")
             errors += 1
     except Exception as e:
-        print(f"  ✗ inspect-mappings ERROR: {e}")
+        print(f"  [X] inspect-mappings ERROR: {e}")
         errors += 1
     
     # Test 2: backup-list (sin backups aún, pero no debe fallar)
@@ -623,12 +623,12 @@ def test_subcommands(repo_root: Path) -> bool:
             timeout=10
         )
         if result.returncode == 0:
-            print("  ✓ backup-list OK")
+            print("  [OK] backup-list OK")
         else:
-            print(f"  ✗ backup-list FALLÓ (exit {result.returncode})")
+            print(f"  [X] backup-list FALLÓ (exit {result.returncode})")
             errors += 1
     except Exception as e:
-        print(f"  ✗ backup-list ERROR: {e}")
+        print(f"  [X] backup-list ERROR: {e}")
         errors += 1
     
     # Test 3: backup-restore --latest --dry-run (debe fallar gracefully si no hay backups)
@@ -643,12 +643,12 @@ def test_subcommands(repo_root: Path) -> bool:
         )
         # Puede ser 0 (éxito) o 1 (no hay backups), ambos son válidos
         if result.returncode in [0, 1]:
-            print("  ✓ backup-restore OK (comportamiento esperado)")
+            print("  [OK] backup-restore OK (comportamiento esperado)")
         else:
-            print(f"  ✗ backup-restore FALLÓ (exit {result.returncode})")
+            print(f"  [X] backup-restore FALLÓ (exit {result.returncode})")
             errors += 1
     except Exception as e:
-        print(f"  ✗ backup-restore ERROR: {e}")
+        print(f"  [X] backup-restore ERROR: {e}")
         errors += 1
     
     # Test 4: backup-clean 5 --dry-run
@@ -662,12 +662,12 @@ def test_subcommands(repo_root: Path) -> bool:
             timeout=10
         )
         if result.returncode == 0:
-            print("  ✓ backup-clean OK")
+            print("  [OK] backup-clean OK")
         else:
-            print(f"  ✗ backup-clean FALLÓ (exit {result.returncode})")
+            print(f"  [X] backup-clean FALLÓ (exit {result.returncode})")
             errors += 1
     except Exception as e:
-        print(f"  ✗ backup-clean ERROR: {e}")
+        print(f"  [X] backup-clean ERROR: {e}")
         errors += 1
     
     # Test 5: update-submodules (solo si hay distros/PKGBUILD/)
@@ -684,13 +684,13 @@ def test_subcommands(repo_root: Path) -> bool:
                 timeout=60
             )
             if result.returncode == 0:
-                print("  ✓ update-submodules OK")
+                print("  [OK] update-submodules OK")
             else:
-                print(f"  ✗ update-submodules FALLÓ (exit {result.returncode})")
+                print(f"  [X] update-submodules FALLÓ (exit {result.returncode})")
                 print(f"    stderr: {result.stderr[:200]}")
                 errors += 1
         except Exception as e:
-            print(f"  ✗ update-submodules ERROR: {e}")
+            print(f"  [X] update-submodules ERROR: {e}")
             errors += 1
     else:
         print("  ⊘ update-submodules SKIP (no hay distros/PKGBUILD/)")
@@ -706,13 +706,13 @@ def test_subcommands(repo_root: Path) -> bool:
             timeout=30
         )
         if result.returncode == 0:
-            print("  ✓ setup-githooks OK")
+            print("  [OK] setup-githooks OK")
         else:
-            print(f"  ✗ setup-githooks FALLÓ (exit {result.returncode})")
+            print(f"  [X] setup-githooks FALLÓ (exit {result.returncode})")
             print(f"    stderr: {result.stderr[:200]}")
             errors += 1
     except Exception as e:
-        print(f"  ✗ setup-githooks ERROR: {e}")
+        print(f"  [X] setup-githooks ERROR: {e}")
         errors += 1
     
     # Test 7: setup-githooks --disable
@@ -726,22 +726,22 @@ def test_subcommands(repo_root: Path) -> bool:
             timeout=10
         )
         if result.returncode == 0:
-            print("  ✓ setup-githooks --disable OK")
+            print("  [OK] setup-githooks --disable OK")
         else:
-            print(f"  ✗ setup-githooks --disable FALLÓ (exit {result.returncode})")
+            print(f"  [X] setup-githooks --disable FALLÓ (exit {result.returncode})")
             errors += 1
     except Exception as e:
-        print(f"  ✗ setup-githooks --disable ERROR: {e}")
+        print(f"  [X] setup-githooks --disable ERROR: {e}")
         errors += 1
     
     # Resumen
     print("\n" + "="*60)
     if errors == 0:
-        print("✓ TODOS LOS SUBCOMANDOS FUNCIONAN CORRECTAMENTE")
+        print("[OK] TODOS LOS SUBCOMANDOS FUNCIONAN CORRECTAMENTE")
         print("="*60)
         return True
     else:
-        print(f"✗ {errors} SUBCOMANDO(S) FALLÓ/FALLARON")
+        print(f"[X] {errors} SUBCOMANDO(S) FALLÓ/FALLARON")
         print("="*60)
         return False
 
@@ -874,16 +874,16 @@ def main():
         if warnings:
             print(f"\nWarnings: {len(warnings)}")
             for w in warnings:
-                print(f"  ⚠ {w}")
+                print(f"  [!] {w}")
         
         if errors:
             print(f"\nErrores: {len(errors)}")
             for e in errors:
-                print(f"  ✗ {e}")
+                print(f"  [X] {e}")
             print("\n" + "="*60)
             return 1
         else:
-            print("\n✓ Todos los symlinks verificados correctamente")
+            print("\n[OK] Todos los symlinks verificados correctamente")
             print("="*60)
     
     # Verificación adicional: probar que funciona desde diferentes directorios
@@ -894,11 +894,11 @@ def main():
     # Test de subcomandos
     if not args.no_subcommands:
         if not test_subcommands(repo_root):
-            print("\n✗ Algunos subcomandos no pasaron las pruebas")
+            print("\n[X] Algunos subcomandos no pasaron las pruebas")
             return 1
     
     print("\n" + "="*60)
-    print("✓ TODAS LAS VERIFICACIONES PASARON")
+    print("[OK] TODAS LAS VERIFICACIONES PASARON")
     print("="*60)
     return 0
 

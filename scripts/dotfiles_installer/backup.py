@@ -180,15 +180,15 @@ def restore_backup(timestamp: str, target_dir: Optional[Path] = None, dry_run: b
                          else:
                              original_path.unlink()
                     shutil.copytree(backup_file, original_path)
-                    print(f"  > Restaurado (dir): {original_path.name}")
+                    print(f"  [OK] Restaurado (dir): {original_path.name}")
                 else:
                     # Copiar backup al original
                     shutil.copy2(backup_file, original_path)
-                    print(f"  > Restaurado: {original_path.name}")
+                    print(f"  [OK] Restaurado: {original_path.name}")
                 
                 restored += 1
             except Exception as e:
-                print(f"  X Error restaurando {original_path.name}: {e}")
+                print(f"  [X] Error restaurando {original_path.name}: {e}")
                 errors += 1
     
     print(f"\nResultado: {restored} restaurados, {errors} errores")
@@ -223,15 +223,15 @@ def clean_old_backups(keep: int = 5, target_dir: Optional[Path] = None, dry_run:
         backup_path = get_backup_dir() / timestamp
         
         if dry_run:
-            print(f"  [DRY-RUN] Eliminaría: {timestamp}")
+            print(f"  [DRY-RUN] Eliminaria: {timestamp}")
             deleted += 1
         else:
             try:
                 shutil.rmtree(backup_path)
-                print(f"  🗑 Eliminado: {timestamp}")
+                print(f"  [CL] Eliminado: {timestamp}")
                 deleted += 1
             except Exception as e:
-                print(f"  ✗ Error eliminando {timestamp}: {e}")
+                print(f"  [X] Error eliminando {timestamp}: {e}")
     
     print(f"\nEliminados: {deleted} backup(s)")
     return deleted

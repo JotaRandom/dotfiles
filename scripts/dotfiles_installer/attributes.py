@@ -126,9 +126,9 @@ def fix_attributes(path: Path, recursive: bool = False, verbose: bool = False) -
         # Agregar permisos de ejecución: rwxr-xr-x (0o755)
         os.chmod(path, 0o755)
         if verbose:
-            print(f"  ✓ Permisos ejecutables agregados: {path.name}")
+            print(f"  [OK] Permisos ejecutables agregados: {path.name}")
         return True
     except (OSError, IOError) as e:
         if verbose:
-            print(f"  ⚠ No se pudieron establecer permisos en {path.name}: {e}")
+            print(f"  [!] No se pudieron establecer permisos en {path.name}: {e}")
         return False

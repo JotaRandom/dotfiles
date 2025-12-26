@@ -30,18 +30,20 @@ def check_and_install_pyyaml():
     try:
         import yaml
         return True
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         # Instalar automáticamente sin preguntar (como el script original)
-        print("⚠ PyYAML no está instalado. Instalando automáticamente...")
+        print("[!] PyYAML no está instalado. Instalando automáticamente...")
         try:
-            subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pyyaml'],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print("✓ PyYAML instalado exitosamente")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "pyyaml"],
+                                 stdout=subprocess.DEVNULL,
+                                 stderr=subprocess.DEVNULL)
+            import yaml
+            print("[OK] PyYAML instalado exitosamente")
             return True
         except subprocess.CalledProcessError:
-            print("✗ ERROR: No se pudo instalar PyYAML automáticamente")
-            print("  Por favor ejecuta: pip install pyyaml")
-            return False
+            print("[X] ERROR: No se pudo instalar PyYAML automáticamente")
+            print("Por favor instala 'python-yaml' o 'pyyaml' manualmente.")
+            sys.exit(1)
 
 
 # Import git-lfs checker from module
@@ -72,7 +74,7 @@ def install_module(module_path: Path, config: DotfilesConfig,
         dry_run: Si True, solo muestra lo que se haría sin crear symlinks
     """
     if not module_path.exists() or not module_path.is_dir():
-        print(f"⚠ Módulo no encontrado: {module_path}")
+        print(f"[X] Módulo no encontrado: {module_path}")
         return
     
     module_name = module_path.name
@@ -88,7 +90,7 @@ def install_module(module_path: Path, config: DotfilesConfig,
     # y evitamos iterar por sus archivos individuales.
     destinations, is_explicit, action = mapper.resolve_destination('*', module_name)
     if is_explicit and action != 'ignore' and destinations:
-        print(f"  → Optimización: Creando enlace de directorio para módulo {module_name}")
+        print(f"  [OK] Optimización: Creando enlace de directorio para módulo {module_name}")
         for dest in destinations:
             if symlink_mgr.create_symlink(module_path, dest, module_name, 
                                          allow_backup=allow_backup,
@@ -97,7 +99,7 @@ def install_module(module_path: Path, config: DotfilesConfig,
                 if fix_attribs:
                     fix_attributes(module_path, recursive=True, verbose=True)
         
-        print(f"\n✓ Módulo '{module_name}' instalado (directorio):")
+        print(f"\n[OK] Módulo '{module_name}' instalado (directorio):")
         print(f"  Symlinks creados: {symlinks_created}")
         return
 
@@ -119,12 +121,12 @@ def install_module(module_path: Path, config: DotfilesConfig,
         # Manejar archivos a ignorar
         if not destinations or action == 'ignore':
             if is_explicit:
-                print(f"  → Ignorando: {rel_path}")
+                print(f"  [OK] Ignorando: {rel_path}")
             continue
             
         # Si es un directorio y tiene mapeo explícito, lo enlazamos completo y saltamos hijos
         if file_path.is_dir() and is_explicit:
-            print(f"  → Creando enlace de directorio: {rel_path}")
+            print(f"  [OK] Creando enlace de directorio: {rel_path}")
             for dest in destinations:
                 if symlink_mgr.create_symlink(file_path, dest, module_name, 
                                              allow_backup=allow_backup,
@@ -162,7 +164,7 @@ def install_module(module_path: Path, config: DotfilesConfig,
                 if fix_attribs:
                     fix_attributes(source_to_link, recursive=False, verbose=True)
         
-    print(f"\n✓ Módulo '{module_name}' instalado:")
+    print(f"\n[OK] Módulo '{module_name}' instalado:")
     print(f"  Archivos procesados: {files_processed}")
     print(f"  Symlinks creados: {symlinks_created}")
 
@@ -243,7 +245,7 @@ Ejemplos:
   # Instalar sin crear backups (testing)
   python install.py install --no-backup modules/shell/bash
   
-  # Sanitizar CRLF → LF
+  # Sanitizar CRLF -> LF
   python install.py install --fix-eol modules/shell/bash
   
   # Permisos ejecutables en scripts
@@ -272,7 +274,7 @@ Los archivos se mapean según install-mappings.yml
     install_parser.add_argument(
         '--fix-eol',
         action='store_true',
-        help='Sanitizar finales de línea: CRLF → LF en archivos de configuración (opcional)'
+        help='Sanitizar finales de línea: CRLF -> LF en archivos de configuración (opcional)'
     )
     install_parser.add_argument(
         '--fix-attributes', '--fix-attribs', '--fix-exec',
@@ -670,7 +672,7 @@ def run_install(args):
     # Load configuration
     mappings_file = repo_root / 'install-mappings.yml'
     if not mappings_file.exists():
-        print(f"✗ Mappings file not found: {mappings_file}")
+        print(f"[X] Mappings file not found: {mappings_file}")
         return 1
     
     print("Dotfiles Installer (Python)")
@@ -743,7 +745,7 @@ def run_install(args):
     with_qt = args.with_qt or args.with_themes
     
     if not modules:
-        print("✗ No modules found to install")
+        print("[X] No modules found to install")
         return 1
     
     # Filter modules if needed (only if installing all)
@@ -772,7 +774,7 @@ def run_install(args):
     elif args.dry_run:
         print("🔍 DRY-RUN MODE: No se crearán symlinks ni backups\n")
     else:
-        print("⚠ Backups deshabilitados (--no-backup)\n")
+        print("[X] Backups deshabilitados (--no-backup)\n")
     
     print(f"Modules to install: {len(modules)}\n")
     
@@ -788,7 +790,7 @@ def run_install(args):
         symlink_mgr.save_backup_metadata()
     
     print(f"\n{'='*60}")
-    print("✓ Installation complete!")
+    print("[OK] Installation complete!")
     print(f"{'='*60}")
     
     # Verificar fuentes requeridas
@@ -850,13 +852,13 @@ def run_backup_restore(args):
     if args.latest:
         backup_dir = get_backup_dir()
         if not backup_dir.exists():
-            print("ERROR: No hay backups disponibles", file=sys.stderr)
+            print("[X] No hay backups disponibles", file=sys.stderr)
             return 1
         
         # Encontrar el más reciente
         backups = sorted([d.name for d in backup_dir.iterdir() if d.is_dir()], reverse=True)
         if not backups:
-            print("ERROR: No hay backups disponibles", file=sys.stderr)
+            print("[X] No hay backups disponibles", file=sys.stderr)
             return 1
         
         timestamp = backups[0]
@@ -866,7 +868,7 @@ def run_backup_restore(args):
     if args.timestamp:
         return restore_backup(args.timestamp, args.dry_run)
     
-    print("ERROR: Especifica --timestamp o --latest", file=sys.stderr)
+    print("[X] ERROR: Especifica --timestamp o --latest", file=sys.stderr)
     return 1
 
 
@@ -875,7 +877,7 @@ def run_backup_clean(args):
     from dotfiles_installer.backup import clean_old_backups
     
     if args.keep < 0:
-        print("ERROR: El número de backups a mantener debe ser >= 0", file=sys.stderr)
+        print("[X] ERROR: El número de backups a mantener debe ser >= 0", file=sys.stderr)
         return 1
     
     clean_old_backups(keep=args.keep, dry_run=args.dry_run)
@@ -916,7 +918,7 @@ def run_update_submodules(args):
         print("\nNo se encontraron submódulos para actualizar")
         return 0
     
-    print(f"\n✓ {updated} submódulo(s) actualizado(s)")
+    print(f"\n[OK] {updated} submódulo(s) actualizado(s)")
     
     # Commit si se solicitó y hay cambios
     if not args.no_commit:
@@ -926,7 +928,7 @@ def run_update_submodules(args):
                 ['git', 'commit', '-m', 'chore: update PKGBUILD submodules', '--no-verify'],
                 check=False
             )
-            print("✓ Cambios commiteados")
+            print("[OK] Cambios commiteados")
             print("\nListo. Revisa con 'git status' y sube tu rama de trabajo.")
         except:
             print("No hay cambios para commitear")

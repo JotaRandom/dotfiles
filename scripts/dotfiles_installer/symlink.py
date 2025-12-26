@@ -63,9 +63,9 @@ class SymlinkManager:
         try:
             with open(metadata_file, 'w', encoding='utf-8') as f:
                 json.dump(metadata_to_save, f, indent=2, ensure_ascii=False)
-            print(f"  📋 Metadata guardada: {metadata_file}")
+            print(f"  [OK] Metadata guardada: {metadata_file}")
         except Exception as e:
-            print(f"  ⚠ Error guardando metadata: {e}")
+            print(f"  [!] Error guardando metadata: {e}")
     
     def create_symlink(self, source: Path, destination: Path, module_name: str,
                       allow_backup: bool = True, dry_run: bool = False) -> bool:
@@ -84,12 +84,12 @@ class SymlinkManager:
         """
         # Ensure source exists
         if not source.exists():
-            print(f"  ⚠ Source does not exist: {source}")
+            print(f"  [!] Source does not exist: {source}")
             return False
         
         # DRY-RUN: Solo mostrar lo que se haría
         if dry_run:
-            print(f"  [DRY-RUN] {destination} → {source}")
+            print(f"  [DRY-RUN] {destination} -> {source}")
             return True  # Reportar como "exitoso" para contadores
         
         # Create destination parent directory
@@ -99,7 +99,7 @@ class SymlinkManager:
         if destination.exists() or destination.is_symlink():
             # Check if it's already the correct symlink
             if self._is_correct_symlink(destination, source):
-                print(f"  ✓ Symlink already correct: {destination.name}")
+                print(f"  [OK] Symlink already correct: {destination.name}")
                 return False
             
             # Backup existing file/directory if allowed
@@ -108,7 +108,7 @@ class SymlinkManager:
                 if destination.is_dir() and not destination.is_symlink():
                     self._create_backup(destination, module_name)
                     shutil.rmtree(destination)
-                    print(f"  🗑 Directorio existente eliminado: {destination}")
+                    print(f"  [X] Directorio existente eliminado: {destination}")
                 elif not destination.is_symlink():
                     # Regular file - create backup
                     self._create_backup(destination, module_name)
@@ -125,10 +125,10 @@ class SymlinkManager:
             destination.parent.mkdir(parents=True, exist_ok=True)
             
             destination.symlink_to(source)
-            print(f"  ✓ {destination} → {source}")
+            print(f"  [OK] {destination} -> {source}")
             return True
         except OSError as e:
-            print(f"  ✗ Failed to create symlink {destination}: {e}")
+            print(f"  [X] Failed to create symlink {destination}: {e}")
             return False
     
     def _is_correct_symlink(self, link_path: Path, expected_target: Path) -> bool:
@@ -174,10 +174,10 @@ class SymlinkManager:
         try:
             if file_path.is_dir():
                 shutil.copytree(file_path, backup_path)
-                print(f"  📦 Backed up directory: {file_path.name}")
+                print(f"  [BOX] Backed up directory: {file_path.name}")
             else:
                 shutil.copy2(file_path, backup_path)
-                print(f"  📦 Backed up: {file_path.name}")
+                print(f"  [BOX] Backed up: {file_path.name}")
             
             # Agregar a metadata
             self._backup_metadata['modules_installed'].add(module_name)
@@ -188,7 +188,7 @@ class SymlinkManager:
                 'is_dir': file_path.is_dir()
             })
         except OSError as e:
-            print(f"  ⚠ Backup failed for {file_path.name}: {e}")
+            print(f"  [!] Backup failed for {file_path.name}: {e}")
     
     def verify_symlink(self, link_path: Path, expected_target: Path) -> bool:
         """

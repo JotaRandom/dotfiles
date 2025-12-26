@@ -65,17 +65,17 @@ def install_git_lfs_macos() -> bool:
         True si se instaló exitosamente, False en caso contrario
     """
     if not which('brew'):
-        print("  ⚠ Homebrew no está instalado")
+        print("  [!] Homebrew no está instalado")
         print("  Instala Homebrew desde: https://brew.sh/")
         return False
     
     try:
-        print("  → Instalando git-lfs con Homebrew...")
+        print("  -> Instalando git-lfs con Homebrew...")
         subprocess.check_call(['brew', 'install', 'git-lfs'])
-        print("  ✓ git-lfs instalado exitosamente")
+        print("  [OK] git-lfs instalado exitosamente")
         return True
     except subprocess.CalledProcessError:
-        print("  ✗ No se pudo instalar git-lfs con Homebrew")
+        print("  [X] No se pudo instalar git-lfs con Homebrew")
         return False
 
 
@@ -94,7 +94,7 @@ def check_and_install_git_lfs(interactive: bool = True) -> bool:
     if is_git_lfs_installed():
         return True
     
-    print("\n⚠ git-lfs no está instalado")
+    print("\n[!] git-lfs no está instalado")
     print("  git-lfs es necesario para algunos submódulos con assets grandes")
     
     # Verificar si estamos en terminal interactiva
@@ -121,14 +121,14 @@ def check_and_install_git_lfs(interactive: bool = True) -> bool:
         # Detectar distribución
         distro = detect_distro()
         if not distro:
-            print("  ⚠ No se pudo detectar la distribución Linux")
+            print("  [!] No se pudo detectar la distribución Linux")
             print("  Por favor instala git-lfs manualmente con tu package manager")
             return False
         
         # Obtener nombre del paquete
         package = get_git_lfs_package(distro)
         if not package:
-            print(f"  ⚠ No se conoce el paquete git-lfs para {distro}")
+            print(f"  [!] No se conoce el paquete git-lfs para {distro}")
             print("  Por favor instala git-lfs manualmente")
             return False
         
@@ -140,7 +140,7 @@ def check_and_install_git_lfs(interactive: bool = True) -> bool:
         return False
     
     else:
-        print(f"  ⚠ Sistema operativo no soportado: {system}")
+        print(f"  [!] Sistema operativo no soportado: {system}")
         print("  Por favor instala git-lfs manualmente")
         return False
 
@@ -165,7 +165,7 @@ def main():
     print("="*60)
     
     if is_git_lfs_installed():
-        print("✓ git-lfs ya está instalado")
+        print("[OK] git-lfs ya está instalado")
         
         # Mostrar versión
         try:

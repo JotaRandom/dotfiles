@@ -16,10 +16,11 @@ from typing import Dict, List, Optional, Tuple
 
 def detect_distro() -> Optional[str]:
     """
-    Detecta la distribución Linux actual.
+    Detecta la distribución o sistema operativo actual.
     
     Returns:
-        'arch', 'debian', 'fedora', 'opensuse', o None si no se puede detectar
+        'arch', 'debian', 'fedora', 'opensuse', 'alpine', 'gentoo', 
+        'macos', 'freebsd', o None si no se puede detectar
     """
     # Intentar leer /etc/os-release
     try:
@@ -34,8 +35,21 @@ def detect_distro() -> Optional[str]:
                 return 'fedora'
             elif 'opensuse' in content or 'suse' in content:
                 return 'opensuse'
+            elif 'alpine' in content:
+                return 'alpine'
+            elif 'gentoo' in content:
+                return 'gentoo'
     except FileNotFoundError:
         pass
+    
+    # Detección por plataforma (No Linux)
+    import platform
+    system = platform.system().lower()
+    
+    if system == 'darwin':
+        return 'macos'
+    elif 'freebsd' in system:
+        return 'freebsd'
     
     # Fallback: verificar package managers
     if which('pacman'):
@@ -46,7 +60,15 @@ def detect_distro() -> Optional[str]:
         return 'fedora'
     elif which('zypper'):
         return 'opensuse'
-    # TODO: Add more distributions with package managers
+    elif which('apk'):
+        return 'alpine'
+    elif which('emerge'):
+        return 'gentoo'
+    elif which('pkg') and system != 'darwin': # Evitar confundir con otros en mac
+        return 'freebsd'
+    elif which('brew'):
+        return 'macos'
+        
     return None
 
 
@@ -112,6 +134,30 @@ def get_package_manager_info(distro: str) -> Optional[Dict[str, any]]:
             'update_args': ['refresh'],
             'search_args': ['search'],
         },
+        'alpine': {
+            'command': 'apk',
+            'install_args': ['add'],
+            'update_args': ['update'],
+            'search_args': ['search'],
+        },
+        'gentoo': {
+            'command': 'emerge',
+            'install_args': ['--ask=n'],
+            'update_args': ['--sync'],
+            'search_args': ['--search'],
+        },
+        'freebsd': {
+            'command': 'pkg',
+            'install_args': ['install', '-y'],
+            'update_args': ['update'],
+            'search_args': ['search'],
+        },
+        'macos': {
+            'command': 'brew',
+            'install_args': ['install'],
+            'update_args': ['update'],
+            'search_args': ['search'],
+        },
     }
     
     return package_managers.get(distro)
@@ -132,18 +178,20 @@ def install_package(package: str, distro: str, interactive: bool = True) -> bool
     # Obtener información del package manager
     pm_info = get_package_manager_info(distro)
     if not pm_info:
-        print(f"  ⚠ Distribución no soportada: {distro}")
+        print(f"  [!] Distribución no soportada: {distro}")
         return False
     
     # Verificar que el package manager existe
     if not which(pm_info['command']):
-        print(f"  ⚠ Package manager no encontrado: {pm_info['command']}")
+        print(f"  [!] Package manager no encontrado: {pm_info['command']}")
         return False
     
-    # Obtener herramientas de privilegios
-    priv_tools = get_privilege_tools()
+    # Herramientas de privilegios
+    priv_tools = ['sudo', 'doas', 'pkexec']
+    priv_tools = [pt for pt in priv_tools if which(pt)]
+    
     if not priv_tools:
-        print(f"  ⚠ No se encontró herramienta de privilegios (sudo, doas, etc.)")
+        print(f"  [!] No se encontró herramienta de privilegios (sudo, doas, etc.)")
         return False
     
     # Preguntar si instalar (si es interactivo)
@@ -156,17 +204,28 @@ def install_package(package: str, distro: str, interactive: bool = True) -> bool
     # Construir comando de instalación
     install_cmd = [pm_info['command']] + pm_info['install_args'] + [package]
     
+    # Homebrew (macOS) NO debe usar sudo/privilegios
+    if distro == 'macos':
+        try:
+            print(f"  -> Instalando {package} con {pm_info['command']}...")
+            subprocess.check_call(install_cmd)
+            print(f"  [OK] {package} instalado exitosamente")
+            return True
+        except subprocess.CalledProcessError:
+            print(f"  [X] No se pudo instalar {package}")
+            return False
+            
     # Intentar con cada herramienta de privilegios
     for priv_tool in priv_tools:
         try:
-            print(f"  → Instalando {package} con {priv_tool}...")
+            print(f"  -> Instalando {package} con {priv_tool}...")
             subprocess.check_call([priv_tool] + install_cmd)
-            print(f"  ✓ {package} instalado exitosamente")
+            print(f"  [OK] {package} instalado exitosamente")
             return True
         except subprocess.CalledProcessError:
             continue
     
-    print(f"  ✗ No se pudo instalar {package}")
+    print(f"  [X] No se pudo instalar {package}")
     return False
 
 
@@ -211,9 +270,13 @@ def is_package_installed(package: str, distro: str) -> bool:
     
     check_commands = {
         'arch': ['pacman', '-Q', package],
-        'debian': ['dpkg', '-l', package],
+        'debian': ['dpkg-query', '-W', package], # Simplificado ya que arriba hay lógica especial para Debian
         'fedora': ['rpm', '-q', package],
         'opensuse': ['rpm', '-q', package],
+        'alpine': ['apk', 'info', '-e', package],
+        'gentoo': ['qlist', '-I', package],
+        'freebsd': ['pkg', 'info', package],
+        'macos': ['brew', 'list', package],
     }
     
     cmd = check_commands.get(distro)

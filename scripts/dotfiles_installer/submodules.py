@@ -77,7 +77,7 @@ def update_submodule(path: Path, repo_root: Optional[Path] = None, auto_commit: 
         True si se actualizó exitosamente
     """
     if not is_git_available():
-        print("  ⚠ Git no está disponible en el sistema", file=sys.stderr)
+        print("  [!] Git no está disponible en el sistema", file=sys.stderr)
         return False
         
     name = path.name
@@ -112,13 +112,13 @@ def update_submodule(path: Path, repo_root: Optional[Path] = None, auto_commit: 
                     run_git_command(['git', 'add', str(relative_path)], cwd=repo_root)
                 except ValueError:
                     # Si path no es relativo a repo_root, saltar add
-                    print(f"    ⚠ Saltando git add: {path} no está dentro de repo_root")
+                    print(f"    [!] Saltando git add: {path} no está dentro de repo_root")
         
-        print(f"    ✓ {name} actualizado")
+        print(f"    [OK] {name} actualizado")
         return True
         
     except subprocess.CalledProcessError as e:
-        print(f"    ✗ Error actualizando {name}: {e}", file=sys.stderr)
+        print(f"    [X] Error actualizando {name}: {e}", file=sys.stderr)
         return False
 
 
@@ -168,7 +168,7 @@ def update_repo_submodules(recursive: bool = False) -> int:
         0 si éxito, 1 si error
     """
     if not is_git_available():
-        print("✗ Git no disponible", file=sys.stderr)
+        print("[X] Git no disponible", file=sys.stderr)
         return 1
         
     print("Actualizando submódulos del repositorio...")
@@ -180,9 +180,9 @@ def update_repo_submodules(recursive: bool = False) -> int:
         cmd.extend(['--remote', '--merge'])
         
         run_git_command(cmd)
-        print("✓ Submódulos del repositorio actualizados")
+        print("[OK] Submódulos del repositorio actualizados")
         return 0
         
     except Exception:
-        print("✗ Error actualizando submódulos del repositorio", file=sys.stderr)
+        print("[X] Error actualizando submódulos del repositorio", file=sys.stderr)
         return 1

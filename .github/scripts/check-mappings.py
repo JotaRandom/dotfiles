@@ -144,10 +144,10 @@ def check_mappings():
     print("="*60)
     
     if errors > 0:
-        print(f"X Se detectaron {errors} archivos sin mapping", file=sys.stderr)
+        print(f"[X] Se detectaron {errors} archivos sin mapping", file=sys.stderr)
         return 1
     else:
-        print("✓ Todos los archivos tienen mapping correcto")
+        print("[OK] Todos los archivos tienen mapping correcto")
         return 0
 
 

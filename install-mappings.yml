@@ -6,8 +6,6 @@ default_action: dotify
 # modules/shell
 #########################
 
-## FixMe: Fix the install mappings for the shell modules that actually use the xdg locations
-
 # Shell-specific configs (modules/shell/*)
 starship.toml|starship: xdg:starship/starship.toml  # modules/shell/starship
 config.fish|fish: xdg:fish/config.fish               # modules/shell/fish

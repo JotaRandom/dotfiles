@@ -108,14 +108,14 @@ def rebuild_font_cache() -> bool:
         True si se reconstruyó exitosamente, False en caso contrario
     """
     try:
-        print("  → Reconstruyendo caché de fuentes...")
+        print("  -> Reconstruyendo caché de fuentes...")
         subprocess.check_call(['fc-cache', '-fv'], 
                             stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL)
-        print("  ✓ Caché de fuentes reconstruida")
+        print("  [OK] Caché de fuentes reconstruida")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print("  ⚠ No se pudo reconstruir la caché de fuentes")
+        print("  [!] No se pudo reconstruir la caché de fuentes")
         return False
 
 
@@ -138,7 +138,7 @@ def check_and_install_fonts(interactive: bool = True,
     # Detectar distribución
     distro = detect_distro()
     if not distro:
-        print("⚠ No se pudo detectar la distribución Linux")
+        print("[!] No se pudo detectar la distribución Linux")
         print("  Las fuentes deben instalarse manualmente")
         return ([], REQUIRED_FONTS)
     
@@ -146,7 +146,7 @@ def check_and_install_fonts(interactive: bool = True,
     
     # Verificar fontconfig
     if not which('fc-list'):
-        print("⚠ fontconfig (fc-list) no está instalado")
+        print("[!] fontconfig (fc-list) no está instalado")
         print("  No se pueden verificar fuentes automáticamente")
         return ([], REQUIRED_FONTS)
     
@@ -164,17 +164,17 @@ def check_and_install_fonts(interactive: bool = True,
         status = "requerida" if is_required else "opcional"
         
         if is_font_installed(font):
-            print(f"✓ {font} ({status}): instalada")
+            print(f"[OK] {font} ({status}): instalada")
             installed.append(font)
         else:
-            print(f"✗ {font} ({status}): NO instalada")
+            print(f"[X] {font} ({status}): NO instalada")
             missing.append(font)
             
             # Intentar instalar si es requerida
             if is_required:
                 package = get_package_for_font(font, distro)
                 if not package:
-                    print(f"  ⚠ No se conoce el paquete para {font} en {distro}")
+                    print(f"  [!] No se conoce el paquete para {font} en {distro}")
                     continue
                 
                 # Instalar usando la función compartida
@@ -191,18 +191,18 @@ def check_and_install_fonts(interactive: bool = True,
     print("\n" + "="*60)
     print("Resumen de Fuentes")
     print("="*60)
-    print(f"✓ Instaladas: {len(installed)}")
+    print(f"[OK] Instaladas: {len(installed)}")
     if newly_installed:
         print(f"  Recién instaladas: {', '.join(newly_installed)}")
     
     if missing:
-        print(f"\n⚠ Faltantes: {len(missing)}")
+        print(f"\n[!] Faltantes: {len(missing)}")
         for font in missing:
             package = get_package_for_font(font, distro)
             if package:
-                print(f"  - {font} → instalar con: sudo pacman -S {package}")
+                print(f"  - {font} -> instalar con: sudo pacman -S {package}")
             else:
-                print(f"  - {font} → instalar manualmente")
+                print(f"  - {font} -> instalar manualmente")
     
     return (installed, missing)
 
